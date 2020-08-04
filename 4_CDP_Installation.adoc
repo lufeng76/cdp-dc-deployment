@@ -1,12 +1,16 @@
 == 安装CDP
 
+
 === 上传License
+
 
 如果没有CDP license，可以选择"Try Cloudera Data Platform for 60 days"
 
 image::pictures/CDP001.jpg[license]
 
-=== 安装Cloudera Manager Agent
+
+=== 安装Cloudera Manager Agent和CDH Parcle
+
 
 Step1:给新集群命名
 
@@ -49,21 +53,27 @@ Step8:集群检查（网络性能和主机扫描）
 image::pictures/CDP010.jpg[inspector]
 
 网络性能检查：
+
 image::pictures/CDP011.jpg[inspector]
 
 主机整体扫描：
+
 image::pictures/CDP012.jpg[inspector]
 
+
 === 添加服务组件
+
 
 Step1：以Data Engineering为例
 
 image::pictures/CDP013.jpg[add services]
 
 Step2：角色分配可以参考以下链接：
-https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html Architecture is the following:
+https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html
+
 
 image::pictures/CDP015.jpg[assign roles]
+
 
 Node 1: Cloudera Manager Server + PostgresSQL database
 Node 2 & 3: Masters & Utility/Gateway hosts containing master services and all servers needed

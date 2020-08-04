@@ -1,0 +1,200 @@
+Failed to set locale, defaulting to C
+Loaded plugins: ovl, priorities
+81 packages excluded due to repository priority protections
+Resolving Dependencies
+--> Running transaction check
+---> Package cloudera-manager-agent.x86_64 0:7.1.1-3274282.el7 will be installed
+--> Processing Dependency: python-psycopg2 <= 2.8.3 for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: httpd for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: fuse for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: cyrus-sasl-gssapi for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: bind-utils for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: MySQL-python for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: fuse-libs for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: cyrus-sasl-plain for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: portmap for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+--> Processing Dependency: mod_ssl for package: cloudera-manager-agent-7.1.1-3274282.el7.x86_64
+---> Package cloudera-manager-daemons.x86_64 0:7.1.1-3274282.el7 will be installed
+--> Running transaction check
+---> Package MySQL-python.x86_64 0:1.2.5-1.el7 will be installed
+--> Processing Dependency: libmysqlclient.so.18(libmysqlclient_18)(64bit) for package: MySQL-python-1.2.5-1.el7.x86_64
+--> Processing Dependency: libmysqlclient.so.18()(64bit) for package: MySQL-python-1.2.5-1.el7.x86_64
+---> Package bind-utils.x86_64 32:9.11.4-9.P2.el7 will be installed
+--> Processing Dependency: bind-libs-lite(x86-64) = 32:9.11.4-9.P2.el7 for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+--> Processing Dependency: bind-libs(x86-64) = 32:9.11.4-9.P2.el7 for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+--> Processing Dependency: liblwres.so.160()(64bit) for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+--> Processing Dependency: libisccfg.so.160()(64bit) for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+--> Processing Dependency: libisc.so.169()(64bit) for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+--> Processing Dependency: libirs.so.160()(64bit) for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+--> Processing Dependency: libdns.so.1102()(64bit) for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+--> Processing Dependency: libbind9.so.160()(64bit) for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+--> Processing Dependency: libGeoIP.so.1()(64bit) for package: 32:bind-utils-9.11.4-9.P2.el7.x86_64
+---> Package cyrus-sasl-gssapi.x86_64 0:2.1.26-23.el7 will be installed
+---> Package cyrus-sasl-plain.x86_64 0:2.1.26-23.el7 will be installed
+---> Package fuse.x86_64 0:2.9.2-11.el7 will be installed
+---> Package fuse-libs.x86_64 0:2.9.2-11.el7 will be installed
+---> Package httpd.x86_64 0:2.4.6-90.el7.centos will be installed
+--> Processing Dependency: httpd-tools = 2.4.6-90.el7.centos for package: httpd-2.4.6-90.el7.centos.x86_64
+--> Processing Dependency: system-logos >= 7.92.1-1 for package: httpd-2.4.6-90.el7.centos.x86_64
+--> Processing Dependency: libaprutil-1.so.0()(64bit) for package: httpd-2.4.6-90.el7.centos.x86_64
+--> Processing Dependency: libapr-1.so.0()(64bit) for package: httpd-2.4.6-90.el7.centos.x86_64
+---> Package mod_ssl.x86_64 1:2.4.6-90.el7.centos will be installed
+---> Package python-psycopg2.x86_64 0:2.5.1-4.el7 will be installed
+---> Package rpcbind.x86_64 0:0.2.0-48.el7 will be installed
+--> Running transaction check
+---> Package GeoIP.x86_64 0:1.5.0-14.el7 will be installed
+---> Package apr.x86_64 0:1.4.8-5.el7 will be installed
+---> Package apr-util.x86_64 0:1.5.2-6.el7 will be installed
+---> Package bind-libs.x86_64 32:9.11.4-9.P2.el7 will be installed
+---> Package bind-libs-lite.x86_64 32:9.11.4-9.P2.el7 will be installed
+---> Package centos-logos.noarch 0:70.0.6-3.el7.centos will be installed
+---> Package httpd-tools.x86_64 0:2.4.6-90.el7.centos will be installed
+---> Package mariadb-libs.x86_64 1:5.5.64-1.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package             Arch   Version               Repository               Size
+================================================================================
+Installing:
+ cloudera-manager-agent
+                     x86_64 7.1.1-3274282.el7     cloudera-manager         12 M
+ cloudera-manager-daemons
+                     x86_64 7.1.1-3274282.el7     cloudera-manager        1.4 G
+Installing for dependencies:
+ GeoIP               x86_64 1.5.0-14.el7          base-hwx-internal-vault 1.5 M
+ MySQL-python        x86_64 1.2.5-1.el7           base-hwx-internal-vault  90 k
+ apr                 x86_64 1.4.8-5.el7           base-hwx-internal-vault 103 k
+ apr-util            x86_64 1.5.2-6.el7           base-hwx-internal-vault  92 k
+ bind-libs           x86_64 32:9.11.4-9.P2.el7    base-hwx-internal-vault 154 k
+ bind-libs-lite      x86_64 32:9.11.4-9.P2.el7    base-hwx-internal-vault 1.1 M
+ bind-utils          x86_64 32:9.11.4-9.P2.el7    base-hwx-internal-vault 258 k
+ centos-logos        noarch 70.0.6-3.el7.centos   base-hwx-internal-vault  21 M
+ cyrus-sasl-gssapi   x86_64 2.1.26-23.el7         base-hwx-internal-vault  41 k
+ cyrus-sasl-plain    x86_64 2.1.26-23.el7         base-hwx-internal-vault  39 k
+ fuse                x86_64 2.9.2-11.el7          base-hwx-internal-vault  86 k
+ fuse-libs           x86_64 2.9.2-11.el7          base-hwx-internal-vault  93 k
+ httpd               x86_64 2.4.6-90.el7.centos   base-hwx-internal-vault 2.7 M
+ httpd-tools         x86_64 2.4.6-90.el7.centos   base-hwx-internal-vault  91 k
+ mariadb-libs        x86_64 1:5.5.64-1.el7        base-hwx-internal-vault 759 k
+ mod_ssl             x86_64 1:2.4.6-90.el7.centos base-hwx-internal-vault 112 k
+ python-psycopg2     x86_64 2.5.1-4.el7           base-hwx-internal-vault 132 k
+ rpcbind             x86_64 0.2.0-48.el7          base-hwx-internal-vault  60 k
+
+Transaction Summary
+================================================================================
+Install  2 Packages (+18 Dependent packages)
+
+Total download size: 1.4 G
+Installed size: 1.7 G
+Downloading packages:
+--------------------------------------------------------------------------------
+Total                                               27 MB/s | 1.4 GB  00:53     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : apr-1.4.8-5.el7.x86_64                                      1/20 
+  Installing : GeoIP-1.5.0-14.el7.x86_64                                   2/20 
+  Installing : 32:bind-libs-lite-9.11.4-9.P2.el7.x86_64                    3/20 
+  Installing : apr-util-1.5.2-6.el7.x86_64                                 4/20 
+  Installing : httpd-tools-2.4.6-90.el7.centos.x86_64                      5/20 
+  Installing : 32:bind-libs-9.11.4-9.P2.el7.x86_64                         6/20 
+  Installing : 32:bind-utils-9.11.4-9.P2.el7.x86_64                        7/20 
+  Installing : centos-logos-70.0.6-3.el7.centos.noarch                     8/20 
+  Installing : httpd-2.4.6-90.el7.centos.x86_64                            9/20 
+  Installing : 1:mod_ssl-2.4.6-90.el7.centos.x86_64                       10/20 
+  Installing : cyrus-sasl-gssapi-2.1.26-23.el7.x86_64                     11/20 
+  Installing : cyrus-sasl-plain-2.1.26-23.el7.x86_64                      12/20 
+  Installing : python-psycopg2-2.5.1-4.el7.x86_64                         13/20 
+  Installing : cloudera-manager-daemons-7.1.1-3274282.el7.x86_64          14/20 
+  Installing : fuse-2.9.2-11.el7.x86_64                                   15/20 
+  Installing : fuse-libs-2.9.2-11.el7.x86_64                              16/20 
+  Installing : rpcbind-0.2.0-48.el7.x86_64                                17/20 
+  Installing : 1:mariadb-libs-5.5.64-1.el7.x86_64                         18/20 
+  Installing : MySQL-python-1.2.5-1.el7.x86_64                            19/20 
+  Installing : cloudera-manager-agent-7.1.1-3274282.el7.x86_64            20/20 
+Created symlink from /etc/systemd/system/multi-user.target.wants/cloudera-scm-agent.service to /usr/lib/systemd/system/cloudera-scm-agent.service.
+Created symlink from /etc/systemd/system/multi-user.target.wants/cloudera-scm-supervisord.service to /usr/lib/systemd/system/cloudera-scm-supervisord.service.
+  Verifying  : GeoIP-1.5.0-14.el7.x86_64                                   1/20 
+  Verifying  : 1:mariadb-libs-5.5.64-1.el7.x86_64                          2/20 
+  Verifying  : rpcbind-0.2.0-48.el7.x86_64                                 3/20 
+  Verifying  : fuse-libs-2.9.2-11.el7.x86_64                               4/20 
+  Verifying  : fuse-2.9.2-11.el7.x86_64                                    5/20 
+  Verifying  : cloudera-manager-daemons-7.1.1-3274282.el7.x86_64           6/20 
+  Verifying  : httpd-tools-2.4.6-90.el7.centos.x86_64                      7/20 
+  Verifying  : cloudera-manager-agent-7.1.1-3274282.el7.x86_64             8/20 
+  Verifying  : python-psycopg2-2.5.1-4.el7.x86_64                          9/20 
+  Verifying  : httpd-2.4.6-90.el7.centos.x86_64                           10/20 
+  Verifying  : apr-1.4.8-5.el7.x86_64                                     11/20 
+  Verifying  : 1:mod_ssl-2.4.6-90.el7.centos.x86_64                       12/20 
+  Verifying  : apr-util-1.5.2-6.el7.x86_64                                13/20 
+  Verifying  : cyrus-sasl-plain-2.1.26-23.el7.x86_64                      14/20 
+  Verifying  : 32:bind-libs-9.11.4-9.P2.el7.x86_64                        15/20 
+  Verifying  : 32:bind-libs-lite-9.11.4-9.P2.el7.x86_64                   16/20 
+  Verifying  : 32:bind-utils-9.11.4-9.P2.el7.x86_64                       17/20 
+  Verifying  : MySQL-python-1.2.5-1.el7.x86_64                            18/20 
+  Verifying  : cyrus-sasl-gssapi-2.1.26-23.el7.x86_64                     19/20 
+  Verifying  : centos-logos-70.0.6-3.el7.centos.noarch                    20/20 
+
+Installed:
+  cloudera-manager-agent.x86_64 0:7.1.1-3274282.el7                             
+  cloudera-manager-daemons.x86_64 0:7.1.1-3274282.el7                           
+
+Dependency Installed:
+  GeoIP.x86_64 0:1.5.0-14.el7                                                   
+  MySQL-python.x86_64 0:1.2.5-1.el7                                             
+  apr.x86_64 0:1.4.8-5.el7                                                      
+  apr-util.x86_64 0:1.5.2-6.el7                                                 
+  bind-libs.x86_64 32:9.11.4-9.P2.el7                                           
+  bind-libs-lite.x86_64 32:9.11.4-9.P2.el7                                      
+  bind-utils.x86_64 32:9.11.4-9.P2.el7                                          
+  centos-logos.noarch 0:70.0.6-3.el7.centos                                     
+  cyrus-sasl-gssapi.x86_64 0:2.1.26-23.el7                                      
+  cyrus-sasl-plain.x86_64 0:2.1.26-23.el7                                       
+  fuse.x86_64 0:2.9.2-11.el7                                                    
+  fuse-libs.x86_64 0:2.9.2-11.el7                                               
+  httpd.x86_64 0:2.4.6-90.el7.centos                                            
+  httpd-tools.x86_64 0:2.4.6-90.el7.centos                                      
+  mariadb-libs.x86_64 1:5.5.64-1.el7                                            
+  mod_ssl.x86_64 1:2.4.6-90.el7.centos                                          
+  python-psycopg2.x86_64 0:2.5.1-4.el7                                          
+  rpcbind.x86_64 0:0.2.0-48.el7                                                 
+
+Complete!
+Failed to set locale, defaulting to C
+Loaded plugins: ovl, priorities
+81 packages excluded due to repository priority protections
+Resolving Dependencies
+--> Running transaction check
+---> Package cloudera-manager-server.x86_64 0:7.1.1-3274282.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package                  Arch    Version               Repository         Size
+================================================================================
+Installing:
+ cloudera-manager-server  x86_64  7.1.1-3274282.el7     cloudera-manager   12 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 12 k
+Installed size: 14 k
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : cloudera-manager-server-7.1.1-3274282.el7.x86_64             1/1 
+Created symlink from /etc/systemd/system/multi-user.target.wants/cloudera-scm-server.service to /usr/lib/systemd/system/cloudera-scm-server.service.
+  Verifying  : cloudera-manager-server-7.1.1-3274282.el7.x86_64             1/1 
+
+Installed:
+  cloudera-manager-server.x86_64 0:7.1.1-3274282.el7                            
+
+Complete!

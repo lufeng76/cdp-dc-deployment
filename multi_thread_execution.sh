@@ -9,20 +9,20 @@
 echo "Start of script"
 
 # Modify these below settings according to your cluster
-export NODE_NAME='fri2-'
+export NODE_NAME='feng-'
 export NODE_USER='root'
 export NODE_NUMBERS_START=1
-export NODE_NUMBERS_END=6
-export PRINT_RESULTS=true
-export DELETE_RESULTS=true
+export NODE_NUMBERS_END=5
+export PRINT_RESULTS=false
+export DELETE_RESULTS=false
 export ARCHIVE_RESULTS=false
 
 # Create folder name to first argument passed or default to timestamp
 if [ -z "$1" ]
 then 
-    export FOLDER_NAME=results/$(date +%s)
+    export FOLDER_NAME=logs/$(date +%s)
 else 
-    export FOLDER_NAME=results/$1
+    export FOLDER_NAME=logs/$1
 fi
 
 PID_ARRAY=()
@@ -37,8 +37,8 @@ cp script.sh ${FOLDER_NAME}/
 # Execute the script on each node and redirect its output in an appropriate named file
 for i in $(eval echo "{${NODE_NUMBERS_START}..${NODE_NUMBERS_END}}")
 do
-    echo "*************** Launch execution on node ${NODE_NAME}${i} ***************"
-    ssh ${NODE_USER}@${NODE_NAME}${i} 'bash -s' < ${FOLDER_NAME}/script.sh ${i} > ${FOLDER_NAME}/results/${NODE_NAME}${i}.out &
+    echo "*************** Launch parallel execution on node ${NODE_NAME}${i} ***************"
+    ssh ${NODE_USER}@${NODE_NAME}${i} 'bash -s' < ${FOLDER_NAME}/script.sh ${i} > ${FOLDER_NAME}/results/${NODE_NAME}${i}.out 2>&1 &
     PID_ARRAY+=($!)
 done
 

@@ -7,6 +7,7 @@ Notes relatives to YCloud installation.
 To login, using a key is mandatory at first. Hence a file __ycloud-key__ must be created with following content:
 
 [source,bash]
+vi ycloud-key
 -----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAwf4QUH8xfdUhMWeDIJVO3l9ukXyBLM+Wghs822hnkBuyXIeV
 yFhxNfdgP+Y0VGctnlObBTLGEt9ixKiklSZ+Tf+T+8hNkL3E1KLDO8B1kFuCayJi
@@ -38,7 +39,8 @@ UJp++mpVj67cxQmzxRHvVGtW3vXShcqjWuLBZ/nZEnioZl8Zb3PA
 Then, to connect, this is the command to use:
 
 [source,bash]
-ssh -i ycloud-key root@fri-1
+chmod 400 ycloud-key
+ssh -i ycloud-key root@feng-1
 
 Note that once your private key has been added to all hosts, there is no need to use ycloud key anymore.
 
@@ -49,18 +51,16 @@ As hostnames in YCloud are different than outside, it is recommended to set same
 To do this, first, get lines from your /etc/hosts that looks like this:
 
 [source,bash]
-172.27.74.205   ccycloud-2.fri2.root.hwx.site 	fri2-2 		
-172.27.172.135  ccycloud-5.fri2.root.hwx.site 	fri2-5 	 	
-172.27.13.195   ccycloud-6.fri2.root.hwx.site 	fri2-6 		
-172.27.90.0   ccycloud-3.fri2.root.hwx.site 	fri2-3 		
-172.27.29.133   ccycloud-1.fri2.root.hwx.site 	fri2-1 		
-172.27.76.65  ccycloud-4.fri2.root.hwx.site 	fri2-4
+172.27.14.129   ccycloud-1.feng.root.hwx.site   feng-1
+172.27.170.65   ccycloud-2.feng.root.hwx.site   feng-2
+172.27.115.6   ccycloud-3.feng.root.hwx.site   feng-3
+172.27.17.134   ccycloud-4.feng.root.hwx.site   feng-4
+172.27.126.77   ccycloud-5.feng.root.hwx.site   feng-5
 
 Add them to each node, and then run this on each node to change their hostname:
 
 [source,bash]
 ----
-export CLUSTER_NAME=fri2
 echo "
 127.0.0.1	localhost
 ::1	localhost ip6-localhost ip6-loopback
@@ -69,12 +69,10 @@ ff00::0	ip6-mcastprefix
 ff02::1	ip6-allnodes
 ff02::2	ip6-allrouters
 
-172.27.74.205   ccycloud-2.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-2 		
-172.27.172.135  ccycloud-5.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-5 	 	
-172.27.13.195   ccycloud-6.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-6 		
-172.27.90.0   ccycloud-3.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-3 		
-172.27.29.133   ccycloud-1.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-1 		
-172.27.76.65  ccycloud-4.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-4 
+172.27.14.129   ccycloud-1.feng.root.hwx.site   feng-1
+172.27.170.65   ccycloud-2.feng.root.hwx.site   feng-2
+172.27.115.6   ccycloud-3.feng.root.hwx.site   feng-3
+172.27.17.134   ccycloud-4.feng.root.hwx.site   feng-4
+172.27.126.77   ccycloud-5.feng.root.hwx.site   feng-5
 " > /etc/hosts
-hostname ccycloud-${1}.${CLUSTER_NAME}.root.hwx.site
 ----

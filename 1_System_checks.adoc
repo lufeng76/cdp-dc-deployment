@@ -16,16 +16,12 @@ Setup correct /etc/hosts on all nodes:
 [source,bash]
 echo "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-169.254.169.254 metadata.google.internal  # Added by Google
-172.31.115.219 cdp-test-2.gce.cloudera.com	cdp-test-2	
-172.31.115.225 cdp-test-3.gce.cloudera.com	cdp-test-3	
-172.31.115.246 cdp-test-6.gce.cloudera.com	cdp-test-6	
-172.31.116.152 cdp-test-5.gce.cloudera.com	cdp-test-5	
-172.31.116.154 cdp-test-4.gce.cloudera.com	cdp-test-4	
-172.31.116.157 cdp-test-1.gce.cloudera.com	cdp-test-1
+172.27.14.129   ccycloud-1.feng.root.hwx.site   feng-1
+172.27.170.65   ccycloud-2.feng.root.hwx.site   feng-2
+172.27.115.6   ccycloud-3.feng.root.hwx.site   feng-3
+172.27.17.134   ccycloud-4.feng.root.hwx.site   feng-4
+172.27.126.77   ccycloud-5.feng.root.hwx.site   feng-5
 " > /etc/hosts
-
-
 
 == Firewall
 

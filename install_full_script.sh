@@ -1,9 +1,7 @@
 # Define global variables here
-export BUILD_NUMBER=3274282
-export USER=frisch
-export PRINCIPAL=frisch
-export REALM=FRISCH.COM
-export HOSTNAME=fri2-
+export USER=etl_user
+export REALM=FENG.COM
+export HOSTNAME=feng-
 
 ## On ALL nodes
 
@@ -15,7 +13,7 @@ gpgkey=https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
 gpgcheck=1
 enabled=1
 autorefresh=0
-type=rpm-md" >> /etc/yum.repos.d/cloudera-manager-7_1-${BUILD_NUMBER}.repo
+type=rpm-md" >> /etc/yum.repos.d/cloudera-manager-7_1_1.repo
 rpm --import https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
 
 # Download KRB libs
@@ -25,13 +23,18 @@ yum install -y krb5-workstation krb5-libs
 systemctl disable firewalld
 systemctl stop firewalld
 setenforce 0
+sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
 systemctl start ntpd
 echo "fs.file-max = 64000" >> /etc/sysctl.conf
-echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
-echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >> /etc/rc.d/rc.local
+echo "echo never > /sys/kernel/mm/transparent_hugepage/defrag" >> /etc/rc.d/rc.local
 echo 0 > /proc/sys/vm/swappiness
-echo "vm.dirty_background_ratio=20
-vm.dirty_ratio=50" >> /etc/sysctl.conf
+echo "vm.dirty_background_ratio=20" >> /etc/sysctl.conf
+echo "vm.dirty_ratio=50" >> /etc/sysctl.conf
+echo "vm.swappiness = 1" >> /etc/sysctl.conf
+sysctl vm.swappiness=1
 # echo performance > /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
 # User creation
@@ -50,13 +53,13 @@ yum -y install https://yum.postgresql.org/10/redhat/rhel-7-x86_64/python3-psycop
 yum -y install postgresql10
 
 # Create Kudus directories
-mkdir -p /data/kudu 
-chmod 755 /data/kudu 
-chown kudu:kudu /data/kudu 
+mkdir -p /data/kudu/wal 
+chmod 755 /data/kudu/wal
+#chown kudu:kudu /data/kudu/wal
 
-mkdir -p /tmp/kudu 
-chmod 755 /tmp/kudu 
-chown kudu:kudu /tmp/kudu 
+mkdir -p /data/kudu/data 
+chmod 755 /data/kudu/data
+#chown kudu:kudu /data/kudu/data
 
 
 # Generate Keys and Certificates Signing Requests  
@@ -90,28 +93,27 @@ chmod 400 /opt/cloudera/security/pki/rootCA.*
 
 ## Only on CM node 
 
-export BUILD_NUMBER=2535749
-export USER=frisch
-export PRINCIPAL=frisch
-export REALM=FRISCH.COM
+export USER=etl_user
+export REALM=FENG.COM
 
 # Install PostgreSQL 10
 yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 yum -y install postgresql10-server postgresql10
 /usr/pgsql-10/bin/postgresql-10-setup initdb
-systemctl enable postgresql-10
-systemctl start postgresql-10
-yum -y install pip
-pip install psycopg2==2.7.5 --ignore-installed
 echo "listen_addresses = '*'
 max_connections = 1000" >> /var/lib/pgsql/10/data/postgresql.conf
 echo "
 local   all             posgtres                                trust
-host    all             all             0.0.0.0/0               md5
+host    all             all             0.0.0.0/0               password
 local   all             all                                     md5
 " >> /var/lib/pgsql/10/data/pg_hba.conf
+systemctl enable postgresql-10
+systemctl start postgresql-10
+yum -y install pip
+pip install psycopg2==2.7.5 --ignore-installed
 
-echo "CREATE ROLE scm LOGIN PASSWORD 'admin';
+sudo -u postgres psql <<EOF
+    CREATE ROLE scm LOGIN PASSWORD 'admin';
     CREATE DATABASE scm OWNER scm ENCODING 'UTF8' TEMPLATE template0;
     CREATE ROLE amon LOGIN PASSWORD 'admin';
     CREATE DATABASE amon OWNER amon ENCODING 'UTF8' TEMPLATE template0;
@@ -128,8 +130,8 @@ echo "CREATE ROLE scm LOGIN PASSWORD 'admin';
     CREATE ROLE smm LOGIN PASSWORD 'admin';
     CREATE DATABASE smm OWNER smm ENCODING 'UTF8' TEMPLATE template0;
     CREATE ROLE rangeradmin LOGIN PASSWORD 'admin';
-    CREATE DATABASE ranger OWNER rangeradmin ENCODING 'UTF8' TEMPLATE template0;" > database_creation.sql
-psql -U postgres -a -f database_creation.sql
+    CREATE DATABASE ranger OWNER rangeradmin ENCODING 'UTF8' TEMPLATE template0;
+EOF
 
 # Install CM & start it
 yum -y install cloudera-manager-agent cloudera-manager-daemons
@@ -139,7 +141,12 @@ systemctl start cloudera-scm-agent
 systemctl enable cloudera-scm-agent
 systemctl enable cloudera-scm-server
 systemctl start cloudera-scm-server
-sleep 60
+while [ `curl -s -X GET -u "admin:admin"  http://localhost:7180/api/version` -z ] ;
+    do
+    echo "waiting 10s for CM Server to come up..";
+    sleep 10;
+done
+echo "-- Now CM Server is started --"
 
 
 # Install MIT-KDC
@@ -194,7 +201,7 @@ ${REALM} = {
 " > /etc/krb5.conf
 
 ###### ATTENTION: This requires interaction from the user
-kdb5_util create -r FRISCH.COM -s
+kdb5_util create -r ${REALM} -s
 
 systemctl start krb5kdc.service
 systemctl start kadmin.service
@@ -205,7 +212,7 @@ systemctl enable kadmin.service
 kadmin.local
 addprinc admin/admin
 addprinc ${USER}/admin
-ktadd -k /home/${USER}/${USER}.keytab ${USER}/admin@FRISCH.COM
+ktadd -k /home/${USER}/${USER}.keytab ${USER}/admin@${REALM}
 
 
 # Install and configure HA proxy required by HUE, OOZIE & IMPALA

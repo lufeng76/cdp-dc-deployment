@@ -1,38 +1,70 @@
-= CDP Installation
+= CDP
 
+== License
 
-== Wizard Install
+CDP"Try Cloudera Data Platform for 60 days"
 
-Add license key.
+image::pictures/CDP001.png
 
-Before goin to the wizard, it is necessary to add the parcel you want to the repository of CM: +
-Parcels > Parcels repositories & Network Settings + 
-Add the url of the repository from which you want to download parcels. +
-(e.g.:  http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/2539960/cdh/7.x/parcels/  )
+== Cloudera Manager
 
-Go through wizard:
+Step1:
 
-image::pictures/clusterBasics.png[Name the cluster]
+image::pictures/CDP002.png
 
-image::pictures/SpecifyHosts.png[Put machines for installation]
+Step2:
 
-image::pictures/SelectRepository.png[Select the right repository]
+image::pictures/CDP003.png
 
-image::pictures/SelectJDK.png[Select the JDK]
+Cloudera Manager Agent
 
-image::pictures/EnterLoginCredentials.png[Enter credentials to log in to each machine]
+image::pictures/CDP014.png
 
+Step3:
 
-Then inspect cluster with wizard:
+image::pictures/CDP004.png
 
-image::pictures/InspectCluster.png[Inspect cluster]
+Parcel Repository & Network Settingscdp7.1.1URL
+image::pictures/CDP005.png
 
-image::pictures/NetworkPerformanceInspectorResults.png[Network performance results]
+Step4:OpenJDK8"Manually manage JDK"
 
+image::pictures/CDP006.png
 
-== Assigning services
+Step5:
 
+image::pictures/CDP007.png
+
+Step6:Cloudera Manager Agent
+
+image::pictures/CDP008.png
+
+Step7:CDH parcel
+
+image::pictures/CDP009.png
+
+Step8:
+
+image::pictures/CDP010.png
+
+
+image::pictures/CDP011.png
+
+
+image::pictures/CDP012.png
+
+== 
+
+Step1Data Engineering
+
+image::pictures/CDP013.png
+
+Step2
+
+https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html
 Architecture is the following:
+
+image::pictures/CDP015.png
 
 Node 1: Cloudera Manager Server + PostgresSQL database
 Node 2 & 3: Masters & Utility/Gateway hosts containing master services and all servers needed

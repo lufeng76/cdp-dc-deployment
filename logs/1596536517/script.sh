@@ -1,1 +1,0 @@
-sysctl vm.swappiness=1

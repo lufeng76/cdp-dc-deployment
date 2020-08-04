@@ -66,31 +66,40 @@ image::pictures/CDP012.jpg[inspector]
 
 Step1：以Data Engineering为例
 
-image::pictures/CDP013.jpg[add services]
+image::pictures/CDP015.jpg[add services]
 
 Step2：角色分配可以参考以下链接：
 https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html
 
+各主机角色分配如下：
+image::pictures/CDP016.jpg[assign roles]
 
-image::pictures/CDP015.jpg[assign roles]
+Step3：测试数据库连接
+
+image::pictures/CDP017.jpg[database connection]
+
+Step4：输入必要的参数，主要是ranger的四个密码设置
+ranger-keyadmin_user_password = Admin1234
+ranger-rangeradmin_user_password = Admin1234
+ranger-rangertagsync_user_password = Admin1234
+ranger-rangerusersync_user_password = Admin1234
+
+image::pictures/CDP018.jpg[setting1]
+
+Step5：审核更改，主要是调整Atlas的两个参数
+
+image::pictures/CDP019.jpg[setting2]
+
+Step6：集群在参数设置完毕后，开始首次启动运行
+
+image::pictures/CDP020.jpg[first run]
+
+Step7：运行成功
+
+image::pictures/CDP021.jpg[finish]
 
 
-Node 1: Cloudera Manager Server + PostgresSQL database
-Node 2 & 3: Masters & Utility/Gateway hosts containing master services and all servers needed
-Node 4, 5, 6: Datanodes containing also Zookeeper & Kafka brokers
-
-
-Test Connection and go through wizard.
-
-These settings have been set:
-- Yarn queue manager ui user/password= admin/admin
-- Ranger passwords: Admin1234
-- Kudu WALs directory = /tmp/kudu
-- Kudu data directory = /data/kudu
-- Ozone ID was set to ozone-fri
-
-
-== Troubleshots
+== Troubleshoots
 
 - Kudu setting was wrong and set to /tmp, hence it changed all /tmp directories to belong Kudu user, that was changed by setting back root:root and giving 777 permissions on /tmp
 - Namenode failed to start because it was unable to format, as there were already data in namenode directories. Data has been manually erased using : rm -rf /dfs/nn

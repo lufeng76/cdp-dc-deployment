@@ -4,18 +4,18 @@
 
 image::pictures/CDP001.jpg[license]
 
-=安装Cloudera Manager Agent
+===安装Cloudera Manager Agent
 Step1:给新集群命名
 
-image::pictures/CDP002.jpg
+image::pictures/CDP002.jpg[cluster name]
 
 Step2:选择目标主机
 
-image::pictures/CDP003.jpg
+image::pictures/CDP003.jpg[select hosts]
 
 由于第一条已经安装过Cloudera Manager Agent，所以会显示为灰色，但也要勾选上
 
-image::pictures/CDP014.jpg
+image::pictures/CDP014.jpg[select hosts]
 
 Step3:选择软件包下载地址
 

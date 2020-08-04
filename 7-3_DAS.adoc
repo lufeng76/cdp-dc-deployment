@@ -1,0 +1,63 @@
+= DAS
+
+
+Using postgresql 9.6, create database:
+[source,bash]
+CREATE ROLE das LOGIN PASSWORD 'admin';
+CREATE DATABASE das OWNER das ENCODING 'UTF8' TEMPLATE template0;
+
+Set Kerberos to true, add parameters to hive session: 
+
+Got error when deploying then, on event processor logs are:
+
+[source,bash]
+05:48:31.463 [main] DEBUG com.hortonworks.hivestudio.hive.HiveModule - hive interactive site configurations for hive studio : {hive.server2.zookeeper.namespace=hiveserver2, hive.server2.enable.doAs=false, hive.zookeeper.quorum=cdp-test-3.gce.cloudera.com,cdp-test-2.gce.cloudera.com,cdp-test-1.gce.cloudera.com, hive.server2.transport.mode=binary, hive.server2.thrift.http.path=cliservice, hive.server2.thrift.http.port=10001, hive.server2.thrift.bind.host=localhost, hive.server2.support.dynamic.service.discovery=true, hive.server2.thrift.port=10000}
+05:48:32.336 [main] WARN  org.apache.hadoop.util.NativeCodeLoader - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+05:48:32.342 [main] WARN  org.apache.hadoop.hdfs.shortcircuit.DomainSocketFactory - The short-circuit local reads feature cannot be used because libhadoop cannot be loaded.
+05:48:32.550 [main] INFO  org.apache.hadoop.hive.metastore.conf.MetastoreConf - Unable to find config file hive-site.xml
+05:48:32.550 [main] INFO  org.apache.hadoop.hive.metastore.conf.MetastoreConf - Found configuration file null
+05:48:32.551 [main] INFO  org.apache.hadoop.hive.metastore.conf.MetastoreConf - Unable to find config file hivemetastore-site.xml
+05:48:32.551 [main] INFO  org.apache.hadoop.hive.metastore.conf.MetastoreConf - Found configuration file null
+05:48:32.551 [main] INFO  org.apache.hadoop.hive.metastore.conf.MetastoreConf - Unable to find config file metastore-site.xml
+05:48:32.551 [main] INFO  org.apache.hadoop.hive.metastore.conf.MetastoreConf - Found configuration file null
+
+on webapp logs are:
+
+
+But both log to stderr the similar error:
+
+
+Event Processor:
+[source,bash]
++ exec /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64/bin/java -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/das_das-DAS_EVENT_PROCESSOR-c38c78715e74a246630aea2bb0f599e8_pid29043.hprof -XX:OnOutOfMemoryError=/opt/cloudera/cm-agent/service/common/killparent.sh -Xmx4096m -Dlog4j.configurationFile=/var/run/cloudera-scm-agent/process/1546350059-das-DAS_EVENT_PROCESSOR/conf/das-event-processor-log4j2.yml -classpath '/opt/cloudera/parcels/CDH-7.1.1-1.cdh7.1.1.p0.2397691/lib/data_analytics_studio/lib/data_analytics_studio-event-processor-1.4.2.7.1.1.0-338.jar:/opt/cloudera/parcels/CDH-7.1.1-1.cdh7.1.1.p0.2397691/lib/data_analytics_studio/lib/ep_libs/*:/var/run/cloudera-scm-agent/process/1546350059-das-DAS_EVENT_PROCESSOR/yarn-conf:/var/run/cloudera-scm-agent/process/1546350059-das-DAS_EVENT_PROCESSOR/conf' com.hortonworks.hivestudio.eventProcessor.EventProcessorApplication server /var/run/cloudera-scm-agent/process/1546350059-das-DAS_EVENT_PROCESSOR/conf/das-event-processor.json
+com.google.inject.ProvisionException: Unable to provision, see the following errors:
+
+1) Error in custom provider, java.lang.ArrayIndexOutOfBoundsException: 1
+  at com.hortonworks.hivestudio.eventProcessor.module.EventProcessorModule.provideConnectionFactory(EventProcessorModule.java:102)
+  at com.hortonworks.hivestudio.eventProcessor.module.EventProcessorModule.provideConnectionFactory(EventProcessorModule.java:102)
+  while locating com.hortonworks.hivestudio.hive.services.ConnectionFactory
+    for the 1st parameter of com.hortonworks.hivestudio.eventProcessor.meta.HiveExecutor.<init>(HiveExecutor.java:55)
+  while locating com.hortonworks.hivestudio.eventProcessor.meta.HiveExecutor
+    for the 1st parameter of com.hortonworks.hivestudio.eventProcessor.meta.HiveRepl.<init>(HiveRepl.java:44)
+  while locating com.hortonworks.hivestudio.eventProcessor.meta.HiveRepl
+    for the 3rd parameter of com.hortonworks.hivestudio.eventProcessor.meta.MetaInfoUpdater.<init>(MetaInfoUpdater.java:113)
+  at com.hortonworks.hivestudio.eventProcessor.meta.MetaInfoUpdater.class(MetaInfoUpdater.java:75)
+  while locating com.hortonworks.hivestudio.eventProcessor.meta.MetaInfoUpdater
+    for the 3rd parameter of com.hortonworks.hivestudio.eventProcessor.lifecycle.MetaInfoManager.<init>(MetaInfoManager.java:52)
+  while locating com.hortonworks.hivestudio.eventProcessor.lifecycle.MetaInfoManager
+
+
+Web app:
+[source,bash] 
++ exec /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.232.b09-0.el7_7.x86_64/bin/java -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/das_das-DAS_WEBAPP-c38c78715e74a246630aea2bb0f599e8_pid31728.hprof -XX:OnOutOfMemoryError=/opt/cloudera/cm-agent/service/common/killparent.sh -Xmx4096m -Dlog4j.configurationFile=/var/run/cloudera-scm-agent/process/1546350069-das-DAS_WEBAPP/conf/das-webapp-log4j2.yml -classpath '/opt/cloudera/parcels/CDH-7.1.1-1.cdh7.1.1.p0.2397691/lib/data_analytics_studio/lib/data_analytics_studio-webapp-1.4.2.7.1.1.0-338.jar:/opt/cloudera/parcels/CDH-7.1.1-1.cdh7.1.1.p0.2397691/lib/data_analytics_studio/lib/hs_libs/*:/var/run/cloudera-scm-agent/process/1546350069-das-DAS_WEBAPP/yarn-conf:/var/run/cloudera-scm-agent/process/1546350069-das-DAS_WEBAPP/conf' com.hortonworks.hivestudio.webapp.HiveStudioApplication server /var/run/cloudera-scm-agent/process/1546350069-das-DAS_WEBAPP/conf/das-webapp.json
+com.google.inject.ProvisionException: Unable to provision, see the following errors:
+
+1) Error injecting constructor, java.lang.ArrayIndexOutOfBoundsException: 1
+at com.hortonworks.hivestudio.hive.services.ConnectionFactory.<init>(ConnectionFactory.java:85)
+at com.hortonworks.hivestudio.hive.services.ConnectionFactory.class(ConnectionFactory.java:66)
+while locating com.hortonworks.hivestudio.hive.services.ConnectionFactory
+for the 8th parameter of com.hortonworks.hivestudio.hive.services.JobService.<init>(JobService.java:81)
+at com.hortonworks.hivestudio.hive.services.JobService.class(JobService.java:64)
+while locating com.hortonworks.hivestudio.hive.services.JobService
+for the 1st parameter of com.hortonworks.hivestudio.webapp.resources.JobResource.<init>(JobResource.java:81)
+while locating com.hortonworks.hivestudio.webapp.resources.JobResource

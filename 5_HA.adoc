@@ -1,0 +1,156 @@
+= High Avaibility
+
+
+== HDFS
+
+Use wizard from CM under HDFS > Actions > Enable High Avaibility.
+
+Set hdfs-osiris as nameservice. +
+Set /dfs/jn as directory for all journal nodes (as it's empty by default).
+
+Prepare Hive to use HDFS service name by stopping metastore and then run a update on it: Hive > Actions > Update Hive Metastore NameNodes. +
+Then restart of HMS server.
+
+Prepare Hue to use HDFS service name by adding an HTTPFS instance where Hue runs: HDFS > Instances > Add a new role. +
+Then set webhdfs to use HTTPFS: HUE > Configuration > webhdfs_url > select HttpFs as value. +
+Restart Hue and it works.
+
+https://docs.cloudera.com/runtime/7.0.3/fault-tolerance/topics/cr-high-availablity-on-cdp-clusters.html[Detailed documentation]
+
+
+== YARN 
+
+use Wizard from CM under YARN > Actions > Enable High Avaibility.
+
+
+https://docs.cloudera.com/runtime/7.0.3/yarn-high-availability/topics/yarn-resourcemanager-ha-overview.html[Detailed Documentation]
+
+
+== HBase
+
+HBase > Instances > Add Role Instances. Then add a Master on another node.
+
+https://docs.cloudera.com/runtime/7.0.3/hbase-high-availability/topics/hbase-enable-ha-using-cm.html[Detailed Documentation]
+
+
+== Hue
+
+Hue > Instances > Add Role Instances. Then add a Hue server.
+
+https://docs.cloudera.com/runtime/7.0.3/administering-hue/topics/hue-add-role-instance-with-cm.html[Detailed Documentation]
+
+
+== Hive
+
+Hive on Tez > Instances > Add Role Instances. Then add a hive server 2 on another node.
+
+https://docs.cloudera.com/runtime/7.0.3/hive-metastore/topics/hive-hms-introduction.html[Detailed Documentation]
+
+
+== Oozie
+
+Installation of a Load Balancer (haproxy): +
+[source,bash]
+yum install haproxy
+cp /etc/haproxy/haproxy.cfg haproxy.cfg
+
+Configure haproxy by editing oozie.cfg: +
+[source,bash]
+----
+global
+    log         127.0.0.1 local2
+
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+
+listen stats :25002
+    balance
+    mode http
+    stats enable
+    stats auth admin:admin
+
+listen oozie :11003
+    balance roundrobin
+    mode tcp
+    server  oozie1 cdp-test-1.gce.cloudera.com:11000 check
+    server  oozie2 cdp-test-2.gce.cloudera.com:11000 check
+
+listen oozie_https :11446
+    balance roundrobin
+    mode tcp
+    server  oozie1 cdp-test-1.gce.cloudera.com:11443 check
+    server  oozie2 cdp-test-2.gce.cloudera.com:11443 check
+----
+
+Launch HaProxy with: +
+[source,bash]
+/usr/sbin/haproxy -f haproxy.cfg 
+
+Then use Wizard from CM under Oozie > Actions > Enable High Avaibility.
+
+https://docs.cloudera.com/runtime/7.0.3/configuring-oozie/topics/oozie-high-availability.html[Detailed Documentation]
+
+Check it works by logging to Oozie through load balancer: 
+Oozie > Web UI > Load Balancer UI
+
+
+== Atlas
+
+Add a new Atlas server using: Atlas > Instances > Add role Instances and select a new Atlas server.
+
+Check with Web UI link that Atlas is well routing requests to the active server.
+
+== Impala
+
+Add these lines to haproxy.cfg:
+[source,bash]
+---- 
+listen impala :21001
+    balance leastconn
+    mode tcp
+    server  impala1 cdp-test-4.gce.cloudera.com:21000 check
+    server  impala2 cdp-test-5.gce.cloudera.com:21000 check
+    server  impala3 cdp-test-6.gce.cloudera.com:21000 check
+
+listen impalajdbc :21051
+    balance leastconn
+    mode tcp
+    server  impala1 cdp-test-4.gce.cloudera.com:21051 check
+    server  impala2 cdp-test-5.gce.cloudera.com:21051 check
+    server  impala3 cdp-test-6.gce.cloudera.com:21051 check
+----
+
+Then set load balancer on Impala settings: Impala > Configuration > Impala Daemons Load Balancer and set it to __cdp-test-1.gce.cloudera.com:21051__.
+
+https://docs.cloudera.com/runtime/7.0.3/impala-manage/topics/impala-load-balancer-configure.html[Detailed Documentation]
+
+

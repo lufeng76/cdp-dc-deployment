@@ -1,0 +1,61 @@
+Num_Acc,catr,voie,v1,v2,circ,nbv,pr,pr1,vosp,prof,plan,lartpc,larrout,surf,infra,situ,env1
+
+Num_Acc = Unique ID
+catr = route category correspondance:
+1 - Autoroute
+2 - Route Nationale
+3 - Route Départementale
+4 - Voie Communale
+5 - Hors réseau public
+6 - Parc de stationnement ouvert à la circulation publique 9 – autre
+voie = road number
+v1 = numeral indices of the road
+v2 = letter indices of the road
+circ = circulation way:
+1 – A sens unique
+2 – Bidirectionnelle
+3 – A chaussées séparées
+4 – Avec voies d’affectation variable
+nbv = number of roads
+pr = number of the born before
+pr1 = distance to the pr in meters
+vosp = if there is a reserved road nearby:
+1 – Piste cyclable
+2 – Banque cyclable 
+3 – Voie réservée
+prof = profile of the road:
+1 - Plat
+2 - Pente
+3 - Sommet de côte 4- Bas de côte
+plan = road curve:
+1 – Partie rectiligne
+2 – En courbe à gauche 
+3 – En courbe à droite 
+4 – En « S »
+lartpc = large of the middle way if it exists
+larrout = large of the road
+surf = Surface state:
+1 - normale 
+2 - mouillée
+3 - flaques
+4 - inondée
+5 - enneigée
+6 - boue
+7 - verglacée
+8 - corps gras - huile 
+9 - autre
+infra = infrastructure:
+1 – Souterrain - tunnel
+2 – Pont - autopont
+3 – Bretelle d’échangeur ou de raccordement 
+4 - Voie ferrée
+5 – Carrefour aménagé
+6 – Zone piétonne
+7 – Zone de péage
+situ = situation of the accident:
+1 – Sur chaussée
+2 – Sur bande d’arrêt d’urgence 
+3 – Sur accotement
+4 – Sur trottoir
+5 – Sur piste cyclable
+env1 = if there is a school nearby

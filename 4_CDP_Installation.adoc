@@ -1,0 +1,101 @@
+= CDP Installation
+
+
+== Wizard Install
+
+Add license key.
+
+Before goin to the wizard, it is necessary to add the parcel you want to the repository of CM: +
+Parcels > Parcels repositories & Network Settings + 
+Add the url of the repository from which you want to download parcels. +
+(e.g.:  http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/2539960/cdh/7.x/parcels/  )
+
+Go through wizard:
+
+image::pictures/clusterBasics.png[Name the cluster]
+
+image::pictures/SpecifyHosts.png[Put machines for installation]
+
+image::pictures/SelectRepository.png[Select the right repository]
+
+image::pictures/SelectJDK.png[Select the JDK]
+
+image::pictures/EnterLoginCredentials.png[Enter credentials to log in to each machine]
+
+
+Then inspect cluster with wizard:
+
+image::pictures/InspectCluster.png[Inspect cluster]
+
+image::pictures/NetworkPerformanceInspectorResults.png[Network performance results]
+
+
+== Assigning services
+
+Architecture is the following:
+
+Node 1: Cloudera Manager Server + PostgresSQL database
+Node 2 & 3: Masters & Utility/Gateway hosts containing master services and all servers needed
+Node 4, 5, 6: Datanodes containing also Zookeeper & Kafka brokers
+
+
+Test Connection and go through wizard.
+
+These settings have been set:
+- Yarn queue manager ui user/password= admin/admin
+- Ranger passwords: Admin1234
+- Kudu WALs directory = /tmp/kudu
+- Kudu data directory = /data/kudu
+- Ozone ID was set to ozone-fri
+
+
+== Troubleshots
+
+- Kudu setting was wrong and set to /tmp, hence it changed all /tmp directories to belong Kudu user, that was changed by setting back root:root and giving 777 permissions on /tmp
+- Namenode failed to start because it was unable to format, as there were already data in namenode directories. Data has been manually erased using : rm -rf /dfs/nn
+
+
+Final view:
+
+image::pictures/osirisCluster.png[Final view of the cluster]
+
+
+== Adding services later
+
+=== Ozone
+
+Ozone was added by setting Gateway on all nodes, SCM an OM on nodes 2 & 3, Recon on node 1 and Datanodes on actual Datanodes.
+
+Ozone Recon was not starting, due to error: 
+
+[source,bash]
+log4j:ERROR Could not instantiate class [org.cloudera.log4j.redactor.RedactorAppender].
+java.lang.ClassNotFoundException: org.cloudera.log4j.redactor.RedactorAppender
+
+This is described here: link:https://issues.apache.org/jira/browse/HDDS-2857[https://issues.apache.org/jira/browse/HDDS-2857]
+
+WARNING: It is not precised but Ozone does not support HA on OM & SCM, so set only one instance of each ! 
+=> After removing one SCM & one OM, Recon, OM & SCM started well, however Datanode not...
+
+[source,bash]
+2020-03-19 03:24:25,465 ERROR org.apache.hadoop.ozone.container.common.states.endpoint.VersionEndpointTask: Error during formatting volume /hadoop-ozone/datanode/data/hdds, exception is {}
+org.apache.hadoop.ozone.common.InconsistentStorageStateException: Mismatched ClusterIDs. Version File : /hadoop-ozone/datanode/data/hdds/VERSION has clusterID: CID-55617385-a051-407f-95f9-d065ddb290ae and Datanode has clusterID: CID-e6d736f5-f8fc-43de-b6d5-c891424570d3
+	at org.apache.hadoop.ozone.container.common.utils.HddsVolumeUtil.getClusterID(HddsVolumeUtil.java:93)
+	at org.apache.hadoop.ozone.container.common.volume.HddsVolume.readVersionFile(HddsVolume.java:321)
+
+=> removing file /hadoop-ozone/datanode/data/hdds/VERSION on node 4,5,6 to force DN to recreate it
+
+Then, this error occurred on all DNs
+[source,bash]
+2020-03-19 03:30:11,638 INFO org.apache.hadoop.ozone.container.common.volume.HddsVolume: Creating Volume: /hadoop-ozone/datanode/data/hdds of  storage type : DISK and capacity : 107361267712
+2020-03-19 03:30:11,640 ERROR org.apache.hadoop.ozone.container.common.volume.VolumeSet: Failed to parse the storage location: /hadoop-ozone/datanode/data
+java.io.IOException: Volume is in an INCONSISTENT state. Skipped loading volume: /hadoop-ozone/datanode/data/hdds
+	at org.apache.hadoop.ozone.container.common.volume.HddsVolume.initialize(HddsVolume.java:225)
+	at org.apache.hadoop.ozone.container.common.volume.HddsVolume.<init>(HddsVolume.java:179)
+
+=> Stop & Delete DNs, remove all folder /hadoop-ozone/datanode/data 
+=> Then add DN one by one
+
+Finally is setup and working:
+
+image::pictures/ozoneGreen.png[Ozone set up and working]

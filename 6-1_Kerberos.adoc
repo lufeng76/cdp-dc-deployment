@@ -1,0 +1,223 @@
+= Kerberos
+
+== Install a MIT KDC
+
+On all nodes before:
+
+[source,bash]
+yum install -y krb5-workstation krb5-libs
+
+
+On node 1, a MIT KDC will be installed using following procedure:
+
+[source,bash]
+yum -y install krb5-server krb5-libs krb5-workstation
+
+File __/var/kerberos/krb5kdc/kadm5.acl__ :
+[source,bash]
+*/admin@FRISCH.COM	*
+
+
+File __/var/kerberos/krb5kdc/kdc.conf__ :
+[source,bash]
+----
+defaul_realm=FRISCH.COM
+
+[kdcdefaults]
+ kdc_ports = 88
+ kdc_tcp_ports = 88
+
+[realms]
+ FRISCH.COM = { 
+  acl_file = /var/kerberos/krb5kdc/kadm5.acl
+  dict_file = /usr/share/dict/words
+  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
+  max_life = 24h 0m 0s
+  max_renewable_life = 7d 0h 0m 0s
+  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
+ }
+----
+
+
+File __/etc/krb5.conf__ :
+
+[source,bash]
+----
+# Configuration snippets may be placed in this directory as well
+includedir /etc/krb5.conf.d/
+
+[logging]
+ default = FILE:/var/log/krb5libs.log
+ kdc = FILE:/var/log/krb5kdc.log
+ admin_server = FILE:/var/log/kadmind.log
+
+[libdefaults]
+ dns_lookup_realm = false
+ ticket_lifetime = 24h
+ renew_lifetime = 7d
+ forwardable = true
+ default_realm = FRISCH.COM
+ default_tkt_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
+ default_tgs_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
+ permitted_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
+
+[realms]
+FRISCH.COM = {
+  kdc = cdp-test-1.gce.cloudera.com:88
+  admin_server = cdp-test-1.gce.cloudera.com:749
+  default_domain = frisch.com
+}
+
+[domain_realm]
+  .frisch.com = FRISCH.COM
+  frisch.com = FRISCH.COM
+----
+
+Then create a database setting the password to nothing:
+
+[source,bash]
+kdb5_util create -r FRISCH.COM -s
+Loading random data
+Initializing database '/var/kerberos/krb5kdc/principal' for realm 'FRISCH.COM',
+master key name 'K/M@FRISCH.COM'
+You will be prompted for the database Master Password.
+It is important that you NOT FORGET this password.
+Enter KDC database master key: 
+Re-enter KDC database master key to verify: 
+
+
+Then start services:
+
+[source,bash]
+systemctl start krb5kdc.service
+systemctl start kadmin.service
+systemctl enable krb5kdc.service
+systemctl enable kadmin.service
+
+
+Create a principal named 'admin' with password 'admin':
+
+[source,bash]
+kadmin.local
+Authenticating as principal root/admin@FRISCH.COM with password.
+kadmin.local:  addprinc admin/admin
+WARNING: no policy specified for admin/admin@FRISCH.COM; defaulting to no policy
+Enter password for principal "admin/admin@FRISCH.COM": 
+Re-enter password for principal "admin/admin@FRISCH.COM": 
+Principal "admin/admin@FRISCH.COM" created.
+
+
+Kinit with it to verify, once krb5-libs have been installed to all nodes and /etc/krb5.conf copied to all nodes:
+
+[source,bash]
+----
+[root@cdp-test-1 ~]# kinit admin/admin
+Password for admin/admin@FRISCH.COM: 
+[root@cdp-test-1 ~]# klist
+Ticket cache: FILE:/tmp/krb5cc_0
+Default principal: admin/admin@FRISCH.COM
+
+Valid starting     Expires            Service principal
+03/23/20 11:01:27  03/24/20 11:01:27  krbtgt/FRISCH.COM@FRISCH.COM
+
+[root@cdp-test-2 ~]# kinit admin/admin
+Password for admin/admin@FRISCH.COM: 
+[root@cdp-test-2 ~]# klist
+Ticket cache: FILE:/tmp/krb5cc_0
+Default principal: admin/admin@FRISCH.COM
+
+Valid starting     Expires            Service principal
+03/23/20 11:05:57  03/24/20 11:05:57  krbtgt/FRISCH.COM@FRISCH.COM
+[root@cdp-test-2 ~]# 
+----
+
+If you want to create a user with a keytab file, do this:
+[source,bash]
+kadmin.local
+ktadd -k /home/frisch/frisch.keytab frisch/admin@FRISCH.COM
+
+
+== Setup Kerberos in the cluster using wizard
+
+Procedure followed is this one: https://docs.cloudera.com/cloudera-manager/7.0.3/security-kerberos-authentication/topics/cm-security-kerberos-enabling-intro.html 
+
+=== YARN state store must be formatted
+
+As YARN was already in HA, its zookeeper znode must be erased and rebuild later, with kerberos enabled.
+
+- Stop of YARN services
+
+- "Format State Store" (see image below)
+
+image::pictures/formatStateStore.png[Format YARN State Store]
+
+
+=== Go through wizard
+
+Administration > Security > Enable Kerberos
+
+image::pictures/KDCInfo.png[KDC Information given]
+
+image::pictures/ManageKRB5_conf.png[Setup CM to manage Krb5.conf]
+
+image::pictures/kerberosAccountCredentials.png[Give kerberos manager account credentials]
+
+
+Finally, cluster must start properly with kerberos enabled:
+
+image::pictures/clusterWellKerberized.png[Cluster well kerberized]
+
+== Troubleshots
+
+Hue Ticket Renewer were not working stating that tickets could not be renewed.
+
+A "klist -fe /var/run/hue/hue_krb5_ccache" showed that they were indeed not renewable.
+
+However a getprinc showed that they have a renawable life time of 7 days.
+
+Solution was to re-setup a KDC for CM (same KDC) but specifying a renewable lifetime of 0 days, to force CM to use the one provided by kdc.conf.
+
+
+== Setup local to acces UIs
+
+Once Kerberos has been enabled, almost all UIs are kerberized, meaning SPNEGO is activated, and they could only be accessed by process having a valid keytab. 
+
+=== Getting a valid keytab
+
+__krb5.conf__ & __frisch.keytab__ have been downloaded from the cluster and have been put into directory __tools__.
+
+Moreover __krb5.conf__ has been put to __/etc/__ directory.
+
+Once Kerberos installed on the local machine, it is possible to do authenticate using:
+
+      kinit -kt tools/frisch.keytab frisch@FRISCH.COM
+
+=== Firefox setting
+
+To enable Firefox to use kerberos ticket when connecting to the cluster, these properties have been added to firefox:
+
+image::pictures/FirefoxKRBSettings.png[Firefox setting for SPNEGO]
+
+Note that Firefox was shutdown and then restarted after getting the kerberos ticket.
+
+=== Check on UIs
+
+List of UIs to check:
+- ATLAS = Ok, no KRB
+- HBase = Ok, no KRB
+- Namenode UI = Ok (N.B: logs are inaccessible with 403: http://cdp-test-2.gce.cloudera.com:9870/logs/ => To check on more details )
+- HS2 = Ok (N.B: logs are inaccessible with 404: http://cdp-test-3.gce.cloudera.com:10002/logs/ => Apparently they are missing)
+- HUE = Ok but is not kerberized (and it could be)
+- Impala = Ok, no KRB
+- Kudu master & Tablet server = Ok, no KRB
+- Oozie = Not Ok due to another error but ok after troubleshots (see Troubleshots section)
+- Ranger = Ok, no KRB
+- Spark = Ok, no KRB
+- YARN RM & JobHistory = Ok
+
+=== Hue SPNEGO activation
+
+Go to HUE service > Configuration > Security, +
+Change Authentication backend +
+Restart Hue +
+Login to Hue webserver using kerberos ticket (as it was already configured with web browser and obtained, nothing is needed) 

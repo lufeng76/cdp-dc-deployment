@@ -1,0 +1,118 @@
+= Encryption of Services
+
+Goal is to provide Encryption to secure data and provide encryption for data in Transit and also UIs. 
+
+Each service could use: +
+- __/opt/cloudera/security/pki/keystore.jks__ that contains key + certificates associated with +
+- __/opt/cloudera/security/pki/truststore.jks__ that contains root certificates to trust other entities
+
+Note that both have __cloudera__ as password (and key present in keystore.jks also).
+
+
+== ATLAS
+
+Atlas > Configuration > Security 
+
+Enable TLS/SSL & Enable Kerberos + fill in all keystore/truststore properties
+
+Restart all needed services
+
+
+== HBase
+
+HBase > Configuration > Security
+
+Enable TLS/SSL for web UI + fill in all keystore properties
+
+Restart HBase.
+
+Check UI, which is now on https, port 16010.
+
+
+== HDFS
+
+Set these properties:
+
+dfs.encrypt.data.transfer = true
+hadoop.rpc.protection = privacy
+dfs.data.transfer.protection = privacy
+dfs.datanode.address = 1044
+
+Enable TLS/SSL + fill in all keystore/truststore properties
+
+Check UI is https on port 9871
+
+
+== Hive
+
+Enable TLS/SSL + fill in all keystore/truststore properties
+
+Check UI is https on port 1002
+
+
+== Hue
+
+Enable TLS/SSL + fill in all keystore/truststore properties using pem files: (/opt/cloudera/security/pki/agent.key for key, /opt/cloudera/security/pki/agent.pem for certificates).
+
+Created a file containing password on node 1: /opt/cloudera/security/pki/passphrase (whihc is "cloudera").
+
+Check UI is https on port 8889. (8888 without load balancer)
+
+
+== Impala
+
+Enable TLS/SSL + fill in all keystore/truststore propertie using pem files: (/opt/cloudera/security/pki/agent.key for key, /opt/cloudera/security/pki/agent.pem for certificates).
+
+Check UI is https on port 25020 for catalog server & 25010 for state store UI.
+
+
+== Kudu
+
+Enable TLS/SSL + fill in all keystore/truststore properties using pem files: (/opt/cloudera/security/pki/agent.key for key, /opt/cloudera/security/pki/agent.pem for certificates).
+
+Check UI is https on port 8051
+
+
+== Oozie
+
+Enable TLS/SSL + fill in all keystore/truststore properties
+
+Check UI is https on port 11443
+
+
+== Ranger
+
+Enable TLS/SSL + fill in all keystore/truststore properties
+
+Check UI is https on port 6182
+
+
+== Spark
+
+Enable TLS/SSL + fill in all keystore/truststore properties
+
+Check UI is https on port 18488
+
+
+== YARN
+
+Enable TLS/SSL + fill in all keystore/truststore properties
+
+Check UI is https on port 19890 for Job History and 8090 for RM UI.
+
+
+== YARN Queue Manager
+
+Enable TLS/SSL + fill in all keystore/truststore properties
+
+The UI is not no longer working...
+
+
+
+== Kafka, Phoenix, Ozone, SolR
+
+These services have been also configured but they do not provide UIs actually, so nothing could be asserted directly.
+(Enable TLS/SSL + fill in all keystore/truststore properties)
+
+
+Note that a good way to check if TLS is working once set, is to take a look at Ranger UI under Audit > Plugins and check that services are still able to download policies from Ranger.

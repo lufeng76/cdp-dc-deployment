@@ -1,0 +1,80 @@
+= YCLOUD
+
+Notes relatives to YCloud installation.
+
+== Login
+
+To login, using a key is mandatory at first. Hence a file __ycloud-key__ must be created with following content:
+
+[source,bash]
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAwf4QUH8xfdUhMWeDIJVO3l9ukXyBLM+Wghs822hnkBuyXIeV
+yFhxNfdgP+Y0VGctnlObBTLGEt9ixKiklSZ+Tf+T+8hNkL3E1KLDO8B1kFuCayJi
+9D0yUz10XP0L5Bj5Gty7wQi+j5VRDchhqPgtw/nYEpaGgXmfVEZNCPmHP1bIoUKD
+HZFTmCCgBsWZRvyQRAQYwmeZ4OFpc3X3LCoLVBm6+pzp95qivPz5L/AnloLhGGom
+4+TrOsnZh1Wd9MNLSw+hru1B9eDNzNy5zZQp3UixuG0c1D+jsRhBVpRvBjyZ792d
+4d6G6it4yALMfBh0fRMUfGHTZb5IoG0IPMQxiQIDAQABAoIBACMJvW6cmpbMsPMY
+bCGtdhJKEFFsuHQchmW3f7VtVQ89QWjfAFmwR7pklNjVvmvkOuQW27ADrKzp9g/p
+Gdjqm/OAjvzx/7h93hg90Z9wMovBS3wIOPE+QGGyftrwxX4MWKnWZn8GEk0ivgIM
+SD9ZnAKClNk+oMqv6ewxymYtk5UHyX4CQ8YxPvnRyO8rglJA4zU6agE3vFeFQP/u
+eOkymD9pzvMB3CMhU307q2gP/f3VCFguJdKO841T/FkfClyR9Wtsgng6vT6qTcfw
+9PdAqXHOrwjDvSmgfdFFFdP2/5MtBGBZF39F3Ne6IfBpS+IcsyDcJCI1QiIYlRNX
+a9JHLcUCgYEA/l61N5IUzWbw1SHTRBR1Hgb+a2+98AjDcYqosbgLfpQo3uFDyfnk
+CwrY9KqwaSvn0dMmhQnwU51IE+2+l8st19sPhPMVddYXH2n3uyKGRRGPMDAhtMWf
+GVYZgGvRz976bUlTUWUtcHcv+633TNNnaO7GHLkkx47bcK+t88T32jcCgYEAwzxO
+lMk1sRlQx3psbcVZ2Kls5e3SOUqOB15mWfEMVITlzOu4FiEbVv9CbuNtKNjhu7Ln
+J5mIf2MJiD3W4OK/hA9671KOxiV2wNQ0XkbtyLazR+LwSwaRU7V8KsJMuH8d2b73
+/qo1ggf+X084iqL9tUBqZwbLBVJtH51BSw+vcj8CgYEA6iT3no2DRIdrTGT0eYhz
+Pg6mBvM23UrTzSIbomuNeRicfnzQz4yM03VKu/yaolTd8RDyNigt5mmyvVVsyYEn
+U7i7kl/H8038vtfmR4XCHrXJHkxP2nzGtKXCl6mn2jagQhTq8tO1ff7YVk2OhFNc
+rwSLrEjoiCEB8bpk3y0CEQUCgYBfK6e2ubrVoNyS0OfIPtrEVhrCnsLKsMA5cVf9
+Yha7oKkQ0ptDFlJofzgYK/8LWWX4hIZP9HTofBOqeVKk/4OSUaWAwkLc7mhMKWV5
+y6OgIweT9FlkiUgQgTiM83hIu5aGjaQAXWKGB3WFam3KjxeT4lm77UDMUFjnf1XT
+zEqfKwKBgCYHwNXo4eX2+v0Myk+zSaDF1hO8BorWANNSdkj3MlAncUfouzLRwigj
+7k7OlCSflm2tYNFtdhheZf8Bu2eUm+/uqelrgKJJW4gaV9ILtFOQWayZ7F6yrvRp
+UJp++mpVj67cxQmzxRHvVGtW3vXShcqjWuLBZ/nZEnioZl8Zb3PA
+-----END RSA PRIVATE KEY-----
+
+Then, to connect, this is the command to use:
+
+[source,bash]
+ssh -i ycloud-key root@fri-1
+
+Note that once your private key has been added to all hosts, there is no need to use ycloud key anymore.
+
+== Hostname
+
+As hostnames in YCloud are different than outside, it is recommended to set same hostname everywhere in order to facilitate management of nodes.
+
+To do this, first, get lines from your /etc/hosts that looks like this:
+
+[source,bash]
+172.27.74.205   ccycloud-2.fri2.root.hwx.site 	fri2-2 		
+172.27.172.135  ccycloud-5.fri2.root.hwx.site 	fri2-5 	 	
+172.27.13.195   ccycloud-6.fri2.root.hwx.site 	fri2-6 		
+172.27.90.0   ccycloud-3.fri2.root.hwx.site 	fri2-3 		
+172.27.29.133   ccycloud-1.fri2.root.hwx.site 	fri2-1 		
+172.27.76.65  ccycloud-4.fri2.root.hwx.site 	fri2-4
+
+Add them to each node, and then run this on each node to change their hostname:
+
+[source,bash]
+----
+export CLUSTER_NAME=fri2
+echo "
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+ff00::0	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+
+172.27.74.205   ccycloud-2.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-2 		
+172.27.172.135  ccycloud-5.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-5 	 	
+172.27.13.195   ccycloud-6.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-6 		
+172.27.90.0   ccycloud-3.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-3 		
+172.27.29.133   ccycloud-1.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-1 		
+172.27.76.65  ccycloud-4.${CLUSTER_NAME}.root.hwx.site 	${CLUSTER_NAME}-4 
+" > /etc/hosts
+hostname ccycloud-${1}.${CLUSTER_NAME}.root.hwx.site
+----

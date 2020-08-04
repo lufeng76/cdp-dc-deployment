@@ -1,0 +1,60 @@
+Num_Acc,place,catu,grav,sexe,trajet,secu,locp,actp,etatp,an_nais,num_veh
+
+Num_Acc = Unique ID
+place = place used by passenger in the vehicule
+catu = category of user:
+1 - Conducteur
+2 - Passager
+3 - Piéton
+grav = gravity of the user:
+1 - Indemne
+2 - Tué
+3 - Blessé hospitalisé 
+4 - Blessé léger
+sexe = sexe of the user:
+1 - Masculin
+2 – Féminin
+trajet = object of the deplacement of the user:
+1 – Domicile – travail
+2 – Domicile – école
+3 – Courses – achats
+4 – Utilisation professionnelle 
+5 – Promenade – loisirs
+9 – Autre
+secu = security:
+le premier concerne l’existence d’un Équipement de sécurité
+1 – Ceinture
+2 – Casque
+3 – Dispositif enfants
+4 – Equipement réfléchissant 9 – Autre
+le second concerne l’utilisation de l’Équipement de sécurité 
+1 – Oui
+2 – Non
+3 – Non déterminable
+locp = localisation of the pedestrian on the road:
+Sur chaussée :
+1 – A + 50 m du passage piéton 
+2 – A – 50 m du passage piéton 
+Sur passage piéton :
+3 – Sans signalisation lumineuse 
+4 – Avec signalisation lumineuse 
+Divers :
+5 – Sur trottoir
+6 – Sur accotement
+7 – Sur refuge ou BAU 
+8 – Sur contre allée
+actp = action of the pedestrian:
+Se déplaçant
+0 - non renseigné ou sans objet 
+1 - Sens véhicule heurtant
+2 - Sens inverse du véhicule Divers
+3 - Traversant
+4 - Masqué
+5 - Jouant – courant 6 - Avec animal
+9 - Autre
+etatp = state of the pedestrian:
+1 – Seul
+2 – Accompagné 
+3 – En groupe
+an_nais = year of birth
+num_veh = number of the vehicule

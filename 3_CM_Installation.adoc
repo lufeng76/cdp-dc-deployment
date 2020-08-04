@@ -1,0 +1,39 @@
+= CM Installation
+
+CM 7.X will be installed on node 1.
+
+
+== Install packages
+
+On all nodes: 
+
+[source,bash]
+yum -y install cloudera-manager-agent cloudera-manager-daemons
+
+On node 1:
+
+[source,bash]
+yum -y install cloudera-manager-server
+
+
+== Setup SCM database
+
+[source,bash]
+/opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm admin
+
+
+== Run CM server and agents
+
+On node 1:
+
+[source, bash]
+systemctl start cloudera-scm-agent
+systemctl enable cloudera-scm-agent
+systemctl enable cloudera-scm-server
+systemctl start cloudera-scm-server
+
+Check it is started by looking at this line in file __/var/log/cloudera-scm-server/cloudera-scm-server.log__:
+
+[source, bash]
+INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.
+

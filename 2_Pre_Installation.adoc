@@ -1,0 +1,108 @@
+= Pre-Installation 
+
+== Java
+
+Install OpenJDK 8 on all nodes:
+
+[source,bash]
+yum -y install java-1.8.0-openjdk-devel
+
+
+== Database
+
+Database that will be used is PostgreSQL, and will be installed on node 1. + 
+This is mandatory to install a PostgreSQL 10 and not a 9.2 like the default one with RHEL or CentOs distribution.  
+
+=== Installation & Configuration of PostrgeSQL
+
+Install PostgreSQL:
+[source, bash]
+yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+yum -y install postgresql10-server postgresql10
+
+
+Initialize postgresSQL:
+[source,bash]
+/usr/pgsql-10/bin/postgresql-10-setup initdb
+systemctl enable postgresql-10
+systemctl start postgresql-10
+
+Set postgres user password:
+[source,bash]
+sudo -u postgres psql
+
+In PSQL client:
+[source,bash]
+\password
+
+Install psycopg2 lib:
+[source,bash]
+yum -y install pip
+pip install psycopg2==2.7.5 --ignore-installed
+yum install https://yum.postgresql.org/10/redhat/rhel-7-x86_64/python3-psycopg2-2.8.5-1.rhel7.x86_64.rpm 
+
+Configure psql by adding these lines to __/var/lib/pgsql/10/data/pg_hba.conf__:
+[source,bash]
+host    all             all             0.0.0.0/0               md5
+local   all             all                                     md5
+
+and this line to __/var/lib/pgsql/10/data/postgresql.conf__:
+[source,bash]
+listen_addresses = '*'
+max_connections = 1000
+
+Finally restart postgreSQL:
+[source,bash]
+systemctl restart postgresql-10
+
+
+=== Creation of needed users and databases
+
+[source, bash]
+sudo -u postgres psql
+
+[source,sql]
+CREATE ROLE scm LOGIN PASSWORD 'admin';
+CREATE DATABASE scm OWNER scm ENCODING 'UTF8' TEMPLATE template0;
+CREATE ROLE amon LOGIN PASSWORD 'admin';
+CREATE DATABASE amon OWNER amon ENCODING 'UTF8' TEMPLATE template0;
+CREATE ROLE rman LOGIN PASSWORD 'admin';
+CREATE DATABASE rman OWNER rman ENCODING 'UTF8' TEMPLATE template0;
+CREATE ROLE hue LOGIN PASSWORD 'admin';
+CREATE DATABASE hue OWNER hue ENCODING 'UTF8' TEMPLATE template0;
+CREATE ROLE hive LOGIN PASSWORD 'admin';
+CREATE DATABASE metastore OWNER hive ENCODING 'UTF8' TEMPLATE template0;
+CREATE ROLE oozie LOGIN PASSWORD 'admin';
+CREATE DATABASE oozie OWNER oozie ENCODING 'UTF8' TEMPLATE template0;
+CREATE ROLE das LOGIN PASSWORD 'admin';
+CREATE DATABASE das OWNER das ENCODING 'UTF8' TEMPLATE template0;
+CREATE ROLE rangeradmin LOGIN PASSWORD 'admin';
+CREATE DATABASE ranger OWNER rangeradmin ENCODING 'UTF8' TEMPLATE template0;
+CREATE ROLE schemaregistry LOGIN PASSWORD 'admin';
+CREATE DATABASE sr OWNER schemaregistry ENCODING 'UTF8' TEMPLATE template0;
+
+
+=== Install postgresql connector & PostgresSQL libs 
+
+On every node:
+
+[source,bash]
+yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+yum -y install postgresql10
+yum -y install postgresql-jdbc*
+cp /usr/share/java/postgresql-jdbc.jar /usr/share/java/postgresql-connector-java.jar
+chmod 644 /usr/share/java/postgresql-connector-java.jar
+
+
+== Initialization of required directories
+
+Some directories will be required by certain services:
+
+[source,bash]
+mkdir -p /data/kudu/
+chmod -R 775 /data/
+chown root:hadoop /data/
+chown kudu:kudu /data/kudu/
+mkdir -p /tmp/kudu
+chmod 775 /tmp/kudu
+chown kudu:kudu /tmp/kudu/

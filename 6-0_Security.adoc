@@ -1,0 +1,9 @@
+= Security
+
+Security could be divided into 3 parts: +
+- Kerberos setting to authenticate users +
+- Ranger setup to authorize users to access services +
+- CM & agents TS/SSL +
+- TLS/SSL to encrypt data in the wire and all services UIs and communications between them+
+- Encryption to encrypt data at rest +
+

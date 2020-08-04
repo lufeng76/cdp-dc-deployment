@@ -1,0 +1,8 @@
+= README
+
+This is an installation of CDP-DC 7.0.3/7.1.1 on 6 CentOS machines running 7.5/7.7.
+
+Machine are 8 CPU and 32Gb of RAM.
+
+Documentation used is the official one here: https://docs.cloudera.com/cdpdc/7.0/installation/topics/cdpdc-installation.html[https://docs.cloudera.com/cdpdc/7.0/installation/topics/cdpdc-installation.html]
+

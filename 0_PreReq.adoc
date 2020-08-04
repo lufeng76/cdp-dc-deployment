@@ -1,0 +1,48 @@
+= Pre-Requisites
+
+== Having a License Key
+
+In order to download, it is mandatory to have a License Key.
+
+If you don't, you can generate one for employees internally https://cloudera.atlassian.net/wiki/spaces/CS/pages/129406339/License+Key+Request+internal+only[https://cloudera.atlassian.net/wiki/spaces/CS/pages/129406339/License+Key+Request+internal+only]
+
+
+Key used here is this one:
+
+login: __e85cdd48-1934-47f8-9711-7001a65eaa73__
+
+password: __1efceae20f1a__
+
+== Add public key to all node
+
+[source,bash]
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDab1CKgDwK9uwzuZHCWTHIYlIVj5dgvHnZ8Vjq4ypvIjm3KD5jfd/bxHEhTohwFPBPbSczXAcMFEMd9dGtRZneeyrA+N06i7yrWCJIP4zPmgnZLVVPGQ2NQ5Xilpwqhi3hV+XXK7GzzhbZ0WmpoezNLNuiNEGZ5ozdsGAwxD14boq1F7JtzshQJ4Ho9eBxxwr18cRGV3+dTKSqtfNW7YGcW/Gpz0wIg1XoS/HydGGi39hgX5PYWPn/p2MqQp/xWKEZ5uGn20DY/mwSBFH5KBQ+WgiCKOnNRu/85nr4ZlByIUGmh1Bt51ItV5pQxtc0sZlX4yOqFIt0YkMjWWYqOFcR frisch@HW15215.local" >> ~/.ssh/authorized_keys
+
+
+== Download repository file
+
+To get latest release version of CDP (internally):
+
+- Go to Cloudera Alpha : link:http://alpha.infra.cloudera.com/[http://alpha.infra.cloudera.com/] +
+- Get to build you want an click view, then use CM URL link to go CM +
+- CM UI > Parcels > Parcels Repositories & Network Settings +
+- Get URL for latest build there  (e.g.:  http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/2539960/cdh/7.x/parcels/ )
+
+Setup cloudera-manager repo file & RPG-key:
+
+For CM 7.0.3:
+[source,bash]
+wget -O /etc/yum.repos.d/cloudera-manager.repo  https://e85cdd48-1934-47f8-9711-7001a65eaa73:1efceae20f1a@archive.cloudera.com/p/cm7/7.0.3/redhat7/yum/cloudera-manager.repo 
+rpm --import https://e85cdd48-1934-47f8-9711-7001a65eaa73:1efceae20f1a@archive.cloudera.com/p/cm7/7.0.3/redhat7/yum/RPM-GPG-KEY-cloudera
+
+For CM 7.1.1, lates is actually:
+[source,bash]
+wget -O /etc/yum.repos.d/cloudera-manager.repo http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/2535749/cm7/7.1.1/redhat7/yum/cloudera-manager.repo 
+rpm --import http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/2535749/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
+
+
+If needed, configure it with your username/password:
+
+[source,bash]
+sed -i 's/username=changeme/username=e85cdd48-1934-47f8-9711-7001a65eaa73/g' /etc/yum.repos.d/cloudera-manager.repo 
+sed -i 's/password=changeme/password=1efceae20f1a/g' /etc/yum.repos.d/cloudera-manager.repo 

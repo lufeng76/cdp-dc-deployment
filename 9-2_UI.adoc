@@ -1,0 +1,29 @@
+= UI
+
+Goal is to login to all UIs and ensure everything is working.
+
+== Hue
+
+username: admin
+password: admin
+
+== Ranger
+
+username: admin
+password: Admin1234
+
+== Atlas
+
+username: admin
+password: Admin1234
+
+
+== PSQL Database
+
+username: postgres  
+password: admin
+
+
+== Other UIs
+
+Does not need any password and function well with no Kerberos (SPNEGO) activated yet

@@ -1,0 +1,60 @@
+= Other Installations
+
+Before or after the upgrade some services and some tools have been added to the cluster and their installation is related in following sections.
+
+== PostgreSQL 9.6
+
+Installing postgres 9.6 on node 2 following these steps:
+
+[source,bash]
+wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+rpm -ivh pgdg-centos96-9.6-3.noarch.rpm
+yum install postgresql96-server
+
+Then as postgres user, initiate db and start server:
+[source,bash]
+/usr/pgsql-9.6/bin/initdb -D /var/lib/pgsql/9.6/data/
+/usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data/ start
+
+Then delete old psql client in 9.2 using root user:
+[source,bash]
+systemctl disable postgresql
+yum remove postgresql
+systemctl enable postgresql-9.6
+export PATH=$PATH:/usr/pgsql-9.6/bin
+
+Finally add export PATH previous command to all needed .bash_profile of users that will require to log into postgres (especially postgres user).
+
+Configuration of postgres must be made by following these steps, but first stop postgres 9.6:
+
+[source,bash]
+systemctl stop postgresql-9.6
+
+Note that this command could not work as first time psql was launched, it was not through systemctl, a quick ```ps -ef | grep 'postgres'``` allows to retrieve the pid and kill it manually.
+
+Change these lines to __/var/lib/pgsql/9.6/data/postgresql.conf__:
+[source,bash]
+listen_addresses = '*'
+max_connections = 1000
+
+Change these lines to force authentication, in file __/var/lib/pgsql/9.6/data/pg_hba.conf__:
+[source,bash]
+----
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# "local" is for Unix domain socket connections only
+local   all             all                                      md5
+# IPv4 local connections:
+host    all             all             0.0.0.0/0                md5
+# IPv6 local connections:
+host    all             all             ::1/128                  md5
+----
+
+Now Postgres could be restarted:
+[source,bash]
+systemctl start postgresql-9.6
+
+
+
+
+

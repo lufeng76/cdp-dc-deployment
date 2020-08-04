@@ -1,0 +1,145 @@
+= Check System configuration and set it if needed
+
+== Network
+
+Check names are correct for all nodes and check IPV6 is not used and also jumbo frames:
+
+[source,bash]
+cat /etc/hosts
+cat /etc/sysconfig/network
+uname -a
+ifconfig
+
+
+Setup correct /etc/hosts on all nodes:
+
+[source,bash]
+echo "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+169.254.169.254 metadata.google.internal  # Added by Google
+172.31.115.219 cdp-test-2.gce.cloudera.com	cdp-test-2	
+172.31.115.225 cdp-test-3.gce.cloudera.com	cdp-test-3	
+172.31.115.246 cdp-test-6.gce.cloudera.com	cdp-test-6	
+172.31.116.152 cdp-test-5.gce.cloudera.com	cdp-test-5	
+172.31.116.154 cdp-test-4.gce.cloudera.com	cdp-test-4	
+172.31.116.157 cdp-test-1.gce.cloudera.com	cdp-test-1
+" > /etc/hosts
+
+
+
+== Firewall
+
+Disable and stop firewall and iptables:
+
+[source,bash]
+systemctl disable firewalld
+systemctl stop firewalld
+
+
+== SELinux
+
+Check it is disabled:
+
+[source,bash]
+getenforce
+
+
+== NTP
+
+Check NTP or chronyd is working:
+
+[source,bash]
+systemctl status chronyd
+
+
+If not, install it.
+
+
+== File System
+
+Check that file limit is above 64000:
+
+[source,bash]
+ulimit -Sn
+ulimit -Hn
+
+If not, raise it by modifying /etc/sysctl.conf file with fs.file-max = 64000
+
+[source,bash]
+echo "fs.file-max = 64000" >> /etc/sysctl.conf
+
+Check file system is in noatime (or at least relatime) mode:
+
+[source,bash]
+cat /proc/mounts
+
+Check umask:
+
+[source,bash]
+umask
+
+
+== Memory
+
+Check Huge page disabled (set to 0):
+
+[source,bash]
+grep HugePages /proc/meminfo 
+cat /sys/kernel/mm/transparent_hugepage/enabled
+cat /sys/kernel/mm/transparent_hugepage/defrag
+
+If they are not set to never, change it with this command:
+
+[source,bash]
+echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
+echo never > /sys/kernel/mm/redhat_transparent_hugepage/defrag
+
+Check swappiness disabled (set to 0):
+
+[source,bash]
+cat /proc/sys/vm/swappiness
+
+If it is not set to 0, change it with this command:
+[source,bash]
+echo 0 > /proc/sys/vm/swappiness
+
+Check Memory virtual usage:
+
+In /etc/sysctl.conf, check these settings:
+
+[source,bash]
+vm.dirty_background_ratio=20
+vm.dirty_ratio=50
+
+If not set, add it using:
+[source,bash]
+echo "vm.dirty_background_ratio=20
+vm.dirty_ratio=50" >> /etc/sysctl.conf
+
+== CPU
+
+Check Performance scaling is set:
+
+[source,bash]
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+If result is not "performance", and especially if it is "powersave", you can configure them:
+[source,bash]
+echo performance > /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+
+== Libs installed
+
+Check that following libs are installed on each node:
+
+[source,bash]
+yum (RHEL/CentOS/Oracle)
+sed
+service
+/sbin/chkconfig (RHEL/CentOS/Oracle)
+id
+rm
+mv
+chown
+install
+

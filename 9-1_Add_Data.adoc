@@ -1,0 +1,286 @@
+= Add Data
+
+Goal is to add some data on the platform to be able to play with it :) 
+
+Note that a project has been created to send random organized data to CDP into different services: link:https://github.infra.cloudera.com/frisch/randomy[https://github.infra.cloudera.com/frisch/randomy]
+
+== Data
+
+Data is representing all accidents that happened in 2018 in France.
+(It is under /data folder).
+
+[source,bash]
+sudo -u hdfs hdfs dfs -mkdir /data
+sudo -u hdfs hdfs dfs -chmod 777 /data
+sudo -u hdfs hdfs dfs -chown root:hadoop /data
+hdfs dfs -mkdir /data/caracteristiques
+hdfs dfs -mkdir /data/lieux
+hdfs dfs -mkdir /data/usagers
+hdfs dfs -mkdir /data/vehicules
+hdfs dfs -put lieux-2018.csv /data/lieux/
+hdfs dfs -put usagers-2018.csv /data/usagers/
+hdfs dfs -put vehicules-2018.csv /data/vehicules/
+hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
+
+
+== Hive
+
+[source,bash]
+----
+CREATE DATABASE accidents;
+USE accidents;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS carac_csv
+(Num_Acc BIGINT,an STRING,mois STRING,jour STRING,hrmn STRING,lum INT,agg INT,inter INT,atm INT,col INT,com STRING,adr STRING,gps STRING,lat INT,longi INT,dep INT)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION 'hdfs:///data/caracteristiques/'
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+CREATE TABLE IF NOT EXISTS carac (Num_Acc BIGINT,an STRING,mois STRING,jour STRING,hrmn STRING,lum INT,agg INT,inter INT,atm INT,col INT,com STRING,adr STRING,gps STRING,lat INT,longi INT,dep INT);
+
+INSERT INTO carac SELECT * FROM carac_csv;
+
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS lieux_csv
+(Num_Acc BIGINT, catr INT,voie INT,v1 INT,v2 STRING,circ INT,nbv INT,pr INT,pr1 INT,vosp INT,prof INT,plan INT,lartpc INT,larrout INT,surf INT,infra INT,situ INT,env1 INT)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION 'hdfs:///data/lieux/'
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+CREATE TABLE IF NOT EXISTS lieux (Num_Acc BIGINT, catr INT,voie INT,v1 INT,v2 STRING,circ INT,nbv INT,pr INT,pr1 INT,vosp INT,prof INT,plan INT,lartpc INT,larrout INT,surf INT,infra INT,situ INT,env1 INT);
+
+INSERT INTO lieux SELECT * FROM lieux_csv;
+
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS usagers_csv
+(Num_Acc BIGINT, place INT,catu INT,grav INT,sexe INT,trajet INT,secu INT,locp INT,actp INT,etatp INT,an_nais INT,num_veh STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION 'hdfs:///data/usagers/'
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+CREATE TABLE IF NOT EXISTS usagers (Num_Acc BIGINT, place INT,catu INT,grav INT,sexe INT,trajet INT,secu INT,locp INT,actp INT,etatp INT,an_nais INT,num_veh STRING);
+
+INSERT INTO usagers SELECT * FROM usagers_csv;
+
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS vehicules_csv
+(Num_Acc BIGINT, senc INT,catv INT,occutc INT,obs INT,obsm INT,choc INT,manv INT,num_veh STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION 'hdfs:///data/vehicules/'
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+CREATE TABLE IF NOT EXISTS vehicules (Num_Acc BIGINT, senc INT,catv INT,occutc INT,obs INT,obsm INT,choc INT,manv INT,num_veh STRING);
+
+INSERT INTO vehicules SELECT * FROM vehicules_csv;
+
+
+----
+
+
+== Kafka
+
+Data from file usagers-2018.csv has been sent to Kafka using project: __[code/horus]code/horus/__.
+
+Below is the main code use to produce to Kafka (Note that messages is a list of String):
+
+[source,bash]
+----
+Properties props = new Properties();
+props.put("bootstrap.servers", "cdp-test-4:9092,cdp-test-5:9092,cdp-test-6:9092");
+props.put("acks", "all");
+props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+Producer<String, String> producer = new KafkaProducer<>(props);
+messages.forEach(message -> sendOneStringMessageToKafka(message, "usagers_str", producer));
+producer.close();
+private static void sendOneStringMessageToKafka(String message, String topic, Producer<String,String> producer) {
+try {
+    String key = message.substring(0,12);
+    producer.send(new ProducerRecord<String, String>(topic, key, message));
+} catch (Exception e) {
+    logger.error("Error while producing message: " + message, e);
+}
+}
+----
+
+
+== Hbase
+
+Let's insert millions of rows to HBase using Java API:
+
+[source,bash]
+----
+Configuration config = HBaseConfiguration.create();
+config.set("hbase.zookeeper.quorum",PropertiesLoader.properties.getProperty("hbase.zookeeper.quorum"));
+config.set("hbase.zookeeper.property.clientPort", PropertiesLoader.properties.getProperty("hbase.zookeeper.property.clientPort"));
+config.set("zookeeper.znode.parent", PropertiesLoader.properties.getProperty("zookeeper.znode.parent"));
+config.set("hbase.security.authentication", PropertiesLoader.properties.getProperty("hbase.security.authentication"));
+try {
+    connection = ConnectionFactory.createConnection(config);
+    if(!connection.getAdmin().tableExists(TableName.valueOf(PropertiesLoader.properties.getProperty("hbase.table.name")))) {
+        connection.getAdmin().createTable(TableDescriptorBuilder.newBuilder(
+                TableName.valueOf(PropertiesLoader.properties.getProperty("hbase.table.name"))
+        )
+                .setColumnFamily(ColumnFamilyDescriptorBuilder.newBuilder(Bytes.toBytes("p")).build())
+                .setColumnFamily(ColumnFamilyDescriptorBuilder.newBuilder(Bytes.toBytes("r")).build())
+                .build());
+    }
+    table = connection.getTable(TableName.valueOf(PropertiesLoader.properties.getProperty("hbase.table.name")));
+} catch (IOException e) {
+    logger.error("Could not initiate HBase connection due to error: ", e);
+    System.exit(1);
+}
+
+Put p = new Put(Bytes.toBytes(name+birthdate+country));
+
+p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("name"), Bytes.toBytes(name));
+p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("birthday"), Bytes.toBytes(birthdate.toString()));
+p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("male"), Bytes.toBytes(male));
+p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("country"), Bytes.toBytes(country));
+p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("zipcode"), Bytes.toBytes(zipCode));
+p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("score"), Bytes.toBytes(score));
+p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("relative_score"), Bytes.toBytes(relativeScore));
+p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("password"), Bytes.toBytes(password));
+p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("password_hash"), passwordHash);
+p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("last_connection"), Bytes.toBytes(lastConnection));
+
+table.put(p)
+
+table.close();
+connection.close();
+
+----
+
+
+== Impala/Kudu
+
+Load some data from CSV files in Kudu storage:
+
+[source,bash]
+----
+CREATE DATABASE impala_kudu;
+
+CREATE TABLE IF NOT EXISTS impala_kudu.usagers 
+(Num_Acc BIGINT, place INT,catu INT,grav INT,sexe INT,trajet INT,secu INT,locp INT,actp INT,etatp INT,an_nais INT,
+num_veh STRING,
+PRIMARY KEY(Num_Acc))
+PARTITION BY HASH PARTITIONS 16
+STORED AS kudu;
+
+INSERT INTO impala_kudu.usagers SELECT * FROM accidents.usagers_csv;
+
+----
+
+
+== SolR
+
+In Java Program:
+
+[source,bash]
+----
+HttpSolrClient httpSolrClient = new HttpSolrClient.Builder("http://"+PropertiesLoader.properties.getProperty("solr.server.url")+":"+
+                PropertiesLoader.properties.getProperty("solr.server.port")+"/solr")
+                .withConnectionTimeout(10000)
+                .withSocketTimeout(60000)
+                .build();
+
+
+// Create SolR collection
+ try {
+     httpSolrClient.request(
+             CollectionAdminRequest.createCollection(PropertiesLoader.properties.getProperty("solr.collection"),
+                     Integer.valueOf(PropertiesLoader.properties.getProperty("solr.collection.shards")),
+                     Integer.valueOf(PropertiesLoader.properties.getProperty("solr.collection.replicas")))
+     );
+ } catch(HttpSolrClient.RemoteSolrException e) {
+     if(e.getMessage().contains("collection already exists")) {
+         logger.warn("Collection already exists so it has not been created");
+     } else {
+         logger.error("Could not create SolR collection : " + PropertiesLoader.properties.getProperty("solr.collection")
+                 + " due to error: ", e);
+     }
+ } catch (Exception e) {
+     logger.error("Could not create SolR collection : " + PropertiesLoader.properties.getProperty("solr.collection")
+             + " due to error: ", e);
+ }
+ // Set base URL directly to the collection, note that this is required
+httpSolrClient.setBaseURL("http://"+PropertiesLoader.properties.getProperty("solr.server.url")+":"+
+         PropertiesLoader.properties.getProperty("solr.server.port")+"/solr/"+PropertiesLoader.properties.getProperty("solr.collection"));
+
+SolrInputDocument doc = new SolrInputDocument();
+doc.addField("Value", row.toCSVString());
+
+try {
+    httpSolrClient.add(doc);
+    httpSolrClient.commit();
+} catch (Exception e) {
+    logger.error("An unexpected error occurred while adding document: " + row.toString() + " to SolR collection : " +
+            PropertiesLoader.properties.getProperty("solr.collection") + " due to error:", e);
+}
+
+httpSolrClient.close();
+----
+
+== Ozone
+
+Using CLI:
+
+[source,bash]
+ozone sh volume create /test
+ozone sh bucket create /test/bucket1
+ozone sh key put /test/bucket1/hoster /etc/hosts
+ozone sh key list /test/bucket1
+
+
+Using Java Program:
+
+[source,bash]
+----
+ozClient = OzoneClientFactory.getRpcClient(PropertiesLoader.properties.getProperty("ozone.om.uri"),
+            Integer.valueOf(PropertiesLoader.properties.getProperty("ozone.om.port")));
+objectStore = ozClient.getObjectStore();
+
+// Create volume if not exists
+     try {
+    objectStore.createVolume(PropertiesLoader.properties.getProperty("ozone.volume.name"));
+} catch (OMException e) {
+    if(e.getResult() == OMException.ResultCodes.VOLUME_ALREADY_EXISTS) {
+        logger.info("Volume: " + PropertiesLoader.properties.getProperty("ozone.volume.name") + " already exists ");
+    } else {
+        logger.error("An error occurred while creating volume " +
+                PropertiesLoader.properties.getProperty("ozone.volume.name") + " : ", e);
+    }
+} catch (IOException e) {
+    logger.error("An unexpected exception occurred while creating volume " +
+            PropertiesLoader.properties.getProperty("ozone.volume.name") + ": ", e);
+}
+
+volume = objectStore.getVolume(PropertiesLoader.properties.getProperty("ozone.volume.name"));
+
+// Create bucket if not exists
+String bucketName = PropertiesLoader.properties.getProperty("ozone.bucket.prefix") + bucketNumber; 
+volume.createBucket(bucketName);
+OzoneBucket bucket = volume.getBucket(bucketName);
+
+Random random = new Random();
+byte[] blob = new byte[1_000_000];
+random.nextBytes(blob);
+OzoneOutputStream os = bucket.createKey(name+birthdate+country, blob.length);
+os.write(blob);
+os.close();
+
+----
+
+
+

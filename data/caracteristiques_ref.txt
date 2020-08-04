@@ -1,0 +1,49 @@
+Num_Acc,an,mois,jour,hrmn,lum,agg,int,atm,col,com,adr,gps,lat,long,dep
+
+Num_Acc = Unique ID
+an = year  YY
+mois = month M
+jour = day D
+hrmn = Hours and minutes HM with hours until 24
+lum = luminosity with correspondance:
+1 – Plein jour
+2 – Crépuscule ou aube
+3 – Nuit sans éclairage public
+4 - Nuit avec éclairage public non allumé 5 – Nuit avec éclairage public allumé
+agg = localisation with correspondance:
+1 – Hors agglomération
+2 – En agglomération
+int = intersection with correspondance:
+1 – Hors intersection
+2 – Intersection en X
+3 – Intersection en T
+4 – Intersection en Y
+5 - Intersection à plus de 4 branches 
+6 - Giratoire
+7 - Place
+8 – Passage à niveau 
+9 – Autre intersection
+atm = atmospherical conditions with correspondance:
+1 – Normale
+2 – Pluie légère
+3 – Pluie forte
+4 – Neige - grêle
+5 – Brouillard - fumée 6 – Vent fort - tempête 7 – Temps éblouissant 8 – Temps couvert
+9 – Autre
+col = colission type with correspondance:
+1 – Deux véhicules - frontale
+2 – Deux véhicules – par l’arrière
+3 – Deux véhicules – par le coté
+4 – Trois véhicules et plus – en chaîne
+5 – Trois véhicules et plus - collisions multiples 6 – Autre collision
+7 – Sans collision
+com = commune number
+adr = postal address
+gps = gps code with correspondance:
+M = Métropole
+A = Antilles (Martinique ou Guadeloupe) G = Guyane
+R = Réunion
+Y = Mayotte
+lat = latitude
+long = longitude
+dep = department code

@@ -1,8 +1,8 @@
-=安装CDP
-=上传License
+== 安装CDP
+=== 上传License
 如果没有CDP license，可以选择"Try Cloudera Data Platform for 60 days"
 
-image::pictures/CDP001.jpg
+image::pictures/CDP001.jpg[license]
 
 =安装Cloudera Manager Agent
 Step1:给新集群命名
@@ -51,7 +51,7 @@ image::pictures/CDP011.jpg
 主机整体扫描：
 image::pictures/CDP012.jpg
 
-=添加服务组件
+== 添加服务组件
 Step1：以Data Engineering为例
 
 image::pictures/CDP013.jpg

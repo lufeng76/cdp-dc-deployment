@@ -1,6 +1,6 @@
 = 安装Cloudera Manager
 
-CM 7.1.1将安装在节点1上。
+CM 7.1.1计划安装在节点1上。
 
 
 == 安装软件包
@@ -10,7 +10,7 @@ CM 7.1.1将安装在节点1上。
 [source,bash]
 yum -y install cloudera-manager-agent cloudera-manager-daemons
 
-在节点1上:
+在节点1上安装:
 
 [source,bash]
 yum -y install cloudera-manager-server
@@ -24,7 +24,7 @@ yum -y install cloudera-manager-server
 
 == 启动CM server和agent服务
 
-在节点1上:
+在节点1上运行命令:
 
 [source, bash]
 systemctl start cloudera-scm-agent
@@ -32,7 +32,7 @@ systemctl enable cloudera-scm-agent
 systemctl enable cloudera-scm-server
 systemctl start cloudera-scm-server
 
-如果CM server启动成功，那么以下信息会显示在__/var/log/cloudera-scm-server/cloudera-scm-server.log__:
+如果CM server启动成功，那么__/var/log/cloudera-scm-server/cloudera-scm-server.log__会显示以下信息:
 
 [source, bash]
 INFO WebServerImpl:com.cloudera.server.cmf.WebServerImpl: Started Jetty server.

@@ -1,71 +1,65 @@
-= 安装CDP
+=安装CDP
+=上传License
+如果没有CDP license，可以选择"Try Cloudera Data Platform for 60 days"
 
-== 上传License
+image::pictures/CDP001.jpg
 
-CDP"Try Cloudera Data Platform for 60 days"
+=安装Cloudera Manager Agent
+Step1:给新集群命名
 
-image::pictures/CDP001.png
+image::pictures/CDP002.jpg
 
-== Cloudera Manager
+Step2:选择目标主机
 
-Step1:
+image::pictures/CDP003.jpg
 
-image::pictures/CDP002.png
+由于第一条已经安装过Cloudera Manager Agent，所以会显示为灰色，但也要勾选上
 
-Step2:
+image::pictures/CDP014.jpg
 
-image::pictures/CDP003.png
+Step3:选择软件包下载地址
 
-Cloudera Manager Agent
+image::pictures/CDP005.jpg
 
-image::pictures/CDP014.png
+注意：Parcel Repository & Network Settings需要填写cdp7.1.1对应的URL
 
-Step3:
+image::pictures/CDP004.jpg
 
-image::pictures/CDP004.png
+Step4:由于OpenJDK8已经提前安装好了，所以选择"Manually manage JDK"
 
-Parcel Repository & Network Settingscdp7.1.1URL
-image::pictures/CDP005.png
+image::pictures/CDP006.jpg
 
-Step4:OpenJDK8"Manually manage JDK"
+Step5:填写用户名和密码
 
-image::pictures/CDP006.png
+image::pictures/CDP007.jpg
 
-Step5:
+Step6:安装Cloudera Manager Agent
 
-image::pictures/CDP007.png
+image::pictures/CDP008.jpg
 
-Step6:Cloudera Manager Agent
+Step7:安装CDH parcel
 
-image::pictures/CDP008.png
+image::pictures/CDP009.jpg
 
-Step7:CDH parcel
+Step8:集群检查（网络性能和主机扫描）
 
-image::pictures/CDP009.png
+image::pictures/CDP010.jpg
 
-Step8:
+网络性能检查：
+image::pictures/CDP011.jpg
 
-image::pictures/CDP010.png
+主机整体扫描：
+image::pictures/CDP012.jpg
 
-
-image::pictures/CDP011.png
+=添加服务组件
+Step1：以Data Engineering为例
 
-
-image::pictures/CDP012.png
+image::pictures/CDP013.jpg
 
-== 
+Step2：角色分配可以参考以下链接：
+https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html Architecture is the following:
 
-Step1Data Engineering
-
-image::pictures/CDP013.png
-
-Step2
-
-https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html
-Architecture is the following:
-
-image::pictures/CDP015.png
-
+image::pictures/CDP015.jpg
 
 Node 1: Cloudera Manager Server + PostgresSQL database
 Node 2 & 3: Masters & Utility/Gateway hosts containing master services and all servers needed
@@ -90,7 +84,7 @@ These settings have been set:
 
 Final view:
 
-image::pictures/osirisCluster.png[Final view of the cluster]
+image::pictures/osirisCluster.jpg[Final view of the cluster]
 
 
 == Adding services later
@@ -131,4 +125,4 @@ java.io.IOException: Volume is in an INCONSISTENT state. Skipped loading volume:
 
 Finally is setup and working:
 
-image::pictures/ozoneGreen.png[Ozone set up and working]
+image::pictures/ozoneGreen.jpg[Ozone set up and working]

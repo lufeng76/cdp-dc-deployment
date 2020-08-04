@@ -1,6 +1,6 @@
-= CDP
+= 安装CDP
 
-== License
+== 上传License
 
 CDP"Try Cloudera Data Platform for 60 days"
 
@@ -65,6 +65,7 @@ https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runti
 Architecture is the following:
 
 image::pictures/CDP015.png
+
 
 Node 1: Cloudera Manager Server + PostgresSQL database
 Node 2 & 3: Masters & Utility/Gateway hosts containing master services and all servers needed

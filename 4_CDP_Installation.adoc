@@ -12,11 +12,11 @@ image::pictures/CDP001.jpg[license]
 === 安装Cloudera Manager Agent和CDH Parcle
 
 
-====Step1:给新集群命名
+==== Step1:给新集群命名
 
 image::pictures/CDP002.jpg[cluster name]
 
-====Step2:选择目标主机
+==== Step2:选择目标主机
 
 image::pictures/CDP003.jpg[select hosts]
 
@@ -24,7 +24,7 @@ image::pictures/CDP003.jpg[select hosts]
 
 image::pictures/CDP014.jpg[select hosts]
 
-====Step3:选择软件包下载地址
+==== Step3:选择软件包下载地址
 
 image::pictures/CDP005.jpg[select repoistories]
 
@@ -32,23 +32,23 @@ image::pictures/CDP005.jpg[select repoistories]
 
 image::pictures/CDP004.jpg[select repoistories]
 
-====Step4:由于OpenJDK8已经提前安装好了，所以选择"Manually manage JDK"
+==== Step4:由于OpenJDK8已经提前安装好了，所以选择"Manually manage JDK"
 
 image::pictures/CDP006.jpg[select JDK]
 
-====Step5:填写用户名和密码
+==== Step5:填写用户名和密码
 
 image::pictures/CDP007.jpg[password]
 
-====Step6:安装Cloudera Manager Agent
+==== Step6:安装Cloudera Manager Agent
 
 image::pictures/CDP008.jpg[install Agent]
 
-====Step7:安装CDH parcel
+==== Step7:安装CDH parcel
 
 image::pictures/CDP009.jpg[install parcel]
 
-====Step8:集群检查（网络性能和主机扫描）
+==== Step8:集群检查（网络性能和主机扫描）
 
 image::pictures/CDP010.jpg[inspector]
 
@@ -64,22 +64,22 @@ image::pictures/CDP012.jpg[inspector]
 === 添加服务组件
 
 
-====Step1：以Data Engineering为例
+==== Step1：以Data Engineering为例
 
 image::pictures/CDP015.jpg[add services]
 
-====Step2：角色分配可以参考以下链接：
+==== Step2：角色分配可以参考以下链接：
 https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html
 
 各主机角色分配示例如下：
 
 image::pictures/CDP016.jpg[assign roles]
 
-====Step3：测试数据库连接
+==== Step3：测试数据库连接
 
 image::pictures/CDP017.jpg[database connection]
 
-====Step4：输入必要的参数，主要是ranger服务的四个密码设置
+==== Step4：输入必要的参数，主要是ranger服务的四个密码设置
 
 [source,bash]
 ranger-keyadmin_user_password = Admin1234
@@ -89,15 +89,15 @@ ranger-rangerusersync_user_password = Admin1234
 
 image::pictures/CDP018.jpg[setting1]
 
-====Step5：审核更改，主要是调整Atlas的两个参数
+==== Step5：审核更改，主要是调整Atlas的两个参数
 
 image::pictures/CDP019.jpg[setting2]
 
-====Step6：在参数设置完毕后，集群首次启动
+==== Step6：在参数设置完毕后，集群首次启动
 
 image::pictures/CDP020.jpg[first run]
 
-====Step7：启动成功
+==== Step7：启动成功
 
 image::pictures/CDP021.jpg[finish]
 

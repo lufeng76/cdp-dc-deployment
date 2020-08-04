@@ -1,10 +1,13 @@
 == 安装CDP
+
 === 上传License
+
 如果没有CDP license，可以选择"Try Cloudera Data Platform for 60 days"
 
 image::pictures/CDP001.jpg[license]
 
-===安装Cloudera Manager Agent
+=== 安装Cloudera Manager Agent
+
 Step1:给新集群命名
 
 image::pictures/CDP002.jpg[cluster name]
@@ -13,53 +16,54 @@ Step2:选择目标主机
 
 image::pictures/CDP003.jpg[select hosts]
 
-由于第一条已经安装过Cloudera Manager Agent，所以会显示为灰色，但也要勾选上
+由于第一台主机已经安装过Cloudera Manager Agent，所以会显示为灰色，但也要勾选上
 
 image::pictures/CDP014.jpg[select hosts]
 
 Step3:选择软件包下载地址
 
-image::pictures/CDP005.jpg
+image::pictures/CDP005.jpg[select repoistories]
 
 注意：Parcel Repository & Network Settings需要填写cdp7.1.1对应的URL
 
-image::pictures/CDP004.jpg
+image::pictures/CDP004.jpg[select repoistories]
 
 Step4:由于OpenJDK8已经提前安装好了，所以选择"Manually manage JDK"
 
-image::pictures/CDP006.jpg
+image::pictures/CDP006.jpg[select JDK]
 
 Step5:填写用户名和密码
 
-image::pictures/CDP007.jpg
+image::pictures/CDP007.jpg[password]
 
 Step6:安装Cloudera Manager Agent
 
-image::pictures/CDP008.jpg
+image::pictures/CDP008.jpg[install Agent]
 
 Step7:安装CDH parcel
 
-image::pictures/CDP009.jpg
+image::pictures/CDP009.jpg[install parcel]
 
 Step8:集群检查（网络性能和主机扫描）
 
-image::pictures/CDP010.jpg
+image::pictures/CDP010.jpg[inspector]
 
 网络性能检查：
-image::pictures/CDP011.jpg
+image::pictures/CDP011.jpg[inspector]
 
 主机整体扫描：
-image::pictures/CDP012.jpg
+image::pictures/CDP012.jpg[inspector]
 
-== 添加服务组件
+=== 添加服务组件
+
 Step1：以Data Engineering为例
 
-image::pictures/CDP013.jpg
+image::pictures/CDP013.jpg[add services]
 
 Step2：角色分配可以参考以下链接：
 https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html Architecture is the following:
 
-image::pictures/CDP015.jpg
+image::pictures/CDP015.jpg[assign roles]
 
 Node 1: Cloudera Manager Server + PostgresSQL database
 Node 2 & 3: Masters & Utility/Gateway hosts containing master services and all servers needed

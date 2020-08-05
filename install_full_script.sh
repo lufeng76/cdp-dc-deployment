@@ -217,11 +217,11 @@ ktadd -k /home/${USER}/${USER}.keytab ${USER}/admin@${REALM}
 
 # Install and configure HA proxy required by HUE, OOZIE & IMPALA
 yum -y install haproxy
-cp /etc/haproxy/haproxy.cfg haproxy.cfg
+cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
 
-echo "    
+echo "
+global    
     log         127.0.0.1 local2
-
     chroot      /var/lib/haproxy
     pidfile     /var/run/haproxy.pid
     maxconn     4000
@@ -230,7 +230,7 @@ echo "
     daemon
 
     # turn on stats unix socket
-    stats socket /var/lib/haproxy/stats
+    #stats socket /var/lib/haproxy/stats
 
 #---------------------------------------------------------------------
 # common defaults that all the 'listen' and 'backend' sections will
@@ -241,55 +241,64 @@ defaults
     log                     global
     option                  httplog
     option                  dontlognull
-    option http-server-close
-    option forwardfor       except 127.0.0.0/8
+    #option http-server-close
+    #option forwardfor       except 127.0.0.0/8
     option                  redispatch
     retries                 3
-    timeout http-request    10s
-    timeout queue           1m
-    timeout connect         10s
-    timeout client          1m
-    timeout server          1m
-    timeout http-keep-alive 10s
-    timeout check           10s
+    timeout connect         5000
+    timeout client          3600s
+    timeout server          3600s
     maxconn                 3000
 
-listen stats :25002
-    balance
+listen stats
+    bind 0.0.0.0:1080
     mode http
+    option httplog
+    maxconn 5000
     stats enable
     stats auth admin:admin
+    stats refresh 30s
+    stats  uri /stats
 
-listen oozie :11003
+listen oozie
+    bind 0.0.0.0:11003
     balance roundrobin
     mode tcp
-    server  oozie1 cdp-test-1.gce.cloudera.com:11000 check
-    server  oozie2 cdp-test-2.gce.cloudera.com:11000 check
+    option tcplog
+    server  oozie1 ccycloud-1.feng.root.hwx.site:11000 check
+    server  oozie2 ccycloud-2.feng.root.hwx.site:11000 check
 
-listen oozie_https :11446
+listen oozie_https
+    bind 0.0.0.0:11446
     balance roundrobin
     mode tcp
-    server  oozie1 cdp-test-1.gce.cloudera.com:11443 check
-    server  oozie2 cdp-test-2.gce.cloudera.com:11443 check
-    " > haproxy.cfg
+    option tcplog
+    server  oozie1 ccycloud-1.feng.root.hwx.site:11443 check
+    server  oozie2 ccycloud-2.feng.root.hwx.site:11443 check
 
- echo 
- "listen impala :21001
+listen impala
+    bind 0.0.0.0:21001
     balance leastconn
     mode tcp
-    server  impala1 cdp-test-4.gce.cloudera.com:21000 check
-    server  impala2 cdp-test-5.gce.cloudera.com:21000 check
-    server  impala3 cdp-test-6.gce.cloudera.com:21000 check
+    option tcplog
+    server  impala1 ccycloud-3.feng.root.hwx.site:21000 check
+    server  impala2 ccycloud-4.feng.root.hwx.site:21000 check
+    server  impala3 ccycloud-5.feng.root.hwx.site:21000 check
 
-listen impalajdbc :21051
+listen impalajdbc 
+    bind 0.0.0.0:21051
     balance leastconn
     mode tcp
-    server  impala1 cdp-test-4.gce.cloudera.com:21051 check
-    server  impala2 cdp-test-5.gce.cloudera.com:21051 check
-    server  impala3 cdp-test-6.gce.cloudera.com:21051 check
-    " >> haproxy.cfg   
+    option tcplog
+    server  impala1 ccycloud-3.feng.root.hwx.site:21051 check
+    server  impala2 ccycloud-4.feng.root.hwx.site:21051 check
+    server  impala3 ccycloud-5.feng.root.hwx.site:21051 check
+    " > /etc/haproxy/haproxy.cfg
 
-/usr/sbin/haproxy -f haproxy.cfg 
+systemctl enable haproxy
+systemctl start haproxy
+
+
 
 
 

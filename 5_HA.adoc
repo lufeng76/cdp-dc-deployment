@@ -121,91 +121,44 @@ image::pictures/HA023.jpg[Enable High Avaibility]
 https://docs.cloudera.com/runtime/7.1.1/hive-metastore/topics/hive-hms-introduction.html[参考链接]
 
 
-== Oozie
-
-Installation of a Load Balancer (haproxy): +
-[source,bash]
-yum install haproxy
-cp /etc/haproxy/haproxy.cfg haproxy.cfg
-
-Configure haproxy by editing oozie.cfg: +
-[source,bash]
-----
-global
-    log         127.0.0.1 local2
-
-    chroot      /var/lib/haproxy
-    pidfile     /var/run/haproxy.pid
-    maxconn     4000
-    user        haproxy
-    group       haproxy
-    daemon
-
-    # turn on stats unix socket
-    stats socket /var/lib/haproxy/stats
-
-#---------------------------------------------------------------------
-# common defaults that all the 'listen' and 'backend' sections will
-# use if not designated in their block
-#---------------------------------------------------------------------
-defaults
-    mode                    http
-    log                     global
-    option                  httplog
-    option                  dontlognull
-    option http-server-close
-    option forwardfor       except 127.0.0.0/8
-    option                  redispatch
-    retries                 3
-    timeout http-request    10s
-    timeout queue           1m
-    timeout connect         10s
-    timeout client          1m
-    timeout server          1m
-    timeout http-keep-alive 10s
-    timeout check           10s
-    maxconn                 3000
-
-listen stats :25002
-    balance
-    mode http
-    stats enable
-    stats auth admin:admin
-
-listen oozie :11003
-    balance roundrobin
-    mode tcp
-    server  oozie1 cdp-test-1.gce.cloudera.com:11000 check
-    server  oozie2 cdp-test-2.gce.cloudera.com:11000 check
-
-listen oozie_https :11446
-    balance roundrobin
-    mode tcp
-    server  oozie1 cdp-test-1.gce.cloudera.com:11443 check
-    server  oozie2 cdp-test-2.gce.cloudera.com:11443 check
-----
-
-Launch HaProxy with: +
-[source,bash]
-/usr/sbin/haproxy -f haproxy.cfg 
-
-Then use Wizard from CM under Oozie > Actions > Enable High Avaibility.
-
-https://docs.cloudera.com/runtime/7.1.1/configuring-oozie/topics/oozie-high-availability.html[Detailed Documentation]
-
-Check it works by logging to Oozie through load balancer: 
-Oozie > Web UI > Load Balancer UI
-
-
 == Atlas
 
-Add a new Atlas server using: Atlas > Instances > Add role Instances and select a new Atlas server.
+进入Atlas服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Atlas Server实例
 
-Check with Web UI link that Atlas is well routing requests to the active server.
+image::pictures/HA024.jpg[Enable High Avaibility]
+
+
+== Oozie
+
+前提是安装好了HAProxy，详见install_full_script.sh部分。
+__注意1：如果浏览器是中文语言，Oozie Load Balancer Hostname选项存在bug。必须把浏览器语言切换到英文!!!__
+__注意2：haproxy.cfg中配置的3个参数：__
+
+[source,bash]
+Oozie Load Balancer=ccycloud-1.feng.root.hwx.site
+Oozie Load Balancer HTTP Port=11003
+Oozie Load Balancer HTTPS Port=11446
+
+Step1.  进入Oozie服务页面，点击"启用High Availability"
+
+image::pictures/HA025.jpg[Enable High Avaibility]
+
+Step2.  指定另一个Oozie Server
+
+image::pictures/HA026.jpg[Oozie Server Host]
+
+image::pictures/HA027.jpg[Oozie Server Port]
+
+Step3.	Cloudera Manager执行一系列的命令进行HA配置，直至执行结束，不需要后续操作
+
+image::pictures/HA028.jpg[First Run]
+
+https://docs.cloudera.com/runtime/7.1.1/configuring-oozie/topics/oozie-high-availability.html[参考链接]
+
 
 == Impala
 
-Add these lines to haproxy.cfg:
+在haproxy.cfg中添加:
 [source,bash]
 ---- 
 listen impala :21001
@@ -225,6 +178,6 @@ listen impalajdbc :21051
 
 Then set load balancer on Impala settings: Impala > Configuration > Impala Daemons Load Balancer and set it to __cdp-test-1.gce.cloudera.com:21051__.
 
-https://docs.cloudera.com/runtime/7.1.1/impala-manage/topics/impala-load-balancer-configure.html[Detailed Documentation]
+https://docs.cloudera.com/runtime/7.1.1/impala-manage/topics/impala-load-balancer-configure.html[参考链接]
 
 

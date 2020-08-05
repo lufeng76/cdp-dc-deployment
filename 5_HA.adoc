@@ -1,12 +1,36 @@
-= High Avaibility
+= HA设置
 
 
 == HDFS
 
-Use wizard from CM under HDFS > Actions > Enable High Avaibility.
+=== 配置HDFS HA
 
-Set hdfs-osiris as nameservice. +
-Set /dfs/jn as directory for all journal nodes (as it's empty by default).
+1.	进入HDFS服务页面，点击"启用High Availability"
+
+image::pictures/HA001.jpg[Enable High Availability]
+
+2.	指定一个Nameservice名称，默认为nameservice1
+
+image::pictures/HA002.jpg[nameservice1]
+
+3.	指定NameNode Standby Host和JournalNode Hosts
+
+image::pictures/HA003.jpg[JournalNode Hosts]
+
+4.	填写JournalNode Edits Directory，此处设置为/dfs/jn
+
+image::pictures/HA004.jpg[JournalNode Edits Directory]
+
+5.	Cloudera Manager执行一系列的命令进行HA配置
+
+image::pictures/HA005.jpg[First Run]
+
+6.  执行结束，提示Hue和Hive Metastore需要配合HDFS进行配置修改
+
+image::pictures/HA006.jpg[Final Step]
+
+
+=== 配置Hive Metastore使用HDFS HA
 
 Prepare Hive to use HDFS service name by stopping metastore and then run a update on it: Hive > Actions > Update Hive Metastore NameNodes. +
 Then restart of HMS server.

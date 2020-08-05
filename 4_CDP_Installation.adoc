@@ -67,8 +67,9 @@ image::pictures/CDP012.jpg[inspector]
 
 image::pictures/CDP015.jpg[add services]
 
-=== Step2：角色分配可以参考以下链接：
-https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html
+=== Step2：角色分配
+
+https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html[参考链接]
 
 各主机角色分配示例如下：
 

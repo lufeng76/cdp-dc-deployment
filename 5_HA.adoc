@@ -78,10 +78,20 @@ https://docs.cloudera.com/runtime/7.1.1/fault-tolerance/topics/cr-high-availabli
 
 == YARN 
 
-use Wizard from CM under YARN > Actions > Enable High Avaibility.
+Step1.  进入YARN服务页面，点击"启用High Availability"
+
+image::pictures/HA018.jpg[Enable High Avaibility]
+
+Step2.  指定Resource Manager Standby Host
+
+image::pictures/HA019.jpg[Resource Manager Standby Host]
+
+Step3.	Cloudera Manager执行一系列的命令进行HA配置，直至执行结束，不需要后续操作
+
+image::pictures/HA020.jpg[First Run]
 
 
-https://docs.cloudera.com/runtime/7.1.1/yarn-high-availability/topics/yarn-resourcemanager-ha-overview.html[Detailed Documentation]
+https://docs.cloudera.com/runtime/7.1.1/yarn-high-availability/topics/yarn-resourcemanager-ha-overview.html[参考链接]
 
 
 == HBase

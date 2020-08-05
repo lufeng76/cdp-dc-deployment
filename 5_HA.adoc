@@ -96,23 +96,29 @@ https://docs.cloudera.com/runtime/7.1.1/yarn-high-availability/topics/yarn-resou
 
 == HBase
 
-HBase > Instances > Add Role Instances. Then add a Master on another node.
+进入HBase服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Standby HMaster实例
 
-https://docs.cloudera.com/runtime/7.1.1/hbase-high-availability/topics/hbase-enable-ha-using-cm.html[Detailed Documentation]
+image::pictures/HA021.jpg[Enable High Avaibility]
+
+https://docs.cloudera.com/runtime/7.1.1/hbase-high-availability/topics/hbase-enable-ha-using-cm.html[参考链接]
 
 
 == Hue
 
-Hue > Instances > Add Role Instances. Then add a Hue server.
+进入Hue服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Hue Server实例
 
-https://docs.cloudera.com/runtime/7.1.1/administering-hue/topics/hue-add-role-instance-with-cm.html[Detailed Documentation]
+image::pictures/HA022.jpg[Enable High Avaibility]
+
+https://docs.cloudera.com/runtime/7.1.1/administering-hue/topics/hue-add-role-instance-with-cm.html[参考链接]
 
 
 == Hive
 
-Hive on Tez > Instances > Add Role Instances. Then add a hive server 2 on another node.
+进入Hive on Tez服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Hive Server2实例
 
-https://docs.cloudera.com/runtime/7.1.1/hive-metastore/topics/hive-hms-introduction.html[Detailed Documentation]
+image::pictures/HA023.jpg[Enable High Avaibility]
+
+https://docs.cloudera.com/runtime/7.1.1/hive-metastore/topics/hive-hms-introduction.html[参考链接]
 
 
 == Oozie

@@ -1,4 +1,4 @@
-= 导入样本数据
+= 测试代码（验证各组件是否正常）
 
 == HDFS
 
@@ -16,7 +16,6 @@ hdfs dfs -put lieux-2018.csv /data/lieux/
 hdfs dfs -put usagers-2018.csv /data/usagers/
 hdfs dfs -put vehicules-2018.csv /data/vehicules/
 hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
-
 
 == Hive
 
@@ -86,7 +85,7 @@ EOF
 
 == Impala/Kudu
 
-建立一张kudu表
+建立一张kudu表，然后插入数据
 
 [source,bash]
 ----

@@ -2,7 +2,7 @@
 
 == HDFS
 
-/data目录下存放了法国2018年交通事故统计。
+/data目录下存放了多个CSV文件（2018年法国交通事故统计表）。
 
 [source,bash]
 sudo -u hdfs hdfs dfs -mkdir /data
@@ -86,10 +86,13 @@ EOF
 
 == Impala/Kudu
 
-Load some data from CSV files in Kudu storage:
+建立一张kudu表
 
 [source,bash]
 ----
+
+impala-shell -i feng-3 << EOF
+
 CREATE DATABASE impala_kudu;
 
 CREATE TABLE IF NOT EXISTS impala_kudu.usagers 
@@ -101,6 +104,7 @@ STORED AS kudu;
 
 INSERT INTO impala_kudu.usagers SELECT * FROM accidents.usagers_csv;
 
+EOF
 ----
 
 == Kafka

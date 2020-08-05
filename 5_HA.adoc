@@ -5,41 +5,75 @@
 
 === 配置HDFS HA
 
-1.	进入HDFS服务页面，点击"启用High Availability"
+Step1.  进入HDFS服务页面，点击"启用High Availability"
 
 image::pictures/HA001.jpg[Enable High Availability]
 
-2.	指定一个Nameservice名称，默认为nameservice1
+Step2.  指定一个Nameservice名称，默认为nameservice1
 
 image::pictures/HA002.jpg[nameservice1]
 
-3.	指定NameNode Standby Host和JournalNode Hosts
+Step3.	指定NameNode Standby Host和JournalNode Hosts
 
 image::pictures/HA003.jpg[JournalNode Hosts]
 
-4.	填写JournalNode Edits Directory，此处设置为/dfs/jn
+Step4.	填写JournalNode Edits Directory，此处设置为/dfs/jn
 
 image::pictures/HA004.jpg[JournalNode Edits Directory]
 
-5.	Cloudera Manager执行一系列的命令进行HA配置
+Step5.	Cloudera Manager执行一系列的命令进行HA配置
 
 image::pictures/HA005.jpg[First Run]
 
-6.  执行结束，提示Hue和Hive Metastore需要配合HDFS进行配置修改
+Step6.  执行结束，提示Hue和Hive Metastore需要配合HDFS进行配置修改
 
 image::pictures/HA006.jpg[Final Step]
 
 
 === 配置Hive Metastore使用HDFS HA
 
-Prepare Hive to use HDFS service name by stopping metastore and then run a update on it: Hive > Actions > Update Hive Metastore NameNodes. +
-Then restart of HMS server.
+Step1.  停止Hive服务，然后备份Hive Metastore的数据，即将元数据从MySQL库中导出到一个安全目录。由于本次是初始安装，因此未做备份操作
 
-Prepare Hue to use HDFS service name by adding an HTTPFS instance where Hue runs: HDFS > Instances > Add a new role. +
-Then set webhdfs to use HTTPFS: HUE > Configuration > webhdfs_url > select HttpFs as value. +
-Restart Hue and it works.
+image::pictures/HA007.jpg[Stop Hive Service]
 
-https://docs.cloudera.com/runtime/7.0.3/fault-tolerance/topics/cr-high-availablity-on-cdp-clusters.html[Detailed documentation]
+image::pictures/HA008.jpg[Stop Hive Service]
+
+Step2.  点击更新Hive Metastore NameNodes
+
+image::pictures/HA009.jpg[Update Hive Metastore NameNodes]
+
+image::pictures/HA010.jpg[Update Hive Metastore NameNodes]
+
+Step3.	Cloudera Manager执行一系列的命令进行更新配置，直至执行结束
+
+image::pictures/HA011.jpg[First Run]
+
+=== 配置Hue使用HDFS HA
+
+Step1.  进入HDFS服务页面，进入"实例"标签页面，点击"添加角色实例"
+
+image::pictures/HA012.jpg[Add Role Instances]
+
+Step2.  点击HttpFS角色下面文本框选择主机
+
+image::pictures/HA013.jpg[Add HttpFS]
+
+image::pictures/HA014.jpg[Add HttpFS]
+
+Step3.  启动HttpFS角色
+
+image::pictures/HA015.jpg[Start HttpFS]
+
+image::pictures/HA016.jpg[Start HttpFS]
+
+Step4.  进入Hue服务页面，进入"配置"标签页面，搜索"HDFS Web"，选中httpfs单选框
+
+image::pictures/HA017.jpg[Select HttpFS]
+
+Step5.  点击保存修改并重启Hue服务
+
+
+https://docs.cloudera.com/runtime/7.1.1/fault-tolerance/topics/cr-high-availablity-on-cdp-clusters.html[参考链接]
 
 
 == YARN 
@@ -47,28 +81,28 @@ https://docs.cloudera.com/runtime/7.0.3/fault-tolerance/topics/cr-high-availabli
 use Wizard from CM under YARN > Actions > Enable High Avaibility.
 
 
-https://docs.cloudera.com/runtime/7.0.3/yarn-high-availability/topics/yarn-resourcemanager-ha-overview.html[Detailed Documentation]
+https://docs.cloudera.com/runtime/7.1.1/yarn-high-availability/topics/yarn-resourcemanager-ha-overview.html[Detailed Documentation]
 
 
 == HBase
 
 HBase > Instances > Add Role Instances. Then add a Master on another node.
 
-https://docs.cloudera.com/runtime/7.0.3/hbase-high-availability/topics/hbase-enable-ha-using-cm.html[Detailed Documentation]
+https://docs.cloudera.com/runtime/7.1.1/hbase-high-availability/topics/hbase-enable-ha-using-cm.html[Detailed Documentation]
 
 
 == Hue
 
 Hue > Instances > Add Role Instances. Then add a Hue server.
 
-https://docs.cloudera.com/runtime/7.0.3/administering-hue/topics/hue-add-role-instance-with-cm.html[Detailed Documentation]
+https://docs.cloudera.com/runtime/7.1.1/administering-hue/topics/hue-add-role-instance-with-cm.html[Detailed Documentation]
 
 
 == Hive
 
 Hive on Tez > Instances > Add Role Instances. Then add a hive server 2 on another node.
 
-https://docs.cloudera.com/runtime/7.0.3/hive-metastore/topics/hive-hms-introduction.html[Detailed Documentation]
+https://docs.cloudera.com/runtime/7.1.1/hive-metastore/topics/hive-hms-introduction.html[Detailed Documentation]
 
 
 == Oozie
@@ -141,7 +175,7 @@ Launch HaProxy with: +
 
 Then use Wizard from CM under Oozie > Actions > Enable High Avaibility.
 
-https://docs.cloudera.com/runtime/7.0.3/configuring-oozie/topics/oozie-high-availability.html[Detailed Documentation]
+https://docs.cloudera.com/runtime/7.1.1/configuring-oozie/topics/oozie-high-availability.html[Detailed Documentation]
 
 Check it works by logging to Oozie through load balancer: 
 Oozie > Web UI > Load Balancer UI
@@ -175,6 +209,6 @@ listen impalajdbc :21051
 
 Then set load balancer on Impala settings: Impala > Configuration > Impala Daemons Load Balancer and set it to __cdp-test-1.gce.cloudera.com:21051__.
 
-https://docs.cloudera.com/runtime/7.0.3/impala-manage/topics/impala-load-balancer-configure.html[Detailed Documentation]
+https://docs.cloudera.com/runtime/7.1.1/impala-manage/topics/impala-load-balancer-configure.html[Detailed Documentation]
 
 

@@ -1,33 +1,33 @@
 = HA说明
 
 支持HA:
-●	HDFS
-●	Zookeeper
-●	HBase
-●	Hive
-●	Yarn
-●	MapReduce jobs
-●	Spark jobs
-●	Oozie
-●	Hue
-●	Impala
-●	Atlas
-●	Ranger
-●	RangerKMS
-●	Kafka
-●	NiFi
-●	Knox
-●	Schema Registry
-●	SRM Drivers
-●	EFM (CEM) 
++●	HDFS
++●	Zookeeper
++●	HBase
++●	Hive
++●	Yarn
++●	MapReduce jobs
++●	Spark jobs
++●	Oozie
++●	Hue
++●	Impala
++●	Atlas
++●	Ranger
++●	RangerKMS
++●	Kafka
++●	NiFi
++●	Knox
++●	Schema Registry
++●	SRM Drivers
++●	EFM (CEM) 
 
 不支持HA：
-●	Cloudera Manager (active-passive fast failover possible)
-●	Cloudera Management Service
-●	CDSW Master Node
-●	Yarn JobHistory Server
-●	Spark History Server
-●	Zeppelin
-●	NiFi Registry 
-●	SMM
-●	SRM Service
++●	Cloudera Manager (active-passive fast failover possible)
++●	Cloudera Management Service
++●	CDSW Master Node
++●	Yarn JobHistory Server
++●	Spark History Server
++●	Zeppelin
++●	NiFi Registry 
++●	SMM
++●	SRM Service

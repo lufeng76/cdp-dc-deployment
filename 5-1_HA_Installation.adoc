@@ -180,3 +180,25 @@ Step2.  点击保存修改并重启Impala服务
 https://docs.cloudera.com/runtime/7.1.1/impala-manage/topics/impala-load-balancer-configure.html[参考链接]
 
 
+== Hue
+
+前提是安装好了HAProxy，详见install_full_script.sh部分。
+
+需要在hue_safety_valve.ini中，添加以下配置：
+
+[source,bash]
+----
+[beeswax]
+hive_server_host=ccycloud-1.feng.root.hwx.site
+hive_server_port=10099
+
+[impala]
+server_host=ccycloud-1.feng.root.hwx.site
+server_port=21051
+----
+
+Step1.  在Hue配置项搜索”hue_safety_valve.ini”，然后添加上述配置
+
+image::pictures/HA030.jpg[hue_safety_valve]
+
+Step2.  点击保存修改并重启Hue服务

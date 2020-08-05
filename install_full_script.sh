@@ -260,7 +260,7 @@ listen stats
     stats refresh 30s
     stats  uri /stats
 
-listen oozie
+listen oozie_http
     bind 0.0.0.0:11003
     balance roundrobin
     mode tcp
@@ -276,7 +276,7 @@ listen oozie_https
     server  oozie1 ccycloud-1.feng.root.hwx.site:11443 check
     server  oozie2 ccycloud-2.feng.root.hwx.site:11443 check
 
-listen impala
+listen impalashell
     bind 0.0.0.0:21001
     balance leastconn
     mode tcp
@@ -290,9 +290,17 @@ listen impalajdbc
     balance leastconn
     mode tcp
     option tcplog
-    server  impala1 ccycloud-3.feng.root.hwx.site:21051 check
-    server  impala2 ccycloud-4.feng.root.hwx.site:21051 check
-    server  impala3 ccycloud-5.feng.root.hwx.site:21051 check
+    server  impala1 ccycloud-3.feng.root.hwx.site:21050 check
+    server  impala2 ccycloud-4.feng.root.hwx.site:21050 check
+    server  impala3 ccycloud-5.feng.root.hwx.site:21050 check
+    
+listen hivejdbc
+    bind 0.0.0.0:10099
+    balance source
+    mode tcp
+    option tcplog
+    server hive1 ccycloud-1.feng.root.hwx.site:10000 check
+    server hive2 ccycloud-2.feng.root.hwx.site:10000 check    
     " > /etc/haproxy/haproxy.cfg
 
 systemctl enable haproxy

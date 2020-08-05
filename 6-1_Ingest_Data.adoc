@@ -1,13 +1,8 @@
-= Add Data
+= 导入样本数据
 
-Goal is to add some data on the platform to be able to play with it :) 
+== HDFS
 
-Note that a project has been created to send random organized data to CDP into different services: link:https://github.infra.cloudera.com/frisch/randomy[https://github.infra.cloudera.com/frisch/randomy]
-
-== Data
-
-Data is representing all accidents that happened in 2018 in France.
-(It is under /data folder).
+/data目录下存放了法国2018年交通事故统计。
 
 [source,bash]
 sudo -u hdfs hdfs dfs -mkdir /data
@@ -27,6 +22,8 @@ hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
 
 [source,bash]
 ----
+beeline -n root -p xxxx <<EOF
+
 CREATE DATABASE accidents;
 USE accidents;
 
@@ -84,9 +81,27 @@ CREATE TABLE IF NOT EXISTS vehicules (Num_Acc BIGINT, senc INT,catv INT,occutc I
 
 INSERT INTO vehicules SELECT * FROM vehicules_csv;
 
-
+EOF
 ----
 
+== Impala/Kudu
+
+Load some data from CSV files in Kudu storage:
+
+[source,bash]
+----
+CREATE DATABASE impala_kudu;
+
+CREATE TABLE IF NOT EXISTS impala_kudu.usagers 
+(Num_Acc BIGINT, place INT,catu INT,grav INT,sexe INT,trajet INT,secu INT,locp INT,actp INT,etatp INT,an_nais INT,
+num_veh STRING,
+PRIMARY KEY(Num_Acc))
+PARTITION BY HASH PARTITIONS 16
+STORED AS kudu;
+
+INSERT INTO impala_kudu.usagers SELECT * FROM accidents.usagers_csv;
+
+----
 
 == Kafka
 
@@ -159,26 +174,6 @@ table.put(p)
 
 table.close();
 connection.close();
-
-----
-
-
-== Impala/Kudu
-
-Load some data from CSV files in Kudu storage:
-
-[source,bash]
-----
-CREATE DATABASE impala_kudu;
-
-CREATE TABLE IF NOT EXISTS impala_kudu.usagers 
-(Num_Acc BIGINT, place INT,catu INT,grav INT,sexe INT,trajet INT,secu INT,locp INT,actp INT,etatp INT,an_nais INT,
-num_veh STRING,
-PRIMARY KEY(Num_Acc))
-PARTITION BY HASH PARTITIONS 16
-STORED AS kudu;
-
-INSERT INTO impala_kudu.usagers SELECT * FROM accidents.usagers_csv;
 
 ----
 

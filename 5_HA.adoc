@@ -162,25 +162,20 @@ https://docs.cloudera.com/runtime/7.1.1/configuring-oozie/topics/oozie-high-avai
 
 == Impala
 
-在haproxy.cfg中添加:
+前提是安装好了HAProxy，详见install_full_script.sh部分。
+
+__注意：haproxy.cfg中配置的3个参数：__
+
 [source,bash]
----- 
-listen impala :21001
-    balance leastconn
-    mode tcp
-    server  impala1 cdp-test-4.gce.cloudera.com:21000 check
-    server  impala2 cdp-test-5.gce.cloudera.com:21000 check
-    server  impala3 cdp-test-6.gce.cloudera.com:21000 check
+Impala Load Balancer=ccycloud-1.feng.root.hwx.site
+Impala Shell Load Balancer Port=21001
+Impala JDBC Load Balancer Port=21051
 
-listen impalajdbc :21051
-    balance leastconn
-    mode tcp
-    server  impala1 cdp-test-4.gce.cloudera.com:21051 check
-    server  impala2 cdp-test-5.gce.cloudera.com:21051 check
-    server  impala3 cdp-test-6.gce.cloudera.com:21051 check
-----
+Step1.  进入Hue服务页面，进入"配置"标签页面，搜索"load balancer"，填写为ccycloud-1.feng.root.hwx.site:21001
 
-Then set load balancer on Impala settings: Impala > Configuration > Impala Daemons Load Balancer and set it to __cdp-test-1.gce.cloudera.com:21051__.
+image::pictures/HA029.jpg[load balancer]
+
+Step2.  点击保存修改并重启Impala服务
 
 https://docs.cloudera.com/runtime/7.1.1/impala-manage/topics/impala-load-balancer-configure.html[参考链接]
 

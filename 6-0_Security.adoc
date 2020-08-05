@@ -1,6 +1,6 @@
 = 安全
 
-安全分成三个部分: +
+安全主要分成三个部分: +
 - 身份认证：kerberos +
 - 权限管控：Ranger +
 - 数据加密：TLS/SSL + HDFS Transparent Encryption

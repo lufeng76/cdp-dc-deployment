@@ -5,5 +5,5 @@
 - 权限管控：Ranger +
 - 数据加密：TLS/SSL + HDFS Transparent Encryption
 
-image::pictures/SEC001.jpg[license]
+image::pictures/SEC001.png[license]
 

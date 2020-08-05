@@ -131,7 +131,9 @@ image::pictures/HA024.jpg[Enable High Avaibility]
 == Oozie
 
 前提是安装好了HAProxy，详见install_full_script.sh部分。
-__注意1：如果浏览器是中文语言，Oozie Load Balancer Hostname选项存在bug。必须把浏览器语言切换到英文!!!__
+
+__注意1：如果浏览器是中文语言，Oozie Load Balancer Hostname选项存在bug。必须把浏览器语言切换到英文语言!!!__
+
 __注意2：haproxy.cfg中配置的3个参数：__
 
 [source,bash]
@@ -146,6 +148,8 @@ image::pictures/HA025.jpg[Enable High Avaibility]
 Step2.  指定另一个Oozie Server
 
 image::pictures/HA026.jpg[Oozie Server Host]
+
+填写上述3个参数：
 
 image::pictures/HA027.jpg[Oozie Server Port]
 

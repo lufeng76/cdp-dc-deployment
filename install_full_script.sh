@@ -232,9 +232,25 @@ systemctl start haproxy
 
 ##################################################################################
 # Part07: Cluster_validation
-# Note: Optinal
+# Note: The following script run on ALL NODES !!!
 ##################################################################################
 
+echo "create user etl_user"
+groupadd etl
+useradd -g etl etl_user
+echo BadPass#1 > passwd.txt
+echo BadPass#1 >> passwd.txt
+passwd etl_user < passwd.txt
+rm -f passwd.txt
+
+##################################################################################
+# Part07: Cluster_validation
+# Note: The following script only run on CM NODE !!!
+##################################################################################
+
+echo "create hdfs dir for user etl_user"
+sudo -u hdfs hadoop fs -mkdir /user/etl_user
+sudo -u hdfs hadoop fs -chown etl_user:hadoop /user/etl_user
 
 ##################################################################################
 # Part08: Enable_Kerberos
@@ -242,10 +258,10 @@ systemctl start haproxy
 ##################################################################################
 
 # Define global variables here
-export host=${host:ccycloud-1.feng.root.hwx.site}
-export realm=${realm:-FENG.COM}
-export domain=${domain:-feng.com}
-export kdcpassword=${kdcpassword:-Admin1234}
+export host=ccycloud-1.feng.root.hwx.site
+export realm=FENG.COM
+export domain=feng.com
+export kdcpassword=Admin1234
 
 set -e
 
@@ -330,15 +346,16 @@ kadmin -p cloudera-scm/admin -w $kdcpassword -r $realm -q "get_principal clouder
 
 echo "KDC setup complete"
 
+echo "create keytabs for user etl_user"
+kadmin.local -q "addprinc -randkey etl_user/${host}@${realm}"
+kadmin.local -q "xst -k etl_user.keytab etl_user/${host}@${realm}"
+mkdir -p /etc/security/keytabs
+mv etl_user.keytab /etc/security/keytabs
+
 ##################################################################################
 # Part08: Enable_Kerberos
 # Note: The following script run on OHTER NODES（except CM node） !!!
 ##################################################################################
-# Define global variables here
-export host=${host:ccycloud-1.feng.root.hwx.site}
-export realm=${realm:-FENG.COM}
-export domain=${domain:-feng.com}
-
 # Download KRB libs
 yum install -y krb5-workstation krb5-libs
 

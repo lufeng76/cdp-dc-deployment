@@ -99,9 +99,9 @@ Step2.  点击保存修改并重启Hue服务
 
 - Oozie = Ok, no SPNEGO {"errorMessage":"Unauthorized access","httpStatusCode":401}
 
-- Ranger = Ok, no KRB
+- Ranger = Ok, no SPNEGO
 
-- Spark = Ok, no KRB
+- Spark = Ok, no SPNEGO
 
 - YARN RM & JobHistory = need SPNEGO (Error: HTTP ERROR 401 Unauthorized access )
 
@@ -115,7 +115,7 @@ Step2.  点击保存修改并重启Hue服务
 
 一旦在本地计算机上安装了Kerberos，就能使用以下方法进行身份验证：
 
-     kinit -kt tools/etl_user.keytab etl_user@FENG.COM
+     kinit -kt tools/etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
      
 === 最后，对浏览器设置SPNEGO认证
 
@@ -129,7 +129,7 @@ Step2.  重启Firfox
 
 == 常见问题
 
-Hue Ticket Renewer无法正常renew？
+- Hue Ticket Renewer无法正常renew？
 
 "klist -fe /var/run/hue/hue_krb5_ccache"的结果表明它们确实没有renew。
 

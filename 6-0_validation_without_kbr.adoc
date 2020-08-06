@@ -5,9 +5,14 @@
 /data目录下存放了多个CSV文件（2018年法国交通事故统计表）。
 
 [source,bash]
+
+# 以root用户登录节点feng-1
+
 sudo -u hdfs hdfs dfs -mkdir /data
 sudo -u hdfs hdfs dfs -chmod 777 /data
-sudo -u hdfs hdfs dfs -chown root:hadoop /data
+sudo -u hdfs hdfs dfs -chown etl_user:hadoop /data
+
+su - etl_user
 hdfs dfs -mkdir /data/caracteristiques
 hdfs dfs -mkdir /data/lieux
 hdfs dfs -mkdir /data/usagers
@@ -21,7 +26,10 @@ hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
 
 [source,bash]
 ----
-beeline -n root -p xxxx <<EOF
+
+# 以root用户登录节点feng-1
+
+beeline -n etl_user -p xxxx <<EOF
 
 CREATE DATABASE accidents;
 USE accidents;
@@ -90,6 +98,8 @@ EOF
 [source,bash]
 ----
 
+# 以root用户登录节点feng-1
+
 impala-shell -i feng-3 << EOF
 
 CREATE DATABASE impala_kudu;
@@ -112,6 +122,8 @@ EOF
 [source,bash]
 ----
 
+# 以root用户登录节点feng-1
+
 export KAFKA_ZNODE=/kafka
 export KAFKA_TOPIC=mytopic
 export KAFKA_BROKERS=ccycloud-3.feng.root.hwx.site:9092,ccycloud-4.feng.root.hwx.site:9092,ccycloud-5.feng.root.hwx.site:9092
@@ -125,26 +137,6 @@ kafka-topics --create --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE} --topic ${KA
 
 kafka-topics --describe --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE} --topic ${KAFKA_TOPIC}
 
-echo "{
- \"partitions\":
-  [
-    {\"topic\": \"${KAFKA_TOPIC}\", \"partition\": 0}
-  ]
-}" > partitions.json
-
-kafka-preferred-replica-election --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE} --path-to-json-file partitions.json
-
-echo "
- \"topics\":
-  [
-    {\"topic\": \"${KAFKA_TOPIC}\"}
-  ],
- \"version\":1
-}
-}" > topics.json
-
-kafka-reassign-partitions --broker-list 1546333077 --generate --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE} --topics-to-move-json-file topics.json
-
 while true; do echo "$(( RANDOM % 10 )),$(echo ${RANDOM} | tr '[0-9]' '[a-zA-Z]')"; sleep 5; done | kafka-console-producer --broker-list ${KAFKA_BROKERS} --topic ${KAFKA_TOPIC}
 
 kafka-console-consumer --bootstrap-server ${KAFKA_BOOTSTRAP_BROKER} --topic ${KAFKA_TOPIC} --from-beginning --group ${KAFKA_CONSUMER_GROUP}
@@ -155,48 +147,18 @@ kafka-consumer-groups  --describe --group ${KAFKA_CONSUMER_GROUP} --bootstrap-se
 
 == Hbase
 
-Let's insert millions of rows to HBase using Java API:
-
 [source,bash]
 ----
-Configuration config = HBaseConfiguration.create();
-config.set("hbase.zookeeper.quorum",PropertiesLoader.properties.getProperty("hbase.zookeeper.quorum"));
-config.set("hbase.zookeeper.property.clientPort", PropertiesLoader.properties.getProperty("hbase.zookeeper.property.clientPort"));
-config.set("zookeeper.znode.parent", PropertiesLoader.properties.getProperty("zookeeper.znode.parent"));
-config.set("hbase.security.authentication", PropertiesLoader.properties.getProperty("hbase.security.authentication"));
-try {
-    connection = ConnectionFactory.createConnection(config);
-    if(!connection.getAdmin().tableExists(TableName.valueOf(PropertiesLoader.properties.getProperty("hbase.table.name")))) {
-        connection.getAdmin().createTable(TableDescriptorBuilder.newBuilder(
-                TableName.valueOf(PropertiesLoader.properties.getProperty("hbase.table.name"))
-        )
-                .setColumnFamily(ColumnFamilyDescriptorBuilder.newBuilder(Bytes.toBytes("p")).build())
-                .setColumnFamily(ColumnFamilyDescriptorBuilder.newBuilder(Bytes.toBytes("r")).build())
-                .build());
-    }
-    table = connection.getTable(TableName.valueOf(PropertiesLoader.properties.getProperty("hbase.table.name")));
-} catch (IOException e) {
-    logger.error("Could not initiate HBase connection due to error: ", e);
-    System.exit(1);
-}
 
-Put p = new Put(Bytes.toBytes(name+birthdate+country));
+# 以root用户登录节点feng-1
 
-p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("name"), Bytes.toBytes(name));
-p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("birthday"), Bytes.toBytes(birthdate.toString()));
-p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("male"), Bytes.toBytes(male));
-p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("country"), Bytes.toBytes(country));
-p.addColumn(Bytes.toBytes("p"), Bytes.toBytes("zipcode"), Bytes.toBytes(zipCode));
-p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("score"), Bytes.toBytes(score));
-p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("relative_score"), Bytes.toBytes(relativeScore));
-p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("password"), Bytes.toBytes(password));
-p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("password_hash"), passwordHash);
-p.addColumn(Bytes.toBytes("r"), Bytes.toBytes("last_connection"), Bytes.toBytes(lastConnection));
-
-table.put(p)
-
-table.close();
-connection.close();
+sudo -u hbase hbase ltt -tn test -write 1:10:10 -num_keys 100
+sudo -u hbase hbase shell << EOF
+list
+describe 'test'
+count 'test'
+list_regions 'test'
+EOF
 
 ----
 

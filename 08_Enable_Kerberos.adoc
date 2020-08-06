@@ -1,3 +1,13 @@
+= 
+
+: +
+- kerberos +
+- Ranger +
+- TLS/SSL + HDFS Transparent Encryption
+
+image::pictures/SEC001.png[license]
+
+
 = Kerberos
 
 == Install a MIT KDC

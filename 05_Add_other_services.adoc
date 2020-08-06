@@ -1,3 +1,58 @@
+= CDF 
+
+To install Cloudera Data Flow and its components, adding repositories is just needed and then download parcels and install them.
+
+== Repo URL
+
+Go to Parcels > Parcel repositories & Network Settings, then add license key for HTTP authentication and these urls:
+
+https://archive.cloudera.com/p/csa/1.1.0.0/parcels/ +
+https://archive.cloudera.com/CFM/parcels/1.0.1.0 + 
+
+After adding repositories, download parcels, distribute them and activate them, it is necessary to restart CM
+
+[source,bash]
+service cloudera-scm-server restart
+
+
+== CSA
+
+Cloudera Streaming Analytics
+
+link:https://docs.cloudera.com/csa/1.1.0/overview/topics/csa-overview.html[https://docs.cloudera.com/csa/1.1.0/overview/topics/csa-overview.html]
+
+
+== CFM 
+
+Cloudera Flow Management
+
+link:https://docs.cloudera.com/cfm/1.0.1/installation/topics/cfm-add-parcel-url.html[https://docs.cloudera.com/cfm/1.0.1/installation/topics/cfm-add-parcel-url.html]
+
+
+== CSP
+
+Cloudera Stream Processing
+
+link:https://docs.cloudera.com/csp/2.0.1/csp-overview/topics/csp-architecture.html[https://docs.cloudera.com/csp/2.0.1/csp-overview/topics/csp-architecture.html]
+
+Note that CSP does not need any additional repositories.
+
+
+= SMM
+
+Installation of SMM on CDP-DC 7.1.1
+
+On Postgres 9.6, create database:
+
+[source,sql]
+CREATE ROLE smm LOGIN PASSWORD 'admin';
+CREATE DATABASE smm OWNER smm ENCODING 'UTF8' TEMPLATE template0;
+
+Enable Kerberos + 
+Enable TLS/SSL in configuration by setting keystore, truststore 
+
+Then a complete restart made it work.
+
 = DAS
 
 

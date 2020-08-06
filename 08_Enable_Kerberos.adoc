@@ -1,9 +1,10 @@
 = 安全管理三步曲
 
-[source,bash]
-1.身份认证：Kerberos
-2.权限管控：Ranger
-3.加密：TLS/SSL + HDFS Transparent Encryption
+- 身份认证：Kerberos
+
+- 权限管控：Ranger
+
+- 加密：TLS/SSL + HDFS Transparent Encryption
 
 
 image::pictures/SEC001.png[license]

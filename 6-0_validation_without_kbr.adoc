@@ -108,30 +108,50 @@ EOF
 
 == Kafka
 
-Data from file usagers-2018.csv has been sent to Kafka using project: __[code/horus]code/horus/__.
-
-Below is the main code use to produce to Kafka (Note that messages is a list of String):
 
 [source,bash]
 ----
-Properties props = new Properties();
-props.put("bootstrap.servers", "cdp-test-4:9092,cdp-test-5:9092,cdp-test-6:9092");
-props.put("acks", "all");
-props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-Producer<String, String> producer = new KafkaProducer<>(props);
-messages.forEach(message -> sendOneStringMessageToKafka(message, "usagers_str", producer));
-producer.close();
-private static void sendOneStringMessageToKafka(String message, String topic, Producer<String,String> producer) {
-try {
-    String key = message.substring(0,12);
-    producer.send(new ProducerRecord<String, String>(topic, key, message));
-} catch (Exception e) {
-    logger.error("Error while producing message: " + message, e);
-}
-}
-----
 
+export KAFKA_ZNODE=/kafka
+export KAFKA_TOPIC=mytopic
+export KAFKA_BROKERS=ccycloud-3.feng.root.hwx.site:9092,ccycloud-4.feng.root.hwx.site:9092,ccycloud-5.feng.root.hwx.site:9092
+export KAFKA_BOOTSTRAP_BROKER=$(echo ${KAFKA_BROKERS} | awk -F',' '{print $1}')
+export KAFKA_CONSUMER_GROUP=myconsumergroup
+export ZOOKEEPER_QUORUM=ccycloud-1.feng.root.hwx.site:2181,ccycloud-2.feng.root.hwx.site:2181,ccycloud-3.feng.root.hwx.site:2181
+
+kafka-topics --list --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE}
+
+kafka-topics --create --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE} --topic ${KAFKA_TOPIC} --replication-factor 1 --partitions 1
+
+kafka-topics --describe --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE} --topic ${KAFKA_TOPIC}
+
+echo "{
+ \"partitions\":
+  [
+    {\"topic\": \"${KAFKA_TOPIC}\", \"partition\": 0}
+  ]
+}" > partitions.json
+
+kafka-preferred-replica-election --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE} --path-to-json-file partitions.json
+
+echo "
+ \"topics\":
+  [
+    {\"topic\": \"${KAFKA_TOPIC}\"}
+  ],
+ \"version\":1
+}
+}" > topics.json
+
+kafka-reassign-partitions --broker-list 1546333077 --generate --zookeeper ${ZOOKEEPER_QUORUM}${KAFKA_ZNODE} --topics-to-move-json-file topics.json
+
+while true; do echo "$(( RANDOM % 10 )),$(echo ${RANDOM} | tr '[0-9]' '[a-zA-Z]')"; sleep 5; done | kafka-console-producer --broker-list ${KAFKA_BROKERS} --topic ${KAFKA_TOPIC}
+
+kafka-console-consumer --bootstrap-server ${KAFKA_BOOTSTRAP_BROKER} --topic ${KAFKA_TOPIC} --from-beginning --group ${KAFKA_CONSUMER_GROUP}
+
+kafka-consumer-groups  --describe --group ${KAFKA_CONSUMER_GROUP} --bootstrap-server ${KAFKA_BOOTSTRAP_BROKER} 
+
+----
 
 == Hbase
 

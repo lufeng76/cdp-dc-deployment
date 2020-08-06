@@ -67,83 +67,72 @@ image::pictures/SEC012.jpg[Successful]
 
 https://docs.cloudera.com/cloudera-manager/7.1.1/security-kerberos-authentication/topics/cm-security-kerberos-enabling-intro.html[参考链接] 
 
-=== YARN state store must be formatted
+== Hue激活SPNEGO
 
-As YARN was already in HA, its zookeeper znode must be erased and rebuild later, with kerberos enabled.
+Step1.  进入Hue服务页面，进入"配置"标签页面，搜索"backend"，选中"desktop.auth.backend.SpnegoDjangoBackend"
 
-- Stop of YARN services
+image::pictures/SEC013.jpg[SPNEGO]
 
-- "Format State Store" (see image below)
-
-image::pictures/formatStateStore.png[Format YARN State Store]
+Step2.  点击保存修改并重启Hue服务
 
 
-=== Go through wizard
+== 通过客户端访问UI
 
-Administration > Security > Enable Kerberos
+启用Kerberos后，几乎所有UI都被kerberized，这意味着SPNEGO被激活，外部应用只能拥有的有效keytab才能访问UI。
 
-image::pictures/KDCInfo.png[KDC Information given]
+=== 首先，检查UI是否需要配置SPNEGO
 
-image::pictures/ManageKRB5_conf.png[Setup CM to manage Krb5.conf]
+- ATLAS = OK, no SPNEGO
 
-image::pictures/kerberosAccountCredentials.png[Give kerberos manager account credentials]
+- HBase = Ok, no SPNEGO
 
+- Namenode UI = need SPNEGO (Error: HTTP ERROR 401 Unauthorized access )
 
-Finally, cluster must start properly with kerberos enabled:
+- HiveServer2 = Ok, no SPNEGO
 
-image::pictures/clusterWellKerberized.png[Cluster well kerberized]
+- HUE = need SPNEGO (401 Unauthorized)
 
-== Troubleshots
+- Impala = need SPNEGO (Error: Must authenticate with SPNEGO.)
 
-Hue Ticket Renewer were not working stating that tickets could not be renewed.
+- Kudu master & Tablet server = need SPNEGO (Error: Must authenticate with SPNEGO.)
 
-A "klist -fe /var/run/hue/hue_krb5_ccache" showed that they were indeed not renewable.
+- Oozie = Ok, no SPNEGO {"errorMessage":"Unauthorized access","httpStatusCode":401}
 
-However a getprinc showed that they have a renawable life time of 7 days.
-
-Solution was to re-setup a KDC for CM (same KDC) but specifying a renewable lifetime of 0 days, to force CM to use the one provided by kdc.conf.
-
-
-== Setup local to acces UIs
-
-Once Kerberos has been enabled, almost all UIs are kerberized, meaning SPNEGO is activated, and they could only be accessed by process having a valid keytab. 
-
-=== Getting a valid keytab
-
-__krb5.conf__ & __frisch.keytab__ have been downloaded from the cluster and have been put into directory __tools__.
-
-Moreover __krb5.conf__ has been put to __/etc/__ directory.
-
-Once Kerberos installed on the local machine, it is possible to do authenticate using:
-
-      kinit -kt tools/frisch.keytab frisch@FRISCH.COM
-
-=== Firefox setting
-
-To enable Firefox to use kerberos ticket when connecting to the cluster, these properties have been added to firefox:
-
-image::pictures/FirefoxKRBSettings.png[Firefox setting for SPNEGO]
-
-Note that Firefox was shutdown and then restarted after getting the kerberos ticket.
-
-=== Check on UIs
-
-List of UIs to check:
-- ATLAS = Ok, no KRB
-- HBase = Ok, no KRB
-- Namenode UI = Ok (N.B: logs are inaccessible with 403: http://cdp-test-2.gce.cloudera.com:9870/logs/ => To check on more details )
-- HS2 = Ok (N.B: logs are inaccessible with 404: http://cdp-test-3.gce.cloudera.com:10002/logs/ => Apparently they are missing)
-- HUE = Ok but is not kerberized (and it could be)
-- Impala = Ok, no KRB
-- Kudu master & Tablet server = Ok, no KRB
-- Oozie = Not Ok due to another error but ok after troubleshots (see Troubleshots section)
 - Ranger = Ok, no KRB
+
 - Spark = Ok, no KRB
-- YARN RM & JobHistory = Ok
 
-=== Hue SPNEGO activation
+- YARN RM & JobHistory = need SPNEGO (Error: HTTP ERROR 401 Unauthorized access )
 
-Go to HUE service > Configuration > Security, +
-Change Authentication backend +
-Restart Hue +
-Login to Hue webserver using kerberos ticket (as it was already configured with web browser and obtained, nothing is needed) 
+- DAS = need SPNEGO (Error: HTTP ERROR 401 Unauthorized access )
+
+- Solr = need SPNEGO (Error: HTTP ERROR 401 WWW-Authenticate: Negotiate )
+
+=== 然后，获取有效的keytab
+
+从集群中下载__krb5.conf__和__etl_user.keytab__。
+
+一旦在本地计算机上安装了Kerberos，就能使用以下方法进行身份验证：
+
+     kinit -kt tools/etl_user.keytab etl_user@FENG.COM
+     
+=== 最后，对浏览器设置SPNEGO认证
+
+以Firefox为例：
+
+Step1.  切入about:config页面，在搜索栏输入network.negotiate-auth.trusted-uris，然后填写主机通用后缀.feng.root.hwx.site 
+
+image::pictures/SEC014.jpg[Firefox setting for SPNEGO]
+
+Step2.  重启Firfox
+
+== 常见问题
+
+Hue Ticket Renewer无法正常renew？
+
+"klist -fe /var/run/hue/hue_krb5_ccache"的结果表明它们确实没有renew。
+
+但是，getprinc显示有7天的renawable life time。
+
+解决方案：是为CM重新设置KDC（使用相同的KDC），但将renewable lifetime 指定为0天，以强制CM使用kdc.conf提供的服务。
+

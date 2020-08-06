@@ -1,6 +1,4 @@
-= 
-
-: +
+= 安全管理三步曲 
 - kerberos +
 - Ranger +
 - TLS/SSL + HDFS Transparent Encryption
@@ -10,146 +8,61 @@ image::pictures/SEC001.png[license]
 
 = Kerberos
 
-== Install a MIT KDC
-
-On all nodes before:
-
-[source,bash]
-yum install -y krb5-workstation krb5-libs
-
-
-On node 1, a MIT KDC will be installed using following procedure:
+前提是安装好了krb5-server，详见install_full_script.sh部分。
+然后将KDC server的krb5.conf同步到其他主机。
 
 [source,bash]
-yum -y install krb5-server krb5-libs krb5-workstation
+scp tools/krb5.conf root@feng-2:/etc/krb5.conf
+scp tools/krb5.conf root@feng-3:/etc/krb5.conf
+scp tools/krb5.conf root@feng-4:/etc/krb5.conf
+scp tools/krb5.conf root@feng-5:/etc/krb5.conf
 
-File __/var/kerberos/krb5kdc/kadm5.acl__ :
-[source,bash]
-*/admin@FRISCH.COM	*
+== 通过CM安全向导启用Kerberos
+Step1.  进入Cloudera Manager的“管理”-> “安全”界面
 
+image::pictures/SEC002.jpg[Security Entry]
 
-File __/var/kerberos/krb5kdc/kdc.conf__ :
-[source,bash]
-----
-defaul_realm=FRISCH.COM
+Step2.  进入如下界面，选择“启用Kerberos”
 
-[kdcdefaults]
- kdc_ports = 88
- kdc_tcp_ports = 88
+image::pictures/SEC003.jpg[Kerberos Page]
 
-[realms]
- FRISCH.COM = { 
-  acl_file = /var/kerberos/krb5kdc/kadm5.acl
-  dict_file = /usr/share/dict/words
-  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
-  max_life = 24h 0m 0s
-  max_renewable_life = 7d 0h 0m 0s
-  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
- }
-----
+Step3.  选择KDC服务类型，已经确保KDC服务是否已启动且准备好
 
+image::pictures/SEC004.jpg[MIT KDC]
 
-File __/etc/krb5.conf__ :
+Step4.  点击“继续”，配置相关的KDC信息，包括KDC服务器、KDC Realm、加密类型以及待创建的Service Principal的更新生命期等
 
-[source,bash]
-----
-# Configuration snippets may be placed in this directory as well
-includedir /etc/krb5.conf.d/
+image::pictures/SEC005.jpg[Configruation]
 
-[logging]
- default = FILE:/var/log/krb5libs.log
- kdc = FILE:/var/log/krb5kdc.log
- admin_server = FILE:/var/log/kadmind.log
+Step5.  不建议让Cloudera Manager来管理krb5.conf，点击继续
 
-[libdefaults]
- dns_lookup_realm = false
- ticket_lifetime = 24h
- renew_lifetime = 7d
- forwardable = true
- default_realm = FRISCH.COM
- default_tkt_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
- default_tgs_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
- permitted_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
+image::pictures/SEC006.jpg[Skip CM]
 
-[realms]
-FRISCH.COM = {
-  kdc = cdp-test-1.gce.cloudera.com:88
-  admin_server = cdp-test-1.gce.cloudera.com:749
-  default_domain = frisch.com
-}
+Step6.  输入Cloudera Manager的Kerbers管理员账号，一定得和之前创建的账号一致，点击“继续”
 
-[domain_realm]
-  .frisch.com = FRISCH.COM
-  frisch.com = FRISCH.COM
-----
+image::pictures/SEC007.jpg[Cloudera-scm]
 
-Then create a database setting the password to nothing:
+Step7.  点击“继续”，导出KDC Account Manager凭据
 
-[source,bash]
-kdb5_util create -r FRISCH.COM -s
-Loading random data
-Initializing database '/var/kerberos/krb5kdc/principal' for realm 'FRISCH.COM',
-master key name 'K/M@FRISCH.COM'
-You will be prompted for the database Master Password.
-It is important that you NOT FORGET this password.
-Enter KDC database master key: 
-Re-enter KDC database master key to verify: 
+image::pictures/SEC008.jpg[KDC Account Manager]
 
+Step8.  确认Kerberos信息以及HDFS的端口号的变化（默认即可）
 
-Then start services:
+image::pictures/SEC009.jpg[KDC Port]
 
-[source,bash]
-systemctl start krb5kdc.service
-systemctl start kadmin.service
-systemctl enable krb5kdc.service
-systemctl enable kadmin.service
+Step9.  点击“继续”，运行启用Kerberos命令
 
+image::pictures/SEC010.jpg[First Run]
 
-Create a principal named 'admin' with password 'admin':
+Step11.  点击“完成”，至此已成功启用Kerberos。
 
-[source,bash]
-kadmin.local
-Authenticating as principal root/admin@FRISCH.COM with password.
-kadmin.local:  addprinc admin/admin
-WARNING: no policy specified for admin/admin@FRISCH.COM; defaulting to no policy
-Enter password for principal "admin/admin@FRISCH.COM": 
-Re-enter password for principal "admin/admin@FRISCH.COM": 
-Principal "admin/admin@FRISCH.COM" created.
+image::pictures/SEC011.jpg[Final Step]
 
+Step12.  查看CM上显示集群已启用Kerberos
 
-Kinit with it to verify, once krb5-libs have been installed to all nodes and /etc/krb5.conf copied to all nodes:
+image::pictures/SEC012.jpg[Successful]
 
-[source,bash]
-----
-[root@cdp-test-1 ~]# kinit admin/admin
-Password for admin/admin@FRISCH.COM: 
-[root@cdp-test-1 ~]# klist
-Ticket cache: FILE:/tmp/krb5cc_0
-Default principal: admin/admin@FRISCH.COM
-
-Valid starting     Expires            Service principal
-03/23/20 11:01:27  03/24/20 11:01:27  krbtgt/FRISCH.COM@FRISCH.COM
-
-[root@cdp-test-2 ~]# kinit admin/admin
-Password for admin/admin@FRISCH.COM: 
-[root@cdp-test-2 ~]# klist
-Ticket cache: FILE:/tmp/krb5cc_0
-Default principal: admin/admin@FRISCH.COM
-
-Valid starting     Expires            Service principal
-03/23/20 11:05:57  03/24/20 11:05:57  krbtgt/FRISCH.COM@FRISCH.COM
-[root@cdp-test-2 ~]# 
-----
-
-If you want to create a user with a keytab file, do this:
-[source,bash]
-kadmin.local
-ktadd -k /home/frisch/frisch.keytab frisch/admin@FRISCH.COM
-
-
-== Setup Kerberos in the cluster using wizard
-
-Procedure followed is this one: https://docs.cloudera.com/cloudera-manager/7.0.3/security-kerberos-authentication/topics/cm-security-kerberos-enabling-intro.html 
+https://docs.cloudera.com/cloudera-manager/7.1.1/security-kerberos-authentication/topics/cm-security-kerberos-enabling-intro.html[参考链接] 
 
 === YARN state store must be formatted
 

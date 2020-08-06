@@ -1,6 +1,10 @@
-export host=ccycloud-1.feng.root.hwx.site
-export realm=FENG.COM
-export domain=feng.com
+export host=${host:ccycloud-1.feng.root.hwx.site}
+export realm=${realm:-FENG.COM}
+export domain=${domain:-feng.com}
+
+# Download KRB libs
+yum install -y krb5-workstation krb5-libs
+
 sudo cat - > /etc/krb5.conf << EOF
 [logging]
  default = FILE:/var/log/krb5libs.log

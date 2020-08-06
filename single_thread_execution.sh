@@ -11,7 +11,7 @@ echo "Start of script"
 # Modify these below settings according to your cluster
 export NODE_NAME='feng-'
 export NODE_USER='root'
-export NODE_NUMBERS_START=1
+export NODE_NUMBERS_START=2
 export NODE_NUMBERS_END=5
 export DELETE_RESULTS=false
 export ARCHIVE_RESULTS=false

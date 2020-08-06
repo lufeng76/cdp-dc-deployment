@@ -1,0 +1,8 @@
+bash: line 4: $'\r': command not found
+Failed to set locale, defaulting to C
+Loaded plugins: ovl, priorities
+Repository cloudera-manager is listed more than once in the configuration
+https://download.postgresql.org/pub/repos/yum/common/redhat/rhel-7-x86_64/repodata/repomd.xml: [Errno 12] Timeout on https://download.postgresql.org/pub/repos/yum/common/redhat/rhel-7-x86_64/repodata/repomd.xml: (28, 'Operation timed out after 30000 milliseconds with 0 out of 0 bytes received')
+Trying other mirror.
+https://download.postgresql.org/pub/repos/yum/common/redhat/rhel-7-x86_64/repodata/repomd.xml: [Errno 12] Timeout on https://download.postgresql.org/pub/repos/yum/common/redhat/rhel-7-x86_64/repodata/repomd.xml: (28, 'Operation timed out after 30001 milliseconds with 0 out of 0 bytes received')
+Trying other mirror.

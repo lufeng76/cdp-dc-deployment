@@ -1,0 +1,3 @@
+bash: line 4: $'\r': command not found
+bash: line 5: $'\r': command not found
+bash: line 32: warning: here-document at line 6 delimited by end-of-file (wanted `EOF')

@@ -1,20 +1,21 @@
 ##################################################################################
-# Part1: System checks
+# Part01: System checks
+# Note: The following script run on ALL NODES !!!
 ##################################################################################
 
-##=============================
-## Part1: On ALL nodes
-##=============================
-
+set -e
 # Setup cloudera manager repo
-echo "[cloudera-manager]
+cat - > /etc/yum.repos.d/cloudera-manager-7_1_1.repo << EOF
+[cloudera-manager]
 name=Cloudera Manager 7.1.1
 baseurl=https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/
 gpgkey=https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
 gpgcheck=1
 enabled=1
 autorefresh=0
-type=rpm-md" >> /etc/yum.repos.d/cloudera-manager-7_1_1.repo
+type=rpm-md
+EOF
+
 rpm --import https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
 
 # System Pre-Requisites
@@ -37,13 +38,11 @@ sysctl vm.swappiness=1
 
 
 ##################################################################################
-# Part2: Pre-Installation
+# Part02: Pre-Installation
+# Note: The following script run on ALL NODES !!!
 ##################################################################################
 
-##=============================
-## Part2: On ALL nodes
-##=============================
-
+set -e
 # Install Java & PostgreSQL connector
 yum -y install java-1.8.0-openjdk-devel
 yum -y install postgresql-jdbc*
@@ -55,28 +54,34 @@ yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_6
 yum -y install https://yum.postgresql.org/10/redhat/rhel-7-x86_64/python3-psycopg2-2.8.5-1.rhel7.x86_64.rpm 
 yum -y install postgresql10
 
+##################################################################################
+# Part02: Pre-Installation
+# Note: The following script only run on CM NODE !!!
+##################################################################################
 
-##=============================
-## Part2: Only on CM node 
-##=============================
-
+set -e
 # Install PostgreSQL 10
 yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 yum -y install postgresql10-server postgresql10
 /usr/pgsql-10/bin/postgresql-10-setup initdb
-echo "listen_addresses = '*'
-max_connections = 1000" >> /var/lib/pgsql/10/data/postgresql.conf
-echo "
+
+cat - > /var/lib/pgsql/10/data/postgresql.conf << EOF
+listen_addresses = '*'
+max_connections = 1000
+EOF
+
+cat - > /var/lib/pgsql/10/data/pg_hba.conf << EOF
 local   all             posgtres                                trust
 host    all             all             0.0.0.0/0               password
 local   all             all                                     md5
-" >> /var/lib/pgsql/10/data/pg_hba.conf
+EOF
+
 systemctl enable postgresql-10
 systemctl start postgresql-10
 yum -y install pip
 pip install psycopg2==2.7.5 --ignore-installed
 
-sudo -u postgres psql <<EOF
+sudo -u postgres psql << EOF
     CREATE ROLE scm LOGIN PASSWORD 'admin';
     CREATE DATABASE scm OWNER scm ENCODING 'UTF8' TEMPLATE template0;
     CREATE ROLE amon LOGIN PASSWORD 'admin';
@@ -98,13 +103,11 @@ sudo -u postgres psql <<EOF
 EOF
 
 ##################################################################################
-# Part3: CM installation
+# Part03: CM installation
+# Note: The following script only run on CM NODE !!!
 ##################################################################################
 
-##=============================
-## Part3: Only on CM node 
-##=============================
-
+set -e
 # Install CM & start it
 yum -y install cloudera-manager-agent cloudera-manager-daemons
 yum -y install cloudera-manager-server
@@ -120,20 +123,27 @@ while [ `curl -s -X GET -u "admin:admin"  http://localhost:7180/api/version` -z 
 done
 echo "-- Now CM Server is started --"
 
+##################################################################################
+# Part04: CDP_Installation
+# Note: No scripts, all done on CM homepage!
+##################################################################################
 
 ##################################################################################
-# Part5: Enable_HA
+# Part05: Add_other_services
+# Note: No scripts, all done on CM homepage!
 ##################################################################################
 
-##=============================
-## Part5: Only on CM node 
-##=============================
+##################################################################################
+# Part06: Enable_HA
+# Note: The following script only run on CM NODE !!!
+##################################################################################
 
+set -e
 # Install and configure HA proxy required by HUE, OOZIE & IMPALA
 yum -y install haproxy
 cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
 
-echo "
+cat - > /etc/haproxy/haproxy.cfg << EOF
 global    
     log         127.0.0.1 local2
     chroot      /var/lib/haproxy
@@ -215,86 +225,133 @@ listen hivejdbc
     option tcplog
     server hive1 ccycloud-1.feng.root.hwx.site:10000 check
     server hive2 ccycloud-2.feng.root.hwx.site:10000 check    
-    " > /etc/haproxy/haproxy.cfg
+EOF
 
 systemctl enable haproxy
 systemctl start haproxy
 
+##################################################################################
+# Part07: Cluster_validation
+# Note: Optinal
+##################################################################################
 
-# Download KRB libs
-yum install -y krb5-workstation krb5-libs
+
+##################################################################################
+# Part08: Enable_Kerberos
+# Note: The following script only run on CM NODE !!!
+##################################################################################
 
 # Define global variables here
-export USER=etl_user
-export REALM=FENG.COM
-export HOSTNAME=feng-
-export USER=etl_user
-export REALM=FENG.COM
+export host=${host:ccycloud-1.feng.root.hwx.site}
+export realm=${realm:-FENG.COM}
+export domain=${domain:-feng.com}
+export kdcpassword=${kdcpassword:-Admin1234}
+
+set -e
 
 # Install MIT-KDC
-yum -y install krb5-server krb5-libs
-echo "*/admin@${REALM}	 * " > /var/kerberos/krb5kdc/kadm5.acl
-echo "
-defaul_realm=${REALM}
+sudo yum -y install krb5-server krb5-workstation krb5-libs
 
-[kdcdefaults]
- kdc_ports = 88
- kdc_tcp_ports = 88
-
-[realms]
- ${REALM} = { 
-  acl_file = /var/kerberos/krb5kdc/kadm5.acl
-  dict_file = /usr/share/dict/words
-  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
-  max_life = 24h 0m 0s
-  max_renewable_life = 7d 0h 0m 0s
-  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
- }" > /var/kerberos/krb5kdc/kdc.conf
-
- echo "
- # Configuration snippets may be placed in this directory as well
-includedir /etc/krb5.conf.d/
-
+sudo cat - > /etc/krb5.conf << EOF
 [logging]
  default = FILE:/var/log/krb5libs.log
  kdc = FILE:/var/log/krb5kdc.log
  admin_server = FILE:/var/log/kadmind.log
 
 [libdefaults]
+ default_realm = $realm
  dns_lookup_realm = false
+ dns_lookup_kdc = false
  ticket_lifetime = 24h
  renew_lifetime = 7d
  forwardable = true
- default_realm = ${REALM}
- default_tkt_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
- default_tgs_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
- permitted_enctypes = des-cbc-md5 des-cbc-crc des3-cbc-sha1
+ default_tgs_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96 arcfour-hmac-md5
+ default_tkt_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96 arcfour-hmac-md5
+ permitted_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96 arcfour-hmac-md5
 
 [realms]
-${REALM} = {
-  kdc = $(hostname -f):88
-  admin_server = $(hostname -f):749
-  default_domain = ${REALM,,}
-}
+ $realm = {
+  kdc = $host
+  admin_server = $host
+ }
 
 [domain_realm]
-  ${REALM,,} = ${REALM}
-  .${REALM,,} = ${REALM}
-" > /etc/krb5.conf
+ .$domain = $realm
+ $domain = $realm
+EOF
 
-###### ATTENTION: This requires interaction from the user
-kdb5_util create -r ${REALM} -s
+mv /var/kerberos/krb5kdc/kdc.conf{,.original}
+sudo cat - >  /var/kerberos/krb5kdc/kdc.conf << EOF
+[kdcdefaults]
+ kdc_ports = 88
+ kdc_tcp_ports = 88
+[realms]
+ ${realm} = {
+ acl_file = /var/kerberos/krb5kdc/kadm5.acl
+ dict_file = /usr/share/dict/words
+ admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
+ supported_enctypes = aes256-cts-hmac-sha1-96:normal aes128-cts-hmac-sha1-96:normal arcfour-hmac-md5:normal
+ max_renewable_life = 7d
+}
+EOF
 
-systemctl start krb5kdc.service
-systemctl start kadmin.service
-systemctl enable krb5kdc.service
-systemctl enable kadmin.service
+echo $kdcpassword > passwd
+echo $kdcpassword >> passwd
+sudo kdb5_util create -s < passwd
 
-###### ATTENTION: This requires interaction from the user
-kadmin.local
-addprinc admin/admin
-addprinc ${USER}/admin
-ktadd -k /home/${USER}/${USER}.keytab ${USER}/admin@${REALM}
+sudo systemctl start krb5kdc
+sudo systemctl start kadmin
+sudo systemctl enable krb5kdc
+sudo systemctl enable kadmin
+
+sudo kadmin.local -q "addprinc admin/admin" < passwd
+sudo kadmin.local -q "addprinc cloudera-scm/admin" < passwd
+rm -f passwd
+
+sudo cat - > /var/kerberos/krb5kdc/kadm5.acl << EOF
+*/admin@$realm  *
+EOF
+
+sudo systemctl restart krb5kdc
+sudo systemctl restart kadmin
+
+echo "Waiting to KDC to restart..."
+sleep 5
+
+sudo systemctl status krb5kdc
+sudo systemctl status kadmin
+
+kadmin.local -q "modprinc -maxrenewlife 7day krbtgt/${realm}@${realm}"
+
+echo "For testing KDC run below:"
+kadmin -p admin/admin -w $kdcpassword -r $realm -q "get_principal admin/admin"
+
+kadmin -p cloudera-scm/admin -w $kdcpassword -r $realm -q "get_principal cloudera-scm/admin"
+
+echo "KDC setup complete"
+
+##################################################################################
+# Part08: Enable_Kerberos
+# Note: The following script run on OHTER NODES（except CM node） !!!
+##################################################################################
+# Define global variables here
+export host=${host:ccycloud-1.feng.root.hwx.site}
+export realm=${realm:-FENG.COM}
+export domain=${domain:-feng.com}
+
+# Download KRB libs
+yum install -y krb5-workstation krb5-libs
+
+##################################################################################
+# Part09: Ranger_Access_Policies
+# Note: No scripts, all done on CM homepage!
+##################################################################################
+
+
+##################################################################################
+# Part10: Encryption-CM
+# Note: The following script only run on CM NODE !!!
+##################################################################################
 
 # Generate Keys and Certificates Signing Requests  
 # TODO : Make auto-signed certificates 

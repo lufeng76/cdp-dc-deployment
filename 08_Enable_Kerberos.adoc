@@ -1,7 +1,8 @@
-= 安全管理三步曲 
-- kerberos +
-- Ranger +
-- TLS/SSL + HDFS Transparent Encryption
+= 安全管理三步曲
+
+1.身份认证：kerberos
+2.权限管控：Ranger
+3.加密：TLS/SSL + HDFS Transparent Encryption
 
 image::pictures/SEC001.png[license]
 

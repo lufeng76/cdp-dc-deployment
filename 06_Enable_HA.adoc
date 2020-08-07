@@ -2,10 +2,12 @@
 
 支持HA: 
 
-- HDFS：2个Namenode实例 + 3个Journal node进行editlog同步，属于Active-Standby模型，支持自动切换
-           
-- Zookeeper：3个Zookeeper实例，通过leader选举产生Active节点的模式
-       
+|组件|节点构成|高可用模式|
+|--|--|--|
+| HDFS | 2个Namenode实例 + 3个Journal node进行editlog同步 | 属于Active-Standby模型，支持自动切换 |
+| Zookeeper | 3个Zookeeper实例 | 通过leader选举产生Active节点的模式 |
+
+ 
 - HBase：3个Hmaster实例，通过leader选举产生Active节点的模式
 
 - Kudu：3个Hmaster实例，通过leader选举产生Active节点的模式

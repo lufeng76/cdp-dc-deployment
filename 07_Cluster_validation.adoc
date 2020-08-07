@@ -8,12 +8,12 @@
 
 # 以root用户登录节点feng-1
 
-```sudo -u hdfs hdfs dfs -mkdir /data
+sudo -u hdfs hdfs dfs -mkdir /data
 sudo -u hdfs hdfs dfs -chmod 777 /data
-sudo -u hdfs hdfs dfs -chown etl_user:hadoop /data```
+sudo -u hdfs hdfs dfs -chown etl_user:hadoop /data
 
 
-```su - etl_user
+su - etl_user
 hdfs dfs -mkdir /data/caracteristiques
 hdfs dfs -mkdir /data/lieux
 hdfs dfs -mkdir /data/usagers
@@ -21,7 +21,7 @@ hdfs dfs -mkdir /data/vehicules
 hdfs dfs -put lieux-2018.csv /data/lieux/
 hdfs dfs -put usagers-2018.csv /data/usagers/
 hdfs dfs -put vehicules-2018.csv /data/vehicules/
-hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques```
+hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
 
 
 == Hive

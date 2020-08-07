@@ -5,13 +5,12 @@
 /data目录下存放了多个CSV文件（2018年法国交通事故统计表）。
 
 [source,bash]
-
+----
 # 以root用户登录节点feng-1
 
 sudo -u hdfs hdfs dfs -mkdir /data
 sudo -u hdfs hdfs dfs -chmod 777 /data
 sudo -u hdfs hdfs dfs -chown etl_user:hadoop /data
-
 
 su - etl_user
 hdfs dfs -mkdir /data/caracteristiques
@@ -22,7 +21,7 @@ hdfs dfs -put lieux-2018.csv /data/lieux/
 hdfs dfs -put usagers-2018.csv /data/usagers/
 hdfs dfs -put vehicules-2018.csv /data/vehicules/
 hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
-
+----
 
 == Hive
 

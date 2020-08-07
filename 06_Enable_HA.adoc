@@ -57,8 +57,9 @@
 
 - Impala Catalogd Server和Impala StateStore：                                  
 
->> + 故障影响：无法执行Impala查询语句
->> + 恢复步骤：通过CM删除失败节点，将服务重新添加到新节点上，并且重启Impala与Hue服务
+-- 故障影响：无法执行Impala查询语句
+
+-- 恢复步骤：通过CM删除失败节点，将服务重新添加到新节点上，并且重启Impala与Hue服务
 
 - Zeppelin 
                                                

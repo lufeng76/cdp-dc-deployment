@@ -119,7 +119,7 @@ EOF
 
 == Kafka
 
-
+=== 非安全集群
 [source,bash]
 ----
 
@@ -143,6 +143,34 @@ while true; do echo "$(( RANDOM % 10 )),$(echo ${RANDOM} | tr '[0-9]' '[a-zA-Z]'
 kafka-console-consumer --bootstrap-server ${KAFKA_BOOTSTRAP_BROKER} --topic ${KAFKA_TOPIC} --from-beginning --group ${KAFKA_CONSUMER_GROUP}
 
 kafka-consumer-groups  --describe --group ${KAFKA_CONSUMER_GROUP} --bootstrap-server ${KAFKA_BOOTSTRAP_BROKER} 
+
+----
+
+=== 安全集群
+[source,bash]
+----
+
+# 需要增加以下步骤
+
+kinit -kt /etc/security/keytabs/etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
+
+cat - > /tmp/jaas.conf << EOF 
+KafkaClient {
+com.sun.security.auth.module.Krb5LoginModule required
+useTicketCache=true;
+};
+EOF
+
+cat - > /tmp/client.properties << EOF
+security.protocol=SASL_PLAINTEXT
+sasl.kerberos.service.name=kafka
+EOF
+
+export KAFKA_OPTS="-Djava.security.auth.login.config=/tmp/jaas.conf"
+
+while true; do echo "$(( RANDOM % 10 )),$(echo ${RANDOM} | tr '[0-9]' '[a-zA-Z]')"; sleep 5; done | kafka-console-producer --producer.config /tmp/client.properties --broker-list ${KAFKA_BROKERS} --topic ${KAFKA_TOPIC}
+
+kafka-console-consumer --consumer.config /tmp/client.properties --bootstrap-server ${KAFKA_BOOTSTRAP_BROKER} --topic ${KAFKA_TOPIC} --from-beginning --group ${KAFKA_CONSUMER_GROUP}
 
 ----
 

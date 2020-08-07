@@ -2,18 +2,10 @@
 
 支持HA: 
 
-|代码库                              |链接                                |
-|:------------------------------------:|------------------------------------|
-|MarkDown                              |[https://github.com/younghz/Markdown](https://github.com/younghz/Markdown "Markdown")|
-|MarkDownCopy                              |[https://github.com/younghz/Markdown](https://github.com/younghz/Markdown "Markdown")|
-
-
-|组件|节点构成|高可用模式|
-|--|--|--|
-| HDFS | 2个Namenode实例 + 3个Journal node进行editlog同步 | 属于Active-Standby模型，支持自动切换 |
-| Zookeeper | 3个Zookeeper实例 | 通过leader选举产生Active节点的模式 |
-
- 
+- HDFS：2个Namenode实例 + 3个Journal node进行editlog同步，属于Active-Standby模型，支持自动切换
+           
+- Zookeeper：3个Zookeeper实例，通过leader选举产生Active节点的模式
+       
 - HBase：3个Hmaster实例，通过leader选举产生Active节点的模式
 
 - Kudu：3个Hmaster实例，通过leader选举产生Active节点的模式
@@ -65,9 +57,8 @@
 
 - Impala Catalogd Server和Impala StateStore：                                  
 
--- 故障影响：无法执行Impala查询语句
-
--- 恢复步骤：通过CM删除失败节点，将服务重新添加到新节点上，并且重启Impala与Hue服务
+>> + 故障影响：无法执行Impala查询语句
+>> + 恢复步骤：通过CM删除失败节点，将服务重新添加到新节点上，并且重启Impala与Hue服务
 
 - Zeppelin 
                                                

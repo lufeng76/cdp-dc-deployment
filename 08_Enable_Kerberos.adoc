@@ -12,14 +12,7 @@ image::pictures/SEC001.png[license]
 
 = Kerberos
 
-前提是安装好了krb5-server，详见install_full_script.sh部分。
-然后将KDC server的krb5.conf同步到其他主机。
-
-[source,bash]
-scp tools/krb5.conf root@feng-2:/etc/krb5.conf
-scp tools/krb5.conf root@feng-3:/etc/krb5.conf
-scp tools/krb5.conf root@feng-4:/etc/krb5.conf
-scp tools/krb5.conf root@feng-5:/etc/krb5.conf
+前提是安装好了krb5-server/krb5-workstation，详见install_full_script.sh部分。
 
 == 通过CM安全向导启用Kerberos
 Step1.  进入Cloudera Manager的“管理”-> “安全”界面
@@ -129,11 +122,4 @@ Step2.  重启Firfox
 
 == 常见问题
 
-- Hue Ticket Renewer无法正常renew？
-
-"klist -fe /var/run/hue/hue_krb5_ccache"的结果表明它们确实没有renew。
-
-但是，getprinc显示有7天的renawable life time。
-
-解决方案：是为CM重新设置KDC（使用相同的KDC），但将renewable lifetime 指定为0天，以强制CM使用kdc.conf提供的服务。
 

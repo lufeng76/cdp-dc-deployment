@@ -254,20 +254,15 @@ sudo -u hdfs hadoop fs -chown etl_user:hadoop /user/etl_user
 
 ##################################################################################
 # Part08: Enable_Kerberos
-# Note: The following script only run on CM NODE !!!
+# Note: The following script run on ALL NODES !!!
 ##################################################################################
+# Install KDC client and libs
+yum install -y krb5-workstation krb5-libs
 
 # Define global variables here
 export host=ccycloud-1.feng.root.hwx.site
 export realm=FENG.COM
 export domain=feng.com
-export kdcpassword=Admin1234
-
-set -e
-
-# Install MIT-KDC
-sudo yum -y install krb5-server krb5-workstation krb5-libs
-
 sudo cat - > /etc/krb5.conf << EOF
 [logging]
  default = FILE:/var/log/krb5libs.log
@@ -295,6 +290,22 @@ sudo cat - > /etc/krb5.conf << EOF
  .$domain = $realm
  $domain = $realm
 EOF
+
+##################################################################################
+# Part08: Enable_Kerberos
+# Note: The following script only run on CM NODE !!!
+##################################################################################
+
+# Define global variables here
+export host=ccycloud-1.feng.root.hwx.site
+export realm=FENG.COM
+export domain=feng.com
+export kdcpassword=Admin1234
+
+set -e
+
+# Install MIT-KDC
+sudo yum -y install krb5-server
 
 mv /var/kerberos/krb5kdc/kdc.conf{,.original}
 sudo cat - >  /var/kerberos/krb5kdc/kdc.conf << EOF
@@ -351,13 +362,6 @@ kadmin.local -q "addprinc -randkey etl_user/${host}@${realm}"
 kadmin.local -q "xst -k etl_user.keytab etl_user/${host}@${realm}"
 mkdir -p /etc/security/keytabs
 mv etl_user.keytab /etc/security/keytabs
-
-##################################################################################
-# Part08: Enable_Kerberos
-# Note: The following script run on OHTER NODES（except CM node） !!!
-##################################################################################
-# Download KRB libs
-yum install -y krb5-workstation krb5-libs
 
 ##################################################################################
 # Part09: Ranger_Access_Policies

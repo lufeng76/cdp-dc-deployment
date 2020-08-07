@@ -69,6 +69,14 @@ image::pictures/SEC013.jpg[SPNEGO]
 
 Step2.  点击保存修改并重启Hue服务
 
+== kafka修改inter Broker Protocol
+
+Step1.  修改security.inter.broker.protocol配置为SASL_PLAINTEXT
+
+image::pictures/SEC015.jpg[kafka protocol]
+
+Step2.  点击保存修改并重启Kafka服务
+
 
 == 通过客户端访问UI
 

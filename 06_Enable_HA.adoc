@@ -40,7 +40,8 @@
 - EFM (CEM) 
 
 
-不支持HA：                                                     
+不支持HA：
+                                                     
 - Cloudera Manager (active-passive fast failover possible)
 
 - Cloudera Management Service  
@@ -233,13 +234,30 @@ Impala Load Balancer=ccycloud-1.feng.root.hwx.site
 Impala Shell Load Balancer Port=21001
 Impala JDBC Load Balancer Port=21051
 
-Step1.  进入Hue服务页面，进入"配置"标签页面，搜索"load balancer"，填写为ccycloud-1.feng.root.hwx.site:21001
+Step1.  进入Impala服务页面，进入"配置"标签页面，搜索"load balancer"，填写为ccycloud-1.feng.root.hwx.site:21001
 
 image::pictures/HA029.jpg[load balancer]
 
 Step2.  点击保存修改并重启Impala服务
 
 https://docs.cloudera.com/runtime/7.1.1/impala-manage/topics/impala-load-balancer-configure.html[参考链接]
+
+
+== Hive
+
+前提是安装好了HAProxy，详见install_full_script.sh部分。
+
+__注意：haproxy.cfg中配置的2个参数：__
+
+[source,bash]
+Hive Load Balancer=ccycloud-1.feng.root.hwx.site
+Hive JDBC Load Balancer Port=10099
+
+Step1.  进入Hive服务页面，进入"配置"标签页面，搜索"load balancer"，填写为ccycloud-1.feng.root.hwx.site:10099
+
+image::pictures/HA031.jpg[load balancer]
+
+Step2.  点击保存修改并重启Hive服务
 
 
 == Hue

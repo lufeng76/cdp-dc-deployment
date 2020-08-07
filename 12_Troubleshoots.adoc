@@ -1,19 +1,41 @@
 = Troubleshoots
 
-== Atlas UI Password
+== Collection not found: ranger_audits
 
-Changing Atlas UI password is challenging as it is not working through CM...
+
 
-As a workaround to be able to authentify to Atlas, process is to enable file authentication and change file password. +
-Note that this method is subject to possible security threats (file is 644 rigths).
+image::pictures/TS001.jpg[ranger_audits]
 
-- Atlas > Configuration > Enable file authentication 
-- Go on server 1 & 2 (where Atlas servers are installed) and change this file __/opt/cloudera/parcels/CDH-7.0.3-1.cdh7.0.3.p0.1635019/etc/atlas/conf.dist/users-credentials.properties__ by adding an entry: __fri=ADMIN::60fe74406e7f353ed979f350f2fbb6a2e8690a5fa7d1b0c32983d1d8b3f95f67__
-- Restart Atlas servers
-- Log in with: fri/Admin1234
+
 
-Note that password is a sha-256 obtained by linux command: __echo -n Admin1234 | sha256sum__ +
-Note that even if you change admin password, it will not work.
+RangerkerberosRangerconfigset<lib>Kerberosranger_audits
+
+Step1.  CDP-INFRA-SOLRRanger
+
+Step2.  collectionranger_audits
+
+solrctl --zk ccycloud-1.feng.root.hwx.site:2181,ccycloud-2.feng.root.hwx.site:2181,ccycloud-3.feng.root.hwx.site:2181/solr-infra instancedir --delete ranger_audits
+
+Step3.  CDP-INFRA-SOLRRanger
+
+== Atlas UI
+
+CM
+
+
+
+644
+
+Step1.  Atlas>>
+
+Step2.  Atlas Server__/opt/cloudera/parcels/CDH-7.0.3-1.cdh7.0.3.p0.1635019/etc/atlas/conf.dist/users-credentials.properties__: __fri=ADMIN::60fe74406e7f353ed979f350f2fbb6a2e8690a5fa7d1b0c32983d1d8b3f95f67__
+
+Step3.  Atlas
+
+Step4.  /etl_user/ Admin1234
+
+Linuxsha-256  __echo -n Admin1234 | sha256sum__ +
+adminadmin
 
 
 == Ozone data is not automatically erased

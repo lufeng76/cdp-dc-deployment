@@ -2,6 +2,7 @@
 
 == 内容介绍
 本文介绍如何在Centos7.x上安装CDP7.1.1。
+
 安装部署一般会分成六个阶段：
 
 image::pictures/OV001.png[Deployment Flow]
@@ -9,7 +10,7 @@ image::pictures/OV001.png[Deployment Flow]
 
 == 文档/脚本/目录说明
 
-**.文档说明**
+. **文档说明**
 |===
 |项目 | 内容说明
 
@@ -41,10 +42,10 @@ image::pictures/OV001.png[Deployment Flow]
 |启用安全：如何配置Ranger Policy
 
 |10_Encryption-CM.adoc
-|启用安全：配置CM&Agent TLS
+|启用安全：对CM&Agent配置TLS
 
 |11_Encryption-Services.adoc
-|启用安全：配置CDP各组件TLS
+|启用安全：对CDP各组件配置TLS
 
 |12_Troubleshoots.adoc
 |问题汇总
@@ -53,19 +54,36 @@ image::pictures/OV001.png[Deployment Flow]
 |总体介绍
 |===
 
-data
+. **目录说明**
+|===
+|项目 | 内容说明
 
-install_full_script.sh
+|data
+|存放集群验证过程中需要的一些csv文件
 
-multi_thread_execution.sh
+|pictures
+|存放文档描述中引用的图片
 
-pictures
+|tools
+|存放配置文件
+|===
 
-script.sh
+. **脚本说明**
+|===
+|项目 | 内容说明
 
-single_thread_execution.sh
+|install_full_script.sh
+|CDP安装代码
 
-tools
+|multi_thread_execution.sh
+|远程执行script.sh，针对不同主机多线程并行
 
-https://docs.cloudera.com/cdpdc/7.1/installation/topics/cdpdc-installation.html[官网安装文档]
+|script.sh
+|切割CDP安装代码，放入该脚本中
+
+|single_thread_execution.sh
+|远程执行script.sh，针对不同主机串行操作
+
+
+https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-installation.html[官网安装文档]
 

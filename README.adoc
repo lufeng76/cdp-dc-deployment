@@ -15,7 +15,7 @@ image::pictures/OV001.png[Deployment Flow]
 |===
 |文档 | 内容说明
 
-|01_System_checks.adoc
+|link:01_System_checks.adoc[01_System_checks.adoc]
 |前置工作：如何准备离线安装包，优化Linux操作系统配置
 
 |02_Pre_Installation.adoc

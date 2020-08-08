@@ -120,7 +120,8 @@ EOF
 将执行命令换成：
 
 [source,bash]
-beeline -u "jdbc:hive2://ccycloud-1.feng.root.hwx.site:10099/default;principal=etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM"
+kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
+beeline -u "jdbc:hive2://ccycloud-1.feng.root.hwx.site:10099/default;principal=hive/ccycloud-1.feng.root.hwx.site@FENG.COM"
 
 == Impala/Kudu
 

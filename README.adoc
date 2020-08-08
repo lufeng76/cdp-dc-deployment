@@ -1,8 +1,60 @@
 = README
 
-This is an installation of CDP-DC 7.0.3/7.1.1 on 6 CentOS machines running 7.5/7.7.
+== 内容介绍
+本文介绍如何在Centos7.x上安装CDP7.1.1。
+安装部署一般会分成六个阶段：
 
-Machine are 8 CPU and 32Gb of RAM.
+image::pictures/OV001.jpg[Deployment Flow]
 
-Documentation used is the official one here: https://docs.cloudera.com/cdpdc/7.0/installation/topics/cdpdc-installation.html[https://docs.cloudera.com/cdpdc/7.0/installation/topics/cdpdc-installation.html]
+
+== 文档/脚本/目录说明
+
+.文档说明
+|===
+|项目 | 内容说明
+
+|01_System_checks.adoc
+|02_Pre_Installation.adoc
+|03_CM_Installation.adoc
+|04_CDP_Installation.adoc
+|05_Add_other_services.adoc
+|06_Enable_HA.adoc
+|07_Cluster_validation.adoc
+|08_Enable_Kerberos.adoc
+|09_Ranger_Access_Policies.adoc
+|10_Encryption-CM.adoc
+|11_Encryption-Services.adoc
+|12_Troubleshoots.adoc
+|README.adoc
+
+|前置工作：如何准备离线安装包，优化Linux操作系统配置
+|前置工作：如何安装JDK和元数据库
+|平台搭建：如何安装Cloudera Manager
+|平台搭建：如何安装CDP
+|平台搭建：如何安装CDF等组件
+|启用HA：如何给不同组件配置高可用
+|集群验证：针对非安全集群和安全集群的验证方法
+|启用安全：如何启用Kerberos
+|启用安全：如何配置Ranger Policy
+|启用安全：配置CM&Agent TLS
+|启用安全：配置CDP各组件TLS
+|问题汇总
+|总体介绍
+|===
+
+data
+
+install_full_script.sh
+
+multi_thread_execution.sh
+
+pictures
+
+script.sh
+
+single_thread_execution.sh
+
+tools
+
+https://docs.cloudera.com/cdpdc/7.1/installation/topics/cdpdc-installation.html[官网安装文档]
 

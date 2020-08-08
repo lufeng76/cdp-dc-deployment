@@ -10,9 +10,10 @@ image::pictures/OV001.png[Deployment Flow]
 
 == 文档/脚本/目录说明
 
-. **文档说明**
+.文档说明
+----
 |===
-|项目 | 内容说明
+|文档 | 内容说明
 
 |01_System_checks.adoc
 |前置工作：如何准备离线安装包，优化Linux操作系统配置
@@ -53,10 +54,12 @@ image::pictures/OV001.png[Deployment Flow]
 |README.adoc
 |总体介绍
 |===
+----
 
-. **目录说明**
+.目录说明
+----
 |===
-|项目 | 内容说明
+|目录 | 内容说明
 
 |data
 |存放集群验证过程中需要的一些csv文件
@@ -67,10 +70,12 @@ image::pictures/OV001.png[Deployment Flow]
 |tools
 |存放配置文件
 |===
+----
 
-. **脚本说明**
+.脚本说明
+----
 |===
-|项目 | 内容说明
+|脚本 | 内容说明
 
 |install_full_script.sh
 |CDP安装代码
@@ -79,11 +84,12 @@ image::pictures/OV001.png[Deployment Flow]
 |远程执行script.sh，针对不同主机多线程并行
 
 |script.sh
-|切割CDP安装代码，放入该脚本中
+|切割CDP安装代码，拷贝到该脚本中
 
 |single_thread_execution.sh
 |远程执行script.sh，针对不同主机串行操作
-
+|===
+----
 
 https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-installation.html[官网安装文档]
 

@@ -2,17 +2,40 @@
 
 == HDFS
 
+=== 非安全集群
+
 /data目录下存放了多个CSV文件（2018年法国交通事故统计表）。
 
 [source,bash]
 ----
+
 # 以root用户登录节点feng-1
 
 sudo -u hdfs hdfs dfs -mkdir /data
 sudo -u hdfs hdfs dfs -chmod 777 /data
 sudo -u hdfs hdfs dfs -chown etl_user:hadoop /data
 
-su - etl_user
+sudo -u etl_user hdfs dfs -mkdir /data/caracteristiques
+sudo -u etl_user hdfs dfs -mkdir /data/lieux
+sudo -u etl_user hdfs dfs -mkdir /data/usagers
+sudo -u etl_user hdfs dfs -mkdir /data/vehicules
+sudo -u etl_user hdfs dfs -put lieux-2018.csv /data/lieux/
+sudo -u etl_user hdfs dfs -put usagers-2018.csv /data/usagers/
+sudo -u etl_user hdfs dfs -put vehicules-2018.csv /data/vehicules/
+sudo -u etl_user hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
+----
+
+=== 安全集群
+
+[source,bash]
+----
+
+kinit -kt hdfs.keytab hdfs/ccycloud-1.feng.root.hwx.site@FENG.COM
+hdfs dfs -mkdir /data
+hdfs hdfs dfs -chmod 777 /data
+hdfs hdfs dfs -chown etl_user:hadoop /data
+
+kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
 hdfs dfs -mkdir /data/caracteristiques
 hdfs dfs -mkdir /data/lieux
 hdfs dfs -mkdir /data/usagers
@@ -24,6 +47,8 @@ hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
 ----
 
 == Hive
+
+=== 非安全集群
 
 [source,bash]
 ----
@@ -92,7 +117,16 @@ INSERT INTO vehicules SELECT * FROM vehicules_csv;
 EOF
 ----
 
+=== 安全集群
+
+将执行命令换成：
+
+[source,bash]
+beeline -u "jdbc:hive2://ccycloud-1.feng.root.hwx.site:10099/default;principal=etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM"
+
 == Impala/Kudu
+
+=== 非安全集群
 
 建立一张kudu表，然后插入数据
 
@@ -101,7 +135,7 @@ EOF
 
 # 以root用户登录节点feng-1
 
-impala-shell -i feng-3 << EOF
+impala-shell -i ccycloud-1.feng.root.hwx.site:21001 << EOF
 
 CREATE DATABASE impala_kudu;
 
@@ -117,9 +151,18 @@ INSERT INTO impala_kudu.usagers SELECT * FROM accidents.usagers_csv;
 EOF
 ----
 
+=== 非安全集群
+
+将执行命令换成：
+
+[source,bash]
+kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
+impala-shell -V -k -i ccycloud-1.feng.root.hwx.site:21001
+
 == Kafka
 
 === 非安全集群
+
 [source,bash]
 ----
 
@@ -176,6 +219,8 @@ kafka-console-consumer --consumer.config /tmp/client.properties --bootstrap-serv
 
 == Hbase
 
+=== 非安全集群
+
 [source,bash]
 ----
 
@@ -191,6 +236,19 @@ EOF
 
 ----
 
+=== 安全集群
+
+[source,bash]
+----
+kinit -kt /etc/security/keytabs/hbase.keytab hbase/ccycloud-1.feng.root.hwx.site@FENG.COM
+hbase ltt -tn test -write 1:10:10 -num_keys 100
+hbase hbase shell << EOF
+list
+describe 'test'
+count 'test'
+list_regions 'test'
+EOF
+----
 
 == SolR
 

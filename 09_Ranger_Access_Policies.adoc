@@ -1,17 +1,45 @@
 = Ranger
 
-前提是创建一个测试用户etl_user，详见install_full_script.sh部分。
+== Ranger配置
+
+Step1.  HDFS服务启用Ranger授权（进入HDFS设置页面，只需要勾选"Enable Ranger Authorization"，其他采取默认）：
+
+image::pictures/Ranger003.jpg[Ranger for HDFS]
+
+Step2.  Solr-infra服务启用Ranger授权（进入Solr-infra设置页面，只需要勾选"Enable Ranger Authorization for the Infrastructure Solr Service"，其他采取默认）：
+
+image::pictures/Ranger004.jpg[Ranger for Solr-infra]
+
+Step3.  Ranger服务初始化Plugin（进入Ranger主页面，点击"Setup Ranger Plugin Service"）
+
+image::pictures/Ranger006.jpg[Setup Ranger Plugin]
+
+== HDFS
+
+由于集群节点上不存在用户hdfs（在/etc/passwd中使用nologin选项），因此必须手动创建一个类hdfs用户。
+
+Step1.  我们已经创建一个测试用户etl_user，详见install_full_script.sh部分。
 
 etl_user创建好之后，可以在Ranger User List中看到：
 
 image::pictures/Ranger001.jpg[Ranger etl_user]
 
+Step2.  在Ranger UI中，请对cm_hdfs进行了修改，启用Kerberos认证并使用HDFS HA：
+
+image::pictures/Ranger005.jpg[Ranger cm_hdfs]
+
+Step3.  修改cm_hdfs Policies ID 1:all - path，将etl_user添加进去，和hdfs用户具有相同的权限。
+
+image::pictures/Ranger007.jpg[Policies ID 1]
+
+image::pictures/Ranger008.jpg[add etl_user]
+
+
 == YARN
 
-Ranger YARN plugin has been configured to use YARN HA & Kerberos authentication:
+Ranger YARN plugin配置为YARN HA & Kerberos认证:
 
-image::pictures/RangerYARNConf.png[Ranger YARN configuration]
-
+image::pictures/Ranger002.jpg[Ranger YARN configuration]
 
 
 == HBase

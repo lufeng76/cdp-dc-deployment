@@ -4,41 +4,52 @@
 本文介绍如何在Centos7.x上安装CDP7.1.1。
 安装部署一般会分成六个阶段：
 
-image::pictures/OV001.jpg[Deployment Flow]
+image::pictures/OV001.png[Deployment Flow]
 
 
 == 文档/脚本/目录说明
 
-.文档说明
+**.文档说明**
 |===
 |项目 | 内容说明
 
 |01_System_checks.adoc
-|02_Pre_Installation.adoc
-|03_CM_Installation.adoc
-|04_CDP_Installation.adoc
-|05_Add_other_services.adoc
-|06_Enable_HA.adoc
-|07_Cluster_validation.adoc
-|08_Enable_Kerberos.adoc
-|09_Ranger_Access_Policies.adoc
-|10_Encryption-CM.adoc
-|11_Encryption-Services.adoc
-|12_Troubleshoots.adoc
-|README.adoc
-
 |前置工作：如何准备离线安装包，优化Linux操作系统配置
+
+|02_Pre_Installation.adoc
 |前置工作：如何安装JDK和元数据库
+
+|03_CM_Installation.adoc
 |平台搭建：如何安装Cloudera Manager
+
+|04_CDP_Installation.adoc
 |平台搭建：如何安装CDP
+
+|05_Add_other_services.adoc
 |平台搭建：如何安装CDF等组件
+
+|06_Enable_HA.adoc
 |启用HA：如何给不同组件配置高可用
+
+|07_Cluster_validation.adoc
 |集群验证：针对非安全集群和安全集群的验证方法
+
+|08_Enable_Kerberos.adoc
 |启用安全：如何启用Kerberos
+
+|09_Ranger_Access_Policies.adoc
 |启用安全：如何配置Ranger Policy
+
+|10_Encryption-CM.adoc
 |启用安全：配置CM&Agent TLS
+
+|11_Encryption-Services.adoc
 |启用安全：配置CDP各组件TLS
+
+|12_Troubleshoots.adoc
 |问题汇总
+
+|README.adoc
 |总体介绍
 |===
 

@@ -2,6 +2,7 @@
 
 == 内容介绍
 本文介绍如何在Centos7.x上安装CDP7.1.1。
+
 https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-installation.html[官网安装文档]
 
 CDP安装部署一般分成六个阶段：
@@ -92,5 +93,14 @@ image::pictures/OV001.png[Deployment Flow]
 |===
 
 
+== 安装方式说明
 
+提供两种安装方式：
+. 远程执行script.sh: 代码全部来自link:install_full_script.sh[install_full_script.sh]
+. 在CM页面上执行安装步骤: 在各文档中有详细描述
 
+== 安装演示环境说明
+
+image::pictures/OV002.png[demo envrionment]
+
+注意：建议所有的操作都在终端服务器上完成，包括远程执行script.sh和CM页面操作。

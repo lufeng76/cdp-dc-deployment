@@ -105,4 +105,4 @@ image::pictures/OV001.png[Deployment Flow]
 
 image::pictures/OV002.png[demo envrionment]
 
-注意：建议所有的操作都在终端服务器上完成，包括远程执行script.sh和CM页面操作。
+**注意**：建议所有的操作都在**终端服务器**上完成，包括远程执行script.sh和CM页面操作。

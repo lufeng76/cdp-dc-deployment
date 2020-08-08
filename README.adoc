@@ -96,8 +96,8 @@ image::pictures/OV001.png[Deployment Flow]
 == 安装方式说明
 
 提供两种安装方式：
-. 远程执行script.sh: 代码全部来自link:install_full_script.sh[install_full_script.sh]
-. 在CM页面上执行安装步骤: 在各文档中有详细描述
+* 远程执行script.sh: 代码全部来自link:install_full_script.sh[install_full_script.sh]
+* 在CM页面上执行安装步骤: 在各文档中有详细描述
 
 == 安装演示环境说明
 

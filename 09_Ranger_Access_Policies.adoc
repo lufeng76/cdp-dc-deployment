@@ -63,4 +63,6 @@ image::pictures/Ranger010.jpg[etl_user Ranger HBase Policy]
 
 如果用户创建了数据库或者表，那边他们应该拥有对这些对象的全部权限。现有的Hadoop SQL策略中已经包含了{OWNER}规则，所以不用另外赋权。
 
+另外，可以给etl_user类似于hive用户的权限：
+
 image::pictures/Ranger011.jpg[OWNER Policy]

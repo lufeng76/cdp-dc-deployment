@@ -30,12 +30,10 @@ sudo -u etl_user hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
 [source,bash]
 ----
 
-kinit -kt hdfs.keytab hdfs/ccycloud-1.feng.root.hwx.site@FENG.COM
+kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
 hdfs dfs -mkdir /data
 hdfs hdfs dfs -chmod 777 /data
 hdfs hdfs dfs -chown etl_user:hadoop /data
-
-kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
 hdfs dfs -mkdir /data/caracteristiques
 hdfs dfs -mkdir /data/lieux
 hdfs dfs -mkdir /data/usagers

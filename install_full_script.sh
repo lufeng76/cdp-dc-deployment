@@ -19,9 +19,9 @@ EOF
 rpm --import https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
 
 # System Pre-Requisites
+setenforce 0
 systemctl disable firewalld
 systemctl stop firewalld
-setenforce 0
 sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
 systemctl start ntpd
 echo "fs.file-max = 64000" >> /etc/sysctl.conf

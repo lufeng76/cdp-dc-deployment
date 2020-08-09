@@ -2,20 +2,88 @@
 
 **目录**
 
-. 演示环境 +
+. 演示环境介绍 +
+.. <<修改hosts文件>> +
 .. <<免密登录>> +
-. 网络配置 +
-.. <<网络配置>>
+. Linux主机配置修改 +
+.. <<禁用SELinux>> +
+.. <关闭防火墙> +
+.. 集群时钟同步 +
+.. 更改文件句柄数 +
+.. 设置swap +
+.. 设置透明大页面 +
+.. 配置操作系统repo +
+.. 安装httpd服务 +
 
-== 演示环境
+== 演示环境介绍
 
 image::pictures/OV002.png[demo envrionment]
 
-
+[%hardbreaks]
 **注意：** 建议所有的操作都在 `终端服务器` 上完成，包括远程执行script.sh和CM页面操作。
 
+=== 修改hosts文件
 
-== 网络配置
+普通Linux服务器：
+....
+echo "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+172.27.14.129   ccycloud-1.feng.root.hwx.site   feng-1
+172.27.170.65   ccycloud-2.feng.root.hwx.site   feng-2
+172.27.115.6   ccycloud-3.feng.root.hwx.site   feng-3
+172.27.17.134   ccycloud-4.feng.root.hwx.site   feng-4
+172.27.126.77   ccycloud-5.feng.root.hwx.site   feng-5
+" > /etc/hosts
+....
+
+YCloud Linux服务器：
+....
+echo "127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+ff00::0	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.27.14.129   ccycloud-1.feng.root.hwx.site   feng-1
+172.27.170.65   ccycloud-2.feng.root.hwx.site   feng-2
+172.27.115.6   ccycloud-3.feng.root.hwx.site   feng-3
+172.27.17.134   ccycloud-4.feng.root.hwx.site   feng-4
+172.27.126.77   ccycloud-5.feng.root.hwx.site   feng-5
+" > /etc/hosts
+....
+
+=== 免密登录
+
+终端服务必须和集群各节点配置免密登录。
+....
+ssh-keygen ---一直敲回车到最后
+ssh-copy-id -i .ssh/id_rsa.pub root@ccycloud-1.feng.root.hwx.site
+ssh-copy-id -i .ssh/id_rsa.pub root@ccycloud-2.feng.root.hwx.site
+ssh-copy-id -i .ssh/id_rsa.pub root@ccycloud-3.feng.root.hwx.site
+ssh-copy-id -i .ssh/id_rsa.pub root@ccycloud-4.feng.root.hwx.site
+ssh-copy-id -i .ssh/id_rsa.pub root@ccycloud-5.feng.root.hwx.site
+....
+
+=== 运行脚本install_full_script.sh
+
+. 打开link:install_full_script.sh[install_full_script.sh]，将其中的部分代码拷贝到link:script.sh[script.sh]中 +
+. 在配置免密登录之后，在**终端服务器上**可以通过以下方式执行脚本：+
+.. sh single_thread_execution.sh +
+.. sh multi_thread_execution.sh
+
+== Linux主机配置修改
+
+以下部分可以通过link:install_full_script.sh[install_full_script.sh]执行生效。
+
+=== 禁用SELinux
+
+=== 关闭防火墙
+=== 集群时钟同步
+=== 更改文件句柄数
+=== 设置swap
+=== 设置透明大页面
+=== 配置操作系统repo
+=== 安装httpd服务
 
 Check names are correct for all nodes and check IPV6 is not used and also jumbo frames:
 
@@ -29,14 +97,7 @@ ifconfig
 Setup correct /etc/hosts on all nodes:
 
 [source,bash]
-echo "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-172.27.14.129   ccycloud-1.feng.root.hwx.site   feng-1
-172.27.170.65   ccycloud-2.feng.root.hwx.site   feng-2
-172.27.115.6   ccycloud-3.feng.root.hwx.site   feng-3
-172.27.17.134   ccycloud-4.feng.root.hwx.site   feng-4
-172.27.126.77   ccycloud-5.feng.root.hwx.site   feng-5
-" > /etc/hosts
+
 
 == Firewall
 

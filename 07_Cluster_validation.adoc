@@ -5,6 +5,20 @@
 . <<HDFS>> +
 .. <<HDFS without KRB&TLS>> +
 .. <<HDFS with KRB only>>
+. <<Hive>> +
+.. <<Hive without KRB&TLS>> +
+.. <<Hive with KRB only>>
+. <<Impala>> +
+.. <<Impala without KRB&TLS>> +
+.. <<Impala with KRB only>>
+. <<Kafka>> +
+.. <<Kafka without KRB&TLS>> +
+.. <<kafka with KRB only>>
+. <<HBase>> +
+.. <<HBase without KRB&TLS>> +
+.. <<HBase with KRB only>> +
+. <<验证UI界面>> +
+. <<验证元数据库>>
 
 == HDFS
 
@@ -48,11 +62,9 @@ hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
 
 == Hive
 
-=== 非安全集群
+=== Hive without KRB&TLS
 
-[source,bash]
-----
-
+....
 # 以root用户登录节点feng-1
 
 beeline -n etl_user -p xxxx <<EOF
@@ -115,25 +127,23 @@ CREATE TABLE IF NOT EXISTS vehicules (Num_Acc BIGINT, senc INT,catv INT,occutc I
 INSERT INTO vehicules SELECT * FROM vehicules_csv;
 
 EOF
-----
+....
 
-=== 安全集群
+=== Hive with KRB only
 
 将执行命令换成：
 
-[source,bash]
+....
 kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
 beeline -u "jdbc:hive2://ccycloud-1.feng.root.hwx.site:10099/default;principal=hive/ccycloud-1.feng.root.hwx.site@FENG.COM"
+....
 
 == Impala/Kudu
 
-=== 非安全集群
+=== Impala without KRB&TLS
 
 建立一张kudu表，然后插入数据
-
-[source,bash]
-----
-
+....
 # 以root用户登录节点feng-1
 
 impala-shell -i ccycloud-1.feng.root.hwx.site:21001 << EOF
@@ -150,19 +160,20 @@ STORED AS kudu;
 INSERT INTO impala_kudu.usagers SELECT * FROM accidents.usagers_csv;
 
 EOF
-----
+....
 
-=== 安全集群
+=== Impala with KRB only
 
 将执行命令换成：
 
-[source,bash]
+....
 kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
 impala-shell -V -k -i ccycloud-1.feng.root.hwx.site:21001
+....
 
 == Kafka
 
-=== 非安全集群
+=== Kafka without KRB&TLS
 
 [source,bash]
 ----
@@ -190,10 +201,9 @@ kafka-consumer-groups  --describe --group ${KAFKA_CONSUMER_GROUP} --bootstrap-se
 
 ----
 
-=== 安全集群
-[source,bash]
-----
+=== kafka with KRB only>
 
+....
 # 需要增加以下步骤
 
 kinit -kt /etc/security/keytabs/etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
@@ -215,16 +225,12 @@ export KAFKA_OPTS="-Djava.security.auth.login.config=/tmp/jaas.conf"
 while true; do echo "$(( RANDOM % 10 )),$(echo ${RANDOM} | tr '[0-9]' '[a-zA-Z]')"; sleep 5; done | kafka-console-producer --producer.config /tmp/client.properties --broker-list ${KAFKA_BROKERS} --topic ${KAFKA_TOPIC}
 
 kafka-console-consumer --consumer.config /tmp/client.properties --bootstrap-server ${KAFKA_BOOTSTRAP_BROKER} --topic ${KAFKA_TOPIC} --from-beginning --group ${KAFKA_CONSUMER_GROUP}
+....
 
-----
+== HBase
 
-== Hbase
-
-=== 非安全集群
-
-[source,bash]
-----
-
+=== HBase without KRB&TLS
+....
 # 以root用户登录节点feng-1
 
 sudo -u hbase hbase ltt -tn test -write 1:10:10 -num_keys 100
@@ -234,13 +240,10 @@ describe 'test'
 count 'test'
 list_regions 'test'
 EOF
+....
 
-----
-
-=== 安全集群
-
-[source,bash]
-----
+=== HBase with KRB only
+....
 kinit -kt /etc/security/keytabs/hbase.keytab hbase/ccycloud-1.feng.root.hwx.site@FENG.COM
 hbase ltt -tn test -write 1:10:10 -num_keys 100
 hbase hbase shell << EOF
@@ -249,131 +252,32 @@ describe 'test'
 count 'test'
 list_regions 'test'
 EOF
-----
+....
 
-== SolR
+== 验证UI界面
 
-In Java Program:
-
-[source,bash]
-----
-HttpSolrClient httpSolrClient = new HttpSolrClient.Builder("http://"+PropertiesLoader.properties.getProperty("solr.server.url")+":"+
-                PropertiesLoader.properties.getProperty("solr.server.port")+"/solr")
-                .withConnectionTimeout(10000)
-                .withSocketTimeout(60000)
-                .build();
-
-
-// Create SolR collection
- try {
-     httpSolrClient.request(
-             CollectionAdminRequest.createCollection(PropertiesLoader.properties.getProperty("solr.collection"),
-                     Integer.valueOf(PropertiesLoader.properties.getProperty("solr.collection.shards")),
-                     Integer.valueOf(PropertiesLoader.properties.getProperty("solr.collection.replicas")))
-     );
- } catch(HttpSolrClient.RemoteSolrException e) {
-     if(e.getMessage().contains("collection already exists")) {
-         logger.warn("Collection already exists so it has not been created");
-     } else {
-         logger.error("Could not create SolR collection : " + PropertiesLoader.properties.getProperty("solr.collection")
-                 + " due to error: ", e);
-     }
- } catch (Exception e) {
-     logger.error("Could not create SolR collection : " + PropertiesLoader.properties.getProperty("solr.collection")
-             + " due to error: ", e);
- }
- // Set base URL directly to the collection, note that this is required
-httpSolrClient.setBaseURL("http://"+PropertiesLoader.properties.getProperty("solr.server.url")+":"+
-         PropertiesLoader.properties.getProperty("solr.server.port")+"/solr/"+PropertiesLoader.properties.getProperty("solr.collection"));
-
-SolrInputDocument doc = new SolrInputDocument();
-doc.addField("Value", row.toCSVString());
-
-try {
-    httpSolrClient.add(doc);
-    httpSolrClient.commit();
-} catch (Exception e) {
-    logger.error("An unexpected error occurred while adding document: " + row.toString() + " to SolR collection : " +
-            PropertiesLoader.properties.getProperty("solr.collection") + " due to error:", e);
-}
-
-httpSolrClient.close();
-----
-
-== Ozone
-
-Using CLI:
-
-[source,bash]
-ozone sh volume create /test
-ozone sh bucket create /test/bucket1
-ozone sh key put /test/bucket1/hoster /etc/hosts
-ozone sh key list /test/bucket1
-
-
-Using Java Program:
-
-[source,bash]
-----
-ozClient = OzoneClientFactory.getRpcClient(PropertiesLoader.properties.getProperty("ozone.om.uri"),
-            Integer.valueOf(PropertiesLoader.properties.getProperty("ozone.om.port")));
-objectStore = ozClient.getObjectStore();
-
-// Create volume if not exists
-     try {
-    objectStore.createVolume(PropertiesLoader.properties.getProperty("ozone.volume.name"));
-} catch (OMException e) {
-    if(e.getResult() == OMException.ResultCodes.VOLUME_ALREADY_EXISTS) {
-        logger.info("Volume: " + PropertiesLoader.properties.getProperty("ozone.volume.name") + " already exists ");
-    } else {
-        logger.error("An error occurred while creating volume " +
-                PropertiesLoader.properties.getProperty("ozone.volume.name") + " : ", e);
-    }
-} catch (IOException e) {
-    logger.error("An unexpected exception occurred while creating volume " +
-            PropertiesLoader.properties.getProperty("ozone.volume.name") + ": ", e);
-}
-
-volume = objectStore.getVolume(PropertiesLoader.properties.getProperty("ozone.volume.name"));
-
-// Create bucket if not exists
-String bucketName = PropertiesLoader.properties.getProperty("ozone.bucket.prefix") + bucketNumber; 
-volume.createBucket(bucketName);
-OzoneBucket bucket = volume.getBucket(bucketName);
-
-Random random = new Random();
-byte[] blob = new byte[1_000_000];
-random.nextBytes(blob);
-OzoneOutputStream os = bucket.createKey(name+birthdate+country, blob.length);
-os.write(blob);
-os.close();
-
-----
-
-= 验证UI界面
-
-== Hue
+=== Hue
 
 username: admin
 password: admin
 
-== Ranger
+=== Ranger
 
 username: admin
 password: Admin1234
 
-== Atlas
+=== Atlas
 
 username: admin
 password: Admin1234
 
-
-== PSQL Database
-
-username: postgres  
-password: Admin1234
-
-== 其他UIs
+=== 其他UIs
 
 不需要密码，但部分需要SPNEGO验证
 
+== 验证元数据库
+
+=== PSQL Database
+
+username: postgres  
+password: Admin1234

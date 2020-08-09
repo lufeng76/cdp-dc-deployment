@@ -4,7 +4,7 @@
 
 Cloudera Streaming Analytics
 
-link:https://docs.cloudera.com/csa/1.1.0/overview/topics/csa-overview.html[Flink介绍]
+link:https://docs.cloudera.com/csa/1.1.0/overview/topics/csa-overview.html[Flink介绍]
 
 
 == CFM 
@@ -18,4 +18,4 @@ link:https://docs.cloudera.com/cfm/1.0.1/installation/topics/cfm-add-parcel-url.
 
 Cloudera Stream Processing
 
-link:https://docs.cloudera.com/csp/2.0.1/csp-overview/topics/csp-architecture.html[kafka/SMM/SRM介绍]
+link:https://docs.cloudera.com/csp/2.0.1/csp-overview/topics/csp-architecture.html[kafka/SMM/SMR介绍]

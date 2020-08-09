@@ -3,12 +3,12 @@
 **目录**
 
 . <<HDFS>> +
-.. <<HDFS without KRB TLS> +
-.. <<HDFS with KRB>>
+.. <<HDFS without KRB&TLS>> +
+.. <<HDFS with KRB only>>
 
 == HDFS
 
-=== HDFS without KRB TLS
+=== HDFS without KRB&TLS
 
 link:data[data]目录下存放了多个CSV文件（2018年法国交通事故统计表）。
 
@@ -29,7 +29,7 @@ sudo -u etl_user hdfs dfs -put vehicules-2018.csv /data/vehicules/
 sudo -u etl_user hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
 ....
 
-=== HDFS with KRB
+=== HDFS with KRB only
 
 ....
 kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM

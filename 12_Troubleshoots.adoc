@@ -1,6 +1,6 @@
 = Troubleshoots
 
-目录
+目录 +
 . Ranger +
 .. <<Collection not found: ranger_audits>>
 . Atlas +
@@ -8,19 +8,13 @@
 
 == Collection not found: ranger_audits
 
-
 image::pictures/TS001.jpg[ranger_audits]
 
-RangerkerberosRangerconfigset<lib>Kerberosranger_audits
-Step1.  CDP-INFRA-SOLRRanger
-Step2.  collectionranger_audits
-solrctl --zk ccycloud-1.feng.root.hwx.site:2181,ccycloud-2.feng.root.hwx.site:2181,ccycloud-3.feng.root.hwx.site:2181/solr-infra instancedir --delete ranger_audits
-Step3.  CDP-INFRA-SOLRRanger
 
 == Atlas
 == PAM Authentication Failed
 
-症状：+
+**症状：** +
 Atlas日志报错：
 ....
 [etp1073763441-106:] ~ Error while PAM authentication (AtlasAuthenticationProvider:119)
@@ -35,9 +29,8 @@ org.apache.atlas.web.security.AtlasAuthenticationException: PAM Authentication F
         at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:116)
         at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
 ....
-根源：CDP7.1默认开了PAM，导致file based auth user 失效。
-
-解决方案：将下面的勾去掉，然后重启Atlas服务。
+**根源：** + CDP7.1默认开了PAM，导致file based auth user 失效。
+**解决方案：** + 将下面的勾去掉，然后重启Atlas服务。
 
 image::pictures/TS003.jpg[Atlas PAM]
 

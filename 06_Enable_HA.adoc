@@ -1,76 +1,161 @@
-= HA说明
-
-支持HA: 
-
-- HDFS：2个Namenode实例 + 3个Journal node进行editlog同步，属于Active-Standby模型，支持自动切换
-           
-- Zookeeper：3个Zookeeper实例，通过leader选举产生Active节点的模式
-       
-- HBase：3个Hmaster实例，通过leader选举产生Active节点的模式
-
-- Kudu：3个Hmaster实例，通过leader选举产生Active节点的模式
-          
-- Hive：2个Hive Metastore + 3个Hive Server2，active-active模式，通过元数据服务器同步信息  
-           
-- Yarn：2个ResourceManager实例，属于Active-Standby模型，支持自动切换
-           
-- MapReduce jobs：由YARN保证
- 
-- Spark jobs：由YARN保证
-     
-- Oozie：多个Oozie服务器，active-active模式，通过元数据服务器同步信息    
-          
-- Hue：多个Hue服务器，active-active模式，通过元数据服务器同步信息  
-        
-- Atlas：多个Atlas服务器，active-active模式
-
-- Impala Daemon：在前端服务器中配置负载均衡器
-          
-- Ranger：
-          
-- RangerKMS：
-       
-- Kafka：
-          
-- NiFi： 
-           
-- Knox： 
-           
-- Schema Registry：   
-
-- SRM Drivers：  
-  
-- EFM (CEM)：
-
-
-不支持HA：
-                                                     
-- Cloudera Manager (active-passive fast failover possible)
-
-- Cloudera Management Service  
-                           
-- CDSW Master Node 
-                                       
-- Yarn JobHistory Server      
-                            
-- Spark History Server  
-
-- Impala Catalogd Server和Impala StateStore：                                  
-
--- 故障影响：无法执行Impala查询语句
-
--- 恢复步骤：通过CM删除失败节点，将服务重新添加到新节点上，并且重启Impala与Hue服务
-
-- Zeppelin 
-                                               
-- NiFi Registry   
-                                        
-- SMM     
-                                                
-- SRM Service  
-                                             
-
 = HA设置
+
+**目录**
+
+. <<HA说明>> +
+.. <<支持HA的组件>> +
+.. <<不支持HA的组件>>
+. <<HDFS>> +
+.. <<配置HDFS HA>> +
+.. <<配置Hive Metastore使用HDFS HA>>
+.. <<配置Hue使用HDFS HA>>
+. <<YARN>> +
+. <<HBASE>> +
+. <<ATLAS>> +
+. <<OOZIE>> +
+. <<IMPALA>> +
+. <<HIVE>> +
+. <<HUE>>
+
+== HA说明
+
+===支持HA的组件
+
+.支持HA的组件说明
+
+|===
+|组件 | 节点部署| 高可用模式|
+
+|HDFS
+|2个Namenode实例 + 3个Journal node进行editlog同步
+|Active-Standby模型，支持自动切换
+
+|Zookeeper
+|3个Zookeeper实例
+|通过leader选举产生Active节点的模式
+
+|HBase
+|3个Hmaster实例
+|通过leader选举产生Active节点的模式
+
+|Kudu
+|3个Hmaster实例
+|通过leader选举产生Active节点的模式
+
+|Hive
+|2个Hive Metastore + 3个Hive Server2
+|active-active模式，通过元数据服务器同步信息
+
+|Yarn
+|2个ResourceManager实例
+|Active-Standby模型，支持自动切换
+
+|MapReduce
+|N/A
+|由YARN保证
+
+|Spark
+|N/A
+|由YARN保证
+
+|Oozie
+|多个Oozie服务器
+|active-active模式，通过元数据服务器同步信息
+
+|Hue
+|多个Hue服务器
+|active-active模式，通过元数据服务器同步信息
+
+|Atlas
+|多个Atlas服务器
+|active-active模式
+
+|Impala Daemon
+|在前端服务器中配置Load Balancer
+|由Load Balancer保障
+
+|Ranger
+|
+|
+
+|RangerKMS
+|
+|
+
+|Kafka
+|
+|
+
+|NiFi
+|
+|
+
+|Knox
+|
+|
+
+|Schema Registry
+|
+|
+
+|SRM Drivers
+|
+|
+
+|EFM (CEM)
+|
+|
+
+|===
+
+=== 不支持HA的组件
+
+.不支持HA的组件说明
+
+|===
+|组件 | 故障影响| 恢复步骤|
+
+|Cloudera Manager
+|
+|
+
+|Cloudera Management Service
+|
+|
+
+|CDSW Master Node
+|
+|
+
+|Yarn JobHistory Server
+|
+|
+
+|Spark History Server
+|
+|
+
+|Impala Catalogd/StateStore
+|无法执行Impala查询语句
+|通过CM删除失败节点，将服务重新添加到新节点上，并且重启Impala与Hue服务
+
+|Zeppelin
+|
+|
+
+|NiFi Registry
+|
+|
+
+|SMM
+|
+|
+
+|SRM Service
+|
+|
+
+|===
 
 
 == HDFS
@@ -148,7 +233,7 @@ Step5.  点击保存修改并重启Hue服务
 https://docs.cloudera.com/runtime/7.1.1/fault-tolerance/topics/cr-high-availablity-on-cdp-clusters.html[参考链接]
 
 
-== YARN 
+== YARN
 
 Step1.  进入YARN服务页面，点击"启用High Availability"
 
@@ -166,7 +251,7 @@ image::pictures/HA020.jpg[First Run]
 https://docs.cloudera.com/runtime/7.1.1/yarn-high-availability/topics/yarn-resourcemanager-ha-overview.html[参考链接]
 
 
-== HBase
+== HBASE
 
 进入HBase服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Standby HMaster实例
 
@@ -175,43 +260,25 @@ image::pictures/HA021.jpg[Enable High Avaibility]
 https://docs.cloudera.com/runtime/7.1.1/hbase-high-availability/topics/hbase-enable-ha-using-cm.html[参考链接]
 
 
-== Hue
-
-进入Hue服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Hue Server实例
-
-image::pictures/HA022.jpg[Enable High Avaibility]
-
-https://docs.cloudera.com/runtime/7.1.1/administering-hue/topics/hue-add-role-instance-with-cm.html[参考链接]
-
-
-== Hive
-
-进入Hive on Tez服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Hive Server2实例
-
-image::pictures/HA023.jpg[Enable High Avaibility]
-
-https://docs.cloudera.com/runtime/7.1.1/hive-metastore/topics/hive-hms-introduction.html[参考链接]
-
-
-== Atlas
+== ATLAS
 
 进入Atlas服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Atlas Server实例
 
 image::pictures/HA024.jpg[Enable High Avaibility]
 
 
-== Oozie
+== OOZIE
 
-前提是安装好了HAProxy，详见install_full_script.sh部分。
+前提是安装好了HAProxy，详见link:install_full_script.sh[install_full_script.sh]部分。
 
 __注意1：如果浏览器是中文语言，Oozie Load Balancer Hostname选项存在bug。必须把浏览器语言切换到英文语言!!!__
 
 __注意2：haproxy.cfg中配置的3个参数：__
-
-[source,bash]
+....
 Oozie Load Balancer=ccycloud-1.feng.root.hwx.site
 Oozie Load Balancer HTTP Port=11003
 Oozie Load Balancer HTTPS Port=11446
+....
 
 Step1.  进入Oozie服务页面，点击"启用High Availability"
 
@@ -232,16 +299,17 @@ image::pictures/HA028.jpg[First Run]
 https://docs.cloudera.com/runtime/7.1.1/configuring-oozie/topics/oozie-high-availability.html[参考链接]
 
 
-== Impala
+== IMPALA
 
-前提是安装好了HAProxy，详见install_full_script.sh部分。
+前提是安装好了HAProxy，详见link:install_full_script.sh[install_full_script.sh]部分。
 
 __注意：haproxy.cfg中配置的3个参数：__
 
-[source,bash]
+....
 Impala Load Balancer=ccycloud-1.feng.root.hwx.site
 Impala Shell Load Balancer Port=21001
 Impala JDBC Load Balancer Port=21051
+....
 
 Step1.  进入Impala服务页面，进入"配置"标签页面，搜索"load balancer"，填写为ccycloud-1.feng.root.hwx.site:21001
 
@@ -252,31 +320,43 @@ Step2.  点击保存修改并重启Impala服务
 https://docs.cloudera.com/runtime/7.1.1/impala-manage/topics/impala-load-balancer-configure.html[参考链接]
 
 
-== Hive
+== HIVE
 
-前提是安装好了HAProxy，详见install_full_script.sh部分。
+Step1.  进入Hive on Tez服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Hive Server2实例
+
+image::pictures/HA023.jpg[Enable High Avaibility]
+
+https://docs.cloudera.com/runtime/7.1.1/hive-metastore/topics/hive-hms-introduction.html[参考链接]
+
+Step2.  前提是安装好了HAProxy，详见link:install_full_script.sh[install_full_script.sh]部分。
 
 __注意：haproxy.cfg中配置的2个参数：__
 
-[source,bash]
+....
 Hive Load Balancer=ccycloud-1.feng.root.hwx.site
 Hive JDBC Load Balancer Port=10099
+....
 
-Step1.  进入Hive服务页面，进入"配置"标签页面，搜索"load balancer"，填写为ccycloud-1.feng.root.hwx.site:10099
+进入Hive服务页面，进入"配置"标签页面，搜索"load balancer"，填写为ccycloud-1.feng.root.hwx.site:10099
 
 image::pictures/HA031.jpg[load balancer]
 
-Step2.  点击保存修改并重启Hive服务
+Step3.  点击保存修改并重启Hive服务
 
 
-== Hue
+== HUE
 
-前提是安装好了HAProxy，详见install_full_script.sh部分。
+Step1.  进入Hue服务页面，进入"实例"标签页面，点击"添加角色实例"，在另一台主机上部署Hue Server实例
+
+image::pictures/HA022.jpg[Enable High Avaibility]
+
+https://docs.cloudera.com/runtime/7.1.1/administering-hue/topics/hue-add-role-instance-with-cm.html[参考链接]
+
+Step2.  前提是安装好了HAProxy，详见link:install_full_script.sh[install_full_script.sh]部分。
 
 需要在hue_safety_valve.ini中，添加以下配置：
 
-[source,bash]
-----
+....
 [beeswax]
 hive_server_host=ccycloud-1.feng.root.hwx.site
 hive_server_port=10099
@@ -284,10 +364,10 @@ hive_server_port=10099
 [impala]
 server_host=ccycloud-1.feng.root.hwx.site
 server_port=21051
-----
+....
 
-Step1.  在Hue配置项搜索”hue_safety_valve.ini”，然后添加上述配置
+在Hue配置项搜索”hue_safety_valve.ini”，然后添加上述配置
 
 image::pictures/HA030.jpg[hue_safety_valve]
 
-Step2.  点击保存修改并重启Hue服务
+Step3.  点击保存修改并重启Hue服务

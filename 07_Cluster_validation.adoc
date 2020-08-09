@@ -1,14 +1,18 @@
-= 测试代码（验证各组件是否正常）
+= 集群验证
+
+**目录**
+
+. <<HDFS>> +
+.. <<HDFS without KRB/TLS> +
+.. <<HDFS with KRB>>
 
 == HDFS
 
-=== 非安全集群
+=== HDFS without KRB/TLS
 
 /data目录下存放了多个CSV文件（2018年法国交通事故统计表）。
 
-[source,bash]
-----
-
+....
 # 以root用户登录节点feng-1
 
 sudo -u hdfs hdfs dfs -mkdir /data
@@ -23,13 +27,11 @@ sudo -u etl_user hdfs dfs -put lieux-2018.csv /data/lieux/
 sudo -u etl_user hdfs dfs -put usagers-2018.csv /data/usagers/
 sudo -u etl_user hdfs dfs -put vehicules-2018.csv /data/vehicules/
 sudo -u etl_user hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
-----
+....
 
-=== 安全集群
+=== HDFS with KRB
 
-[source,bash]
-----
-
+....
 kinit -kt etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
 hdfs dfs -mkdir /data
 hdfs hdfs dfs -chmod 777 /data
@@ -42,7 +44,7 @@ hdfs dfs -put lieux-2018.csv /data/lieux/
 hdfs dfs -put usagers-2018.csv /data/usagers/
 hdfs dfs -put vehicules-2018.csv /data/vehicules/
 hdfs dfs -put caracteristiques-2018.csv /data/caracteristiques
-----
+....
 
 == Hive
 

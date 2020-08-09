@@ -20,7 +20,7 @@ image::pictures/SEC001.png[license]
 . <<kafka修改inter Broker Protocol>> +
 . <<通过客户端访问UI>> +
 .. <<1.检查UI是否需要配置SPNEGO>> +
-.. <<2.获取有效的keytab>> +
+.. <<2.获取有效凭证>> +
 .. <<3.对浏览器设置SPNEGO认证>>
 
 前提是安装好了krb5-server/krb5-workstation，详见link:install_full_script.sh[install_full_script.sh]部分。
@@ -153,7 +153,7 @@ Step2.  点击保存修改并重启Kafka服务
 |Error: HTTP ERROR 401 WWW-Authenticate: Negotiate
 |===
 
-=== 2.获取有效的keytab
+=== 2.获取有效凭证
 
 从集群中下载__krb5.conf__和__etl_user.keytab__。
 

@@ -74,6 +74,10 @@
 |在前端服务器中配置Load Balancer
 |由Load Balancer保障
 
+|Cloudera Manager/Cloudera Management Service
+|2个Cloudera Manager Server和Cloudera Management Service实例
+|由Load Balancer保障
+
 |Ranger
 |
 |
@@ -115,25 +119,24 @@
 |===
 |组件 | 故障影响| 恢复步骤
 
-|Cloudera Manager
-|
+
 |
 
-|Cloudera Management Service
+|
 |
 |
 
 |CDSW Master Node
-|
-|
+|导致CDSW服务不可用
+|如果CDSW项目有备份，则可以重建Master Node。建议安装另一个CDSW Master做冷备
 
 |Yarn JobHistory Server
-|
-|
+|提供了一个用户界面，用来访问运行完成的MapReduce作业的YARN日志。由于日志保存在HDFS中，因此没有数据丢失，只不过不能通过UI来查看
+|发生故障之后，另建一个Job History Server实例非常简单
 
 |Spark History Server
-|
-|
+|提供了一个用户界面，用来访问运行完成的Spark EventLog。由于日志保存在HDFS中，因此没有数据丢失，只不过不能通过UI来查看
+|发生故障之后，另建一个Spark History Server实例非常简单
 
 |Impala Catalogd/StateStore
 |无法执行Impala查询语句

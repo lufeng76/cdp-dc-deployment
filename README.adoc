@@ -100,9 +100,3 @@ image::pictures/OV001.png[Deployment Flow]
 . 远程执行script.sh: 代码全部来自link:install_full_script.sh[install_full_script.sh]
 
 . 在CM页面上执行安装步骤: 在各文档中有详细描述
-
-== 安装演示环境说明
-
-image::pictures/OV002.png[demo envrionment]
-
-**注意**：建议所有的操作都在**终端服务器**上完成，包括远程执行script.sh和CM页面操作。

@@ -182,7 +182,7 @@ Step7.  验证浏览器http://<IP_ADDRESS>/cm7.1能否正常访问
 == 集群主机配置修改
 
 以下部分可以通过link:install_full_script.sh[install_full_script.sh]执行生效。 +
-执行方法参见<<运行脚本install_full_script.sh>>
+执行方法参见<<远程执行脚本>>
 
 === 禁用SELinux
 ....
@@ -210,7 +210,7 @@ systemctl status ntpd
 
 可以将CM服务器作为本地ntp服务器，其它4台主机与其保持同步。
 
-CM服务器配置时钟与自己同步：
+Step1.  CM服务器配置时钟与自己同步：
 
 vim /etc/ntp.conf
 ....
@@ -222,7 +222,7 @@ server  127.127.1.0     # local clock
 fudge   127.127.1.0 stratum 10
 ....
 
-其它主机配置和CM服务器去同步：
+Step2.  其它主机配置和CM服务器去同步：
 
 vim /etc/ntp.conf
 ....
@@ -233,7 +233,7 @@ vim /etc/ntp.conf
 server 172.27.14.129
 ....
 
-重启所有机器的ntp服务，在所有节点执行ntpq -p命令，左边出现*号表示同步成功。
+Step3.  重启所有机器的ntp服务，在所有节点执行ntpq -p命令，左边出现*号表示同步成功。
 ....
 ntpq -p
 ....

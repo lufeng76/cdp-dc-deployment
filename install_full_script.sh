@@ -158,7 +158,7 @@ systemctl start cloudera-scm-agent
 systemctl enable cloudera-scm-agent
 systemctl enable cloudera-scm-server
 systemctl start cloudera-scm-server
-while [ `curl -s -X GET -u "admin:admin"  http://localhost:7180/api/version` -z ] ;
+while [ -z `curl -s -X GET -u "admin:admin"  http://localhost:7180/api/version`] ;
     do
     echo "waiting 10s for CM Server to come up..";
     sleep 10;

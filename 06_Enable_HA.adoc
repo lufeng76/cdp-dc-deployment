@@ -39,7 +39,7 @@
 |通过leader选举产生Active节点的模式
 
 |Kudu
-|3个Hmaster实例
+|3个Kudu Master实例
 |通过leader选举产生Active节点的模式
 
 |Hive

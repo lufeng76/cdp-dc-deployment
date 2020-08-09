@@ -101,7 +101,7 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@ccycloud-5.feng.root.hwx.site
 
 **注意：**
 
-. Cloudera Manager安装需要6个rpm包以及一个asc文件
+* Cloudera Manager安装需要6个rpm包以及一个asc文件
 ....
 https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPMS/x86_64/cloudera-manager-agent-7.1.1-3274282.el7.x86_64.rpm
 https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPMS/x86_64/cloudera-manager-daemons-7.1.1-3274282.el7.x86_64.rpm
@@ -112,7 +112,7 @@ https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPMS/x86_64/openjdk8-8.0+232_
 https://archive.cloudera.com/cm7/7.1.1/allkeys.asc
 ....
 
-. parcel包需要下全三类文件：*.parcel, *.parcel.sha，manifest.json，例如：
+* parcel包需要下全三类文件：*.parcel, *.parcel.sha，manifest.json，例如：
 ....
 https://archive.cloudera.com/cdh7/7.1.1.0/parcels/CDH-7.1.1-1.cdh7.1.1.p0.3266817-el7.parcel
 https://archive.cloudera.com/cdh7/7.1.1.0/parcels/CDH-7.1.1-1.cdh7.1.1.p0.3266817-el7.parcel.sha256
@@ -139,37 +139,38 @@ systemctl enable httpd
 
 === 配置本地repo源
 
-Step1.  先挂载操作系统iso文件，然后拷贝到/var/www/html目录
+Step1.  登录终端服务器
+
+Step2.  先挂载操作系统iso文件，然后拷贝到/var/www/html目录
 ....
-# 登录终端服务器
 mkdir /media/DVD1
 mount -o loop CentOS-7-x86_64-DVD-1611.iso /media/DVD1/
 mkdir /var/www/html/iso
 cp -r /media/DVD1/* /var/www/html/iso/
 ....
 
-Step2.  将Cloudera Manager安装需要的6个rpm包以及一个asc文件转移到/var/www/html目录 +
+Step3.  将Cloudera Manager安装需要的6个rpm包以及一个asc文件转移到/var/www/html目录 +
 然后执行createrepo命令生成rpm元数据。
 ....
 mv cm7.1/ /var/www/html/
 createrepo /var/www/html/cm7.1
 ....
 
-Step3.  将安装postgresql-10需要的rpm包转移到/var/www/html目录 +
+Step4.  将安装postgresql-10需要的rpm包转移到/var/www/html目录 +
 然后执行createrepo命令生成rpm元数据。
 ....
 mv postgresql-10/ /var/www/html/
 createrepo /var/www/html/postgresql-10
-....、
+....
 
-Step4.  将CDP安装需要的三个文件转移到/var/www/html目录
+Step5.  将CDP安装需要的三个文件转移到/var/www/html目录
 ....
 mv cdh7.1/ /var/www/html/
 ....
 
-Step5.  其他的rpm包采取类似于CM的方法，parcel包采取类似于CDP的方法。
+Step6.  其他的rpm包采取类似于CM的方法，parcel包采取类似于CDP的方法。
 
-Step6.  验证浏览器http://<IP_ADDRESS>/cm7.1能否正常访问  
+Step7.  验证浏览器http://<IP_ADDRESS>/cm7.1能否正常访问  
 
 === 运行脚本install_full_script.sh
 

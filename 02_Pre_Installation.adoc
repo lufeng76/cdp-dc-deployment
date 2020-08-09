@@ -99,6 +99,10 @@ sudo -u postgres psql << EOF
     CREATE DATABASE smm OWNER smm ENCODING 'UTF8' TEMPLATE template0;
     CREATE ROLE rangeradmin LOGIN PASSWORD 'admin';
     CREATE DATABASE ranger OWNER rangeradmin ENCODING 'UTF8' TEMPLATE template0;
+    CREATE ROLE smm LOGIN PASSWORD 'admin';
+    CREATE DATABASE smm OWNER smm ENCODING 'UTF8' TEMPLATE template0;
+    CREATE ROLE das LOGIN PASSWORD 'admin';
+    CREATE DATABASE das OWNER das ENCODING 'UTF8' TEMPLATE template0;
 EOF
 ....
 

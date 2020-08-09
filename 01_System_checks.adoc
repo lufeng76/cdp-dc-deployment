@@ -128,7 +128,7 @@ yum -y install httpd
 
 Step2.  修改/etc/httpd/conf/httpd.conf配置文件，在<IfModule mime_module>中修改以下内容：
 ....
-AddType application/x-gzip .gz .tgz `.parcel`
+AddType application/x-gzip .gz .tgz .parcel
 ....
 
 Step3.  保存httpd.conf的修改，并重启httpd服务
@@ -175,8 +175,8 @@ Step7.  验证浏览器http://<IP_ADDRESS>/cm7.1能否正常访问
 === 远程执行脚本
 
 . 打开link:install_full_script.sh[install_full_script.sh]，将其中的**部分代码**拷贝到link:script.sh[script.sh]中 +
-. 在配置免密登录之后，在**终端服务器**上可以通过以下方式执行脚本：+
-.. sh link:single_thread_execution.sh[single_thread_execution.sh] +
+. 在配置免密登录之后，在**终端服务器**上可以通过以下方式执行脚本：
+.. sh link:single_thread_execution.sh[single_thread_execution.sh]
 .. sh link:multi_thread_execution.sh[multi_thread_execution.sh]
 
 == 集群主机配置修改

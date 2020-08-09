@@ -8,7 +8,7 @@
 .. <<准备离线安装包>> +
 .. <<配置httpd服务>> +
 .. <<配置本地repo源>> +
-.. <<运行脚本install_full_script.sh>>
+.. <<远程执行脚本>>
 . 集群主机配置修改 +
 .. <<禁用SELinux>> +
 .. <<关闭防火墙>> +
@@ -172,7 +172,7 @@ Step6.  其他的rpm包采取类似于CM的方法，parcel包采取类似于CDP�
 
 Step7.  验证浏览器http://<IP_ADDRESS>/cm7.1能否正常访问  
 
-=== 运行脚本install_full_script.sh
+=== 远程执行脚本
 
 . 打开link:install_full_script.sh[install_full_script.sh]，将其中的**部分代码**拷贝到link:script.sh[script.sh]中 +
 . 在配置免密登录之后，在**终端服务器**上可以通过以下方式执行脚本：+

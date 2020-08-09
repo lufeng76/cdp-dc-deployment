@@ -67,7 +67,7 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@ccycloud-4.feng.root.hwx.site
 ssh-copy-id -i ~/.ssh/id_rsa.pub root@ccycloud-5.feng.root.hwx.site
 ....
 
-== 准备离线安装包
+=== 准备离线安装包
 
 .下载地址
 
@@ -128,7 +128,7 @@ yum -y install httpd
 
 Step2.  修改/etc/httpd/conf/httpd.conf配置文件，在<IfModule mime_module>中修改以下内容：
 ....
-AddType application/x-gzip .gz .tgz `.parcel
+AddType application/x-gzip .gz .tgz `.parcel`
 ....
 
 Step3.  保存httpd.conf的修改，并重启httpd服务

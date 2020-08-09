@@ -2,8 +2,68 @@
 # Part01: System checks
 # Note: The following script run on ALL NODES !!!
 ##################################################################################
-
+# Define global variables here
+export IP_ADDRESS=10.96.9.38
 set -e
+
+# System Pre-Requisites
+sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+setenforce 0
+getenforce
+
+systemctl disable firewalld
+systemctl stop firewalld
+systemctl status firewalld
+
+yum -y remove chrony
+yum -y install ntp
+systemctl start ntpd
+systemctl status ntpd
+ntpq -p
+
+ulimit -Sn
+ulimit -Hn
+echo "fs.file-max = 64000" >> /etc/sysctl.conf
+cat /proc/mounts
+umask
+
+sysctl -a | grep vm.swappiness
+echo 1 > /proc/sys/vm/swappiness
+sysctl vm.swappiness=1
+
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >> /etc/rc.d/rc.local
+echo "echo never > /sys/kernel/mm/transparent_hugepage/defrag" >> /etc/rc.d/rc.local
+
+cat - > /etc/yum.repos.d/local_os.repo << EOF
+[osrepo]
+name=os_repo
+baseurl=http://${IP_ADDRESS}/iso/
+enabled=true
+gpgcheck=false
+EOF
+
+cat - > /etc/yum.repos.d/local_cm.repo << EOF
+[cloudera-manager]
+name=cm_repo
+baseurl=http://${IP_ADDRESS}/cm7.1/
+enabled=true
+gpgcheck=false
+EOF
+
+cat - > /etc/yum.repos.d/local_pg.repo << EOF
+[postgresql-10]
+name=pg_repo
+baseurl=http://${IP_ADDRESS}/postgresql-10/
+enabled=true
+gpgcheck=false
+EOF
+
+# For YCloud only
+echo "vm.dirty_background_ratio=20" >> /etc/sysctl.conf
+echo "vm.dirty_ratio=50" >> /etc/sysctl.conf
+# echo performance > /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 # Setup cloudera manager repo
 cat - > /etc/yum.repos.d/cloudera-manager-7_1_1.repo << EOF
 [cloudera-manager]
@@ -15,27 +75,7 @@ enabled=1
 autorefresh=0
 type=rpm-md
 EOF
-
 rpm --import https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
-
-# System Pre-Requisites
-setenforce 0
-systemctl disable firewalld
-systemctl stop firewalld
-sed -i 's/SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
-systemctl start ntpd
-echo "fs.file-max = 64000" >> /etc/sysctl.conf
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
-echo never > /sys/kernel/mm/transparent_hugepage/defrag
-echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >> /etc/rc.d/rc.local
-echo "echo never > /sys/kernel/mm/transparent_hugepage/defrag" >> /etc/rc.d/rc.local
-echo 0 > /proc/sys/vm/swappiness
-echo "vm.dirty_background_ratio=20" >> /etc/sysctl.conf
-echo "vm.dirty_ratio=50" >> /etc/sysctl.conf
-echo "vm.swappiness = 1" >> /etc/sysctl.conf
-sysctl vm.swappiness=1
-# echo performance > /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-
 
 ##################################################################################
 # Part02: Pre-Installation

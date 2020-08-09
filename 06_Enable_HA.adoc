@@ -120,23 +120,23 @@
 
 |CDSW Master Node
 |导致CDSW服务不可用
-|如果CDSW项目有备份，则可以重建Master Node。建议安装另一个CDSW Master做冷备
+|如果CDSW项目有备份，则可以重建Master Node。强烈建议安装另一个CDSW Master做冷备
 
 |Yarn JobHistory Server
-|提供了一个用户界面，用来访问运行完成的MapReduce作业的YARN日志。由于日志保存在HDFS中，因此没有数据丢失，只不过不能通过UI来查看
+|提供了一个用户界面，用于访问运行完成的MapReduce作业的YARN日志。由于日志保存在HDFS中，因此数据没有丢失，只不过无法通过UI来查看
 |发生故障之后，另建一个Job History Server实例非常简单
 
 |Spark History Server
-|提供了一个用户界面，用来访问运行完成的Spark EventLog。由于日志保存在HDFS中，因此没有数据丢失，只不过不能通过UI来查看
+|提供了一个用户界面，用来访问运行完成的Spark EventLog。由于日志保存在HDFS中，因此数据没有丢失，只不过无法通过UI来查看
 |发生故障之后，另建一个Spark History Server实例非常简单
 
 |Impala Catalogd/StateStore
 |无法执行Impala查询语句
-|通过CM删除失败节点，将服务重新添加到新节点上，并且重启Impala与Hue服务
+|通过CM删除失败节点，将失败服务添加到新的节点上，最后重启Impala和Hue服务
 
 |Zeppelin
-|用于即席查询的探索性Notebook。Zeppelin并非用于数据摄入
-|可以搭建多个Zeppelin实例，但是Notebook数据是保存在本地的
+|Zeppelin用于即席查询的探索性Notebook，并非用于数据摄入
+|可以搭建多个Zeppelin实例，但是请注意：Notebook数据是保存在本地的
 
 |NiFi Registry
 |

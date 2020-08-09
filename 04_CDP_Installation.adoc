@@ -4,8 +4,7 @@
 
 . <<上传License>> +
 . <<安装Cloudera Manager Agent和CDH Parcle>> +
-. <<添加服务组件>> +
-. <<安装和配置PostrgeSQL Server>>
+. <<添加服务组件>>
 
 == 上传License
 

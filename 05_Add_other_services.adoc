@@ -4,18 +4,18 @@
 
 Cloudera Streaming Analytics
 
-link:https://docs.cloudera.com/csa/1.1.0/overview/topics/csa-overview.html[Flink]
+link:https://docs.cloudera.com/csa/1.1.0/overview/topics/csa-overview.html[Flink介绍]
 
 
 == CFM 
 
 Cloudera Flow Management
 
-link:https://docs.cloudera.com/cfm/1.0.1/installation/topics/cfm-add-parcel-url.html[NiFi]
+link:https://docs.cloudera.com/cfm/1.0.1/installation/topics/cfm-add-parcel-url.html[NiFi介绍]
 
 
 == CSP
 
 Cloudera Stream Processing
 
-link:https://docs.cloudera.com/csp/2.0.1/csp-overview/topics/csp-architecture.html[kafka/SMM/SRM]
+link:https://docs.cloudera.com/csp/2.0.1/csp-overview/topics/csp-architecture.html[kafka/SMM/SRM介绍]

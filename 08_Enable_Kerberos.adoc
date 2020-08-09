@@ -10,9 +10,20 @@
 image::pictures/SEC001.png[license]
 
 
-= Kerberos
+= 启用Kerberos
 
-前提是安装好了krb5-server/krb5-workstation，详见install_full_script.sh部分。
+
+**目录**
+
+. <<通过CM安全向导启用Kerberos>> +
+. <<Hue激活SPNEGO>> +
+. <<kafka修改inter Broker Protocol>> +
+. <<通过客户端访问UI>> +
+.. <<1.检查UI是否需要配置SPNEGO>> +
+.. <<2.获取有效的keytab>> +
+.. <<3.对浏览器设置SPNEGO认证>>
+
+前提是安装好了krb5-server/krb5-workstation，详见link:install_full_script.sh[install_full_script.sh]部分。
 
 == 通过CM安全向导启用Kerberos
 Step1.  进入Cloudera Manager的“管理”-> “安全”界面
@@ -82,43 +93,76 @@ Step2.  点击保存修改并重启Kafka服务
 
 启用Kerberos后，几乎所有UI都被kerberized，这意味着SPNEGO被激活，外部应用只能拥有的有效keytab才能访问UI。
 
-=== 首先，检查UI是否需要配置SPNEGO
+=== 1.检查UI是否需要配置SPNEGO
 
-- ATLAS = OK, no SPNEGO
+.SPNEGO
 
-- HBase = Ok, no SPNEGO
+|===
+|组件 | 是否需要SPNEGO|无ticket时的报错信息
 
-- Namenode UI = need SPNEGO (Error: HTTP ERROR 401 Unauthorized access )
+|ATLAS
+|No
+|N/A
 
-- HiveServer2 = Ok, no SPNEGO
+|HBase
+|No
+|N/A
 
-- HUE = need SPNEGO (401 Unauthorized)
+|Namenode
+|Yes
+|Error: HTTP ERROR 401 Unauthorized access
 
-- Impala = need SPNEGO (Error: Must authenticate with SPNEGO.)
+|HiveServer2
+|No
+|N/A
 
-- Kudu master & Tablet server = need SPNEGO (Error: Must authenticate with SPNEGO.)
+|HUE
+|Yes
+|401 Unauthorized
 
-- Oozie = Ok, no SPNEGO {"errorMessage":"Unauthorized access","httpStatusCode":401}
+|Impala
+|Yes
+|Error: Must authenticate with SPNEGO.
 
-- Ranger = Ok, no SPNEGO
+|Kudu
+|Yes
+|Error: Must authenticate with SPNEGO.
 
-- Spark = Ok, no SPNEGO
+|Oozie
+|Yes
+|"errorMessage":"Unauthorized access","httpStatusCode":401
 
-- YARN RM & JobHistory = need SPNEGO (Error: HTTP ERROR 401 Unauthorized access )
+|Ranger
+|No
+|N/A
 
-- DAS = need SPNEGO (Error: HTTP ERROR 401 Unauthorized access )
+|Spark
+|No
+|N/A
 
-- Solr = need SPNEGO (Error: HTTP ERROR 401 WWW-Authenticate: Negotiate )
+|YARN RM & JobHistory
+|Yes
+|Error: HTTP ERROR 401 Unauthorized access
 
-=== 然后，获取有效的keytab
+|DAS
+|Yes
+|Error: HTTP ERROR 401 Unauthorized access
+
+|Solr
+|Yes
+|Error: HTTP ERROR 401 WWW-Authenticate: Negotiate
+|===
+
+=== 2.获取有效的keytab
 
 从集群中下载__krb5.conf__和__etl_user.keytab__。
 
 一旦在本地计算机上安装了Kerberos，就能使用以下方法进行身份验证：
-
+....
      kinit -kt tools/etl_user.keytab etl_user/ccycloud-1.feng.root.hwx.site@FENG.COM
-     
-=== 最后，对浏览器设置SPNEGO认证
+....
+    
+=== 3.对浏览器设置SPNEGO认证
 
 以Firefox为例：
 
@@ -127,7 +171,3 @@ Step1.  切入about:config页面，在搜索栏输入network.negotiate-auth.trus
 image::pictures/SEC014.jpg[Firefox setting for SPNEGO]
 
 Step2.  重启Firfox
-
-== 常见问题
-
-

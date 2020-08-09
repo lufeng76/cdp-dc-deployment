@@ -217,6 +217,7 @@ security.protocol=SASL_PLAINTEXT
 sasl.kerberos.service.name=kafka
 EOF
 
+# 测试步骤
 export KAFKA_OPTS="-Djava.security.auth.login.config=/tmp/jaas.conf"
 
 while true; do echo "$(( RANDOM % 10 )),$(echo ${RANDOM} | tr '[0-9]' '[a-zA-Z]')"; sleep 5; done | kafka-console-producer --producer.config /tmp/client.properties --broker-list ${KAFKA_BROKERS} --topic ${KAFKA_TOPIC}
@@ -270,7 +271,7 @@ password: Admin1234
 
 === 其他UIs
 
-不需要密码，但部分需要SPNEGO验证
+不需要密码，但部分UI需要SPNEGO验证，详见link:08_Enable_Kerberos.adoc[08_Enable_Kerberos.adoc]
 
 == 验证元数据库
 

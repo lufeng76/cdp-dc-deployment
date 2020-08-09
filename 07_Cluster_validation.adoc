@@ -3,12 +3,12 @@
 **目录**
 
 . <<HDFS>> +
-.. <<HDFS without KRB&TLS> +
+.. <<HDFS without KRB+TLS> +
 .. <<HDFS with KRB>>
 
 == HDFS
 
-=== HDFS without KRB&TLS
+=== HDFS without KRB+TLS
 
 /data目录下存放了多个CSV文件（2018年法国交通事故统计表）。
 

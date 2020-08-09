@@ -16,7 +16,7 @@ yum -y install openjdk8-8.0+232_9-cloudera
 
 == 元数据库
 
-推荐安装PostgreSQL 10，将PostgreSQL Server安装在主节点1上。
+推荐安装PostgreSQL 10，将PostgreSQL Server安装在主节点1上。 +
 **注意：** RHEL或CentOS发行版默认自带的是PostgreSQL 9.2，需要更新为10版本。
 
 === 安装postgresql客户端
@@ -50,7 +50,7 @@ yum -y install pip
 pip install psycopg2==2.7.5 --ignore-installed
 ....
 
-Step3.  修改密码和配置 + 初始化密码为Admin1234 + 
+Step3.  修改密码，初始化密码为Admin1234 + 
 **注意：** 该步为交互式，无法远程执行
 ....
 sudo -u postgres psql

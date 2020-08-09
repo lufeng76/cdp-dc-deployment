@@ -369,7 +369,7 @@ password: Admin1234
 == PSQL Database
 
 username: postgres  
-password: admin
+password: Admin1234
 
 == 其他UIs
 

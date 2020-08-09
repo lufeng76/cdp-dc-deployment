@@ -84,7 +84,7 @@ rpm --import https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-clou
 
 set -e
 # Install Java & PostgreSQL connector
-yum -y install java-1.8.0-openjdk-devel
+yum -y install openjdk8-8.0+232_9-cloudera
 yum -y install postgresql-jdbc*
 cp /usr/share/java/postgresql-jdbc.jar /usr/share/java/postgresql-connector-java.jar
 chmod 644 /usr/share/java/postgresql-connector-java.jar
@@ -102,24 +102,20 @@ yum -y install postgresql10
 set -e
 # Install PostgreSQL 10
 yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-yum -y install postgresql10-server postgresql10
+yum -y install postgresql10-server
 /usr/pgsql-10/bin/postgresql-10-setup initdb
-
-cat - > /var/lib/pgsql/10/data/postgresql.conf << EOF
-listen_addresses = '*'
-max_connections = 1000
-EOF
-
-cat - > /var/lib/pgsql/10/data/pg_hba.conf << EOF
-local   all             posgtres                                trust
-host    all             all             0.0.0.0/0               password
-local   all             all                                     md5
-EOF
-
 systemctl enable postgresql-10
 systemctl start postgresql-10
 yum -y install pip
 pip install psycopg2==2.7.5 --ignore-installed
+
+echo "listen_addresses = '*'
+max_connections = 1000" >> /var/lib/pgsql/10/data/postgresql.conf
+echo "
+local   all             posgtres                                trust
+host    all             all             0.0.0.0/0               md5
+local   all             all                                     md5
+" >> /var/lib/pgsql/10/data/pg_hba.conf
 
 sudo -u postgres psql << EOF
     CREATE ROLE scm LOGIN PASSWORD 'admin';
@@ -141,6 +137,8 @@ sudo -u postgres psql << EOF
     CREATE ROLE rangeradmin LOGIN PASSWORD 'admin';
     CREATE DATABASE ranger OWNER rangeradmin ENCODING 'UTF8' TEMPLATE template0;
 EOF
+
+systemctl restart postgresql-10
 
 ##################################################################################
 # Part03: CM installation

@@ -1,5 +1,13 @@
 = Ranger
 
+**目录**
+
+. <<Ranger配置>> +
+. <<HDFS>> +
+. <<YARN>> +
+. <<HBase>> +
+. <<Hive>>
+
 == Ranger配置
 
 Step1.  HDFS服务启用Ranger授权（进入HDFS设置页面，只需要勾选"Enable Ranger Authorization"，其他采取默认）：

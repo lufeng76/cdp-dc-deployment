@@ -62,11 +62,11 @@ Step9.  点击“继续”，运行启用Kerberos命令
 
 image::pictures/SEC010.jpg[First Run]
 
-Step11.  点击“完成”，至此已成功启用Kerberos。
+Step10.  点击“完成”，至此已成功启用Kerberos。
 
 image::pictures/SEC011.jpg[Final Step]
 
-Step12.  查看CM上显示集群已启用Kerberos
+Step11.  查看CM上显示集群已启用Kerberos
 
 image::pictures/SEC012.jpg[Successful]
 

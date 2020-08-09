@@ -3,7 +3,7 @@
 **目录**
 
 . <<上传License>> +
-. <<安装Cloudera Manager Agent和CDH Parcle>> +
+. <<安装Cloudera Manager Agent和CDH Parcel>> +
 . <<添加服务组件>>
 
 == 上传License
@@ -13,7 +13,7 @@
 image::pictures/CDP001.jpg[license]
 
 
-== 安装Cloudera Manager Agent和CDH Parcle
+== 安装Cloudera Manager Agent和CDH Parcel
 
 
 === Step1:给新集群命名

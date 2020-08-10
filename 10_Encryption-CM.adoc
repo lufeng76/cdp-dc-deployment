@@ -7,13 +7,11 @@
 . <<jks文件验证>> +
 . <<对CM&Agent设置TLS>>
 
-https://docs.cloudera.com/cloudera-manager/7.1.1/security-encrypting-data-in-transit/topics/cm-security-how-to-configure-cm-tls.html[官网安装文档]
-
 == 生成Root certificate 
 
 以下操作详见link:install_full_script.sh[install_full_script.sh]部分。
 
-**注意：**以下操作仅在CM节点上执行
+**注意：以下操作仅在CM节点上执行**
 
 Step1.  首先创建rootCA.key: +
 **openssl genrsa -out rootCA.key 4096**
@@ -82,7 +80,7 @@ Trust this certificate? [no]:  yes
 Certificate was added to keystore
 ....
 
-Step3.  将rootCA.crt & rootCA.key & truststore.jks同步到其他主机
+Step4.  将rootCA.crt & rootCA.key & truststore.jks同步到其他主机
 
 ....
 scp /opt/cloudera/security/pki/rootCA.* root@ccycloud-2.feng.root.hwx.site:/opt/cloudera/security/pki/
@@ -95,7 +93,7 @@ scp /opt/cloudera/security/pki/rootCA.* root@ccycloud-5.feng.root.hwx.site:/opt/
 scp /opt/cloudera/security/pki/truststore.jks root@ccycloud-5.feng.root.hwx.site:/opt/cloudera/security/pki/
 ....
 
-Step4. 修改/etc/cloudera-scm-agent/config.ini，然后同步该文件到其他主机
+Step5. 修改/etc/cloudera-scm-agent/config.ini，然后同步该文件到其他主机
 
 ....
 vi /etc/cloudera-scm-agent/config.ini
@@ -112,7 +110,7 @@ scp /etc/cloudera-scm-agent/config.ini root@ccycloud-4.feng.root.hwx.site:/etc/c
 scp /etc/cloudera-scm-agent/config.ini root@ccycloud-5.feng.root.hwx.site:/etc/cloudera-scm-agent/
 ....
 
-Step4.  在CM节点上生成新的link文件，以允许CM server使用jks文件：
+Step6.  在CM节点上生成新的link文件，以允许CM server使用jks文件：
 ....
 ln -s /opt/cloudera/security/pki/$(hostname -f).jks /opt/cloudera/security/pki/server.jks
 ....
@@ -122,7 +120,7 @@ ln -s /opt/cloudera/security/pki/$(hostname -f).jks /opt/cloudera/security/pki/s
 
 以下操作详见link:install_full_script.sh[install_full_script.sh]部分。
 
-**注意：**在每台主机上分别执行，生成的文件全部带有主机标识
+**注意：在每台主机上分别执行，生成的文件全部带有主机标识**
 
 Step1.  生成server jks文件 +
 ....
@@ -268,4 +266,4 @@ Step6.  集群恢复正常状态
 
 image::pictures/CMTLS003.jpg[Cluser UI secured]
 
-
+https://docs.cloudera.com/cloudera-manager/7.1.1/security-encrypting-data-in-transit/topics/cm-security-how-to-configure-cm-tls.html[官网安装文档]

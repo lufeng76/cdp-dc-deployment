@@ -1,118 +1,129 @@
 = CDP各组件配置TLS
 
-Goal is to provide Encryption to secure data and provide encryption for data in Transit and also UIs. 
+**目录**
 
-Each service could use: +
-- __/opt/cloudera/security/pki/keystore.jks__ that contains key + certificates associated with +
-- __/opt/cloudera/security/pki/truststore.jks__ that contains root certificates to trust other entities
+. <<ATLAS>> +
+. <<HBase>> +
+. <<HDFS>> +
+. <<Hive>> +
+. <<Hue>> +
+. <<Impala>> +
+. <<Kudu>> +
+. <<Oozie>> +
+. <<Ranger>> +
+. <<Spark>> +
+. <<YARN>> +
+. <<YARN Queue Manager>> +
+. <<Kafka, Phoenix, Ozone, SolR>> +
+. <<验证方法>> 
 
-Note that both have __cloudera__ as password (and key present in keystore.jks also).
 
+以下每个组件都会用到: +
+- __/opt/cloudera/security/pki/keystore.jks__ ：包含key + certificates +
+- __/opt/cloudera/security/pki/truststore.jks__ ：包含root certificates
 
 == ATLAS
 
-Atlas > Configuration > Security 
-
-Enable TLS/SSL & Enable Kerberos + fill in all keystore/truststore properties
-
-Restart all needed services
-
+导航Atlas > 配置 > 安全性： +
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+重启所有相关服务
 
 == HBase
 
-HBase > Configuration > Security
-
-Enable TLS/SSL for web UI + fill in all keystore properties
-
-Restart HBase.
-
-Check UI, which is now on https, port 16010.
+导航Atlas > 配置 > 安全性： +
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+重启HBase服务 +
+检查https端口是否变为16010
 
 
 == HDFS
 
-Set these properties:
-
+修改以下参数：
+....
 dfs.encrypt.data.transfer = true
 hadoop.rpc.protection = privacy
 dfs.data.transfer.protection = privacy
 dfs.datanode.address = 1044
+....
 
-Enable TLS/SSL + fill in all keystore/truststore properties
-
-Check UI is https on port 9871
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+检查https端口是否变为9871
 
 
 == Hive
 
-Enable TLS/SSL + fill in all keystore/truststore properties
-
-Check UI is https on port 1002
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+检查https端口是否变为1002
 
 
 == Hue
 
-Enable TLS/SSL + fill in all keystore/truststore properties using pem files: (/opt/cloudera/security/pki/agent.key for key, /opt/cloudera/security/pki/agent.pem for certificates).
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
+....
+  client_key_file=/opt/cloudera/security/pki/agent.pem
+  client_keypw_file=/etc/cloudera-scm-agent/agentkey.pw
+  client_cert_file=/opt/cloudera/security/pki/agent.crt
+....
 
-Created a file containing password on node 1: /opt/cloudera/security/pki/passphrase (whihc is "cloudera").
-
-Check UI is https on port 8889. (8888 without load balancer)
+检查https端口是否变为8889. (8888 without load balancer)
 
 
 == Impala
 
-Enable TLS/SSL + fill in all keystore/truststore propertie using pem files: (/opt/cloudera/security/pki/agent.key for key, /opt/cloudera/security/pki/agent.pem for certificates).
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
+....
+  client_key_file=/opt/cloudera/security/pki/agent.pem
+  client_cert_file=/opt/cloudera/security/pki/agent.crt
+....
 
-Check UI is https on port 25020 for catalog server & 25010 for state store UI.
+检查catalog server https端口是否变为25020, state store https端口是否变为25010.
 
 
 == Kudu
 
-Enable TLS/SSL + fill in all keystore/truststore properties using pem files: (/opt/cloudera/security/pki/agent.key for key, /opt/cloudera/security/pki/agent.pem for certificates).
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
+....
+  client_key_file=/opt/cloudera/security/pki/agent.pem
+  client_cert_file=/opt/cloudera/security/pki/agent.crt
+....
 
-Check UI is https on port 8051
+检查https端口是否变为8051.
 
 
 == Oozie
 
-Enable TLS/SSL + fill in all keystore/truststore properties
-
-Check UI is https on port 11443
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+检查https端口是否变为11443
 
 
 == Ranger
 
-Enable TLS/SSL + fill in all keystore/truststore properties
-
-Check UI is https on port 6182
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+检查https端口是否变为6182
 
 
 == Spark
 
-Enable TLS/SSL + fill in all keystore/truststore properties
-
-Check UI is https on port 18488
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+检查https端口是否变为18488
 
 
 == YARN
 
-Enable TLS/SSL + fill in all keystore/truststore properties
-
-Check UI is https on port 19890 for Job History and 8090 for RM UI.
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+检查Resource manager https端口是否变为8090, Job History https端口是否变为19890.
 
 
 == YARN Queue Manager
 
-Enable TLS/SSL + fill in all keystore/truststore properties
-
-The UI is not no longer working...
-
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties
 
 
 == Kafka, Phoenix, Ozone, SolR
 
-These services have been also configured but they do not provide UIs actually, so nothing could be asserted directly.
-(Enable TLS/SSL + fill in all keystore/truststore properties)
+勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+但是这些服务不提供UI，因此无法直接声明任何内容。
 
+== 验证方法
 
-Note that a good way to check if TLS is working once set, is to take a look at Ranger UI under Audit > Plugins and check that services are still able to download policies from Ranger.
+如果您想验证TLS配置之后是否运行正常，有一种比较简单的方法，就是查看Ranger UI的“Audit”>“Plugins ”，查看服务是否仍然能够从Ranger下载Policy。

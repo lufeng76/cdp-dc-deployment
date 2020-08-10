@@ -1,1 +1,0 @@
-systemctl restart cloudera-scm-agent

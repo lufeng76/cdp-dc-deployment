@@ -1,9 +1,0 @@
-Enter key password for <ccycloud-3.feng.root.hwx.site>
-	(RETURN if same as keystore password):  Re-enter new password: 
-Warning:
-The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /opt/cloudera/security/pki/ccycloud-3.feng.root.hwx.site.jks -destkeystore /opt/cloudera/security/pki/ccycloud-3.feng.root.hwx.site.jks -deststoretype pkcs12".
-keytool error: java.io.IOException: Keystore was tampered with, or password was incorrect
-/opt/cloudera/security/pki/ccycloud-3.feng.root.hwx.site.csr: No such file or directory
-keytool error: java.io.IOException: Keystore was tampered with, or password was incorrect
-Importing keystore /opt/cloudera/security/pki/ccycloud-3.feng.root.hwx.site.jks to /opt/cloudera/security/pki/ccycloud-3.feng.root.hwx.site.p12...
-Enter source keystore password:  MAC verified OK

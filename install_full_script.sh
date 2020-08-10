@@ -463,6 +463,7 @@ echo "yes" | keytool -importcert -alias $(hostname -f) -keystore /opt/cloudera/s
 keytool -importkeystore -srckeystore /opt/cloudera/security/pki/$(hostname -f).jks -destkeystore /opt/cloudera/security/pki/$(hostname -f).p12 -srcalias $(hostname -f) -srcstoretype jks -deststoretype pkcs12  -storepass cloudera < passwd
 openssl pkcs12 -in /opt/cloudera/security/pki/$(hostname -f).p12 -out /opt/cloudera/security/pki/$(hostname -f).pem -password pass:cloudera -passin pass:cloudera -passout pass:cloudera
 
+ln -s /opt/cloudera/security/pki/$(hostname -f).jks /opt/cloudera/security/pki/keystore.jks
 ln -s /opt/cloudera/security/pki/$(hostname -f).pem /opt/cloudera/security/pki/agent.pem
 ln -s /opt/cloudera/security/pki/$(hostname -f).crt /opt/cloudera/security/pki/agent.crt
 echo $jkspassword > /etc/cloudera-scm-agent/agentkey.pw

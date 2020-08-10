@@ -159,6 +159,7 @@ openssl pkcs12 -in /opt/cloudera/security/pki/$(hostname -f).p12 -out /opt/cloud
 
 Step8.  必须在所有节点上建立新的link文件，以允许CM Agent使用agent.pem、agent.crt、agentkey.pw三个文件：
 ....
+ln -s /opt/cloudera/security/pki/$(hostname -f).jks /opt/cloudera/security/pki/keystore.jks
 ln -s /opt/cloudera/security/pki/$(hostname -f).pem /opt/cloudera/security/pki/agent.pem
 ln -s /opt/cloudera/security/pki/$(hostname -f).crt /opt/cloudera/security/pki/agent.crt
 echo "cloudera" > /etc/cloudera-scm-agent/agentkey.pw
@@ -170,7 +171,7 @@ chmod 400 /opt/cloudera/security/pki/rootCA.*
 
 == jks文件验证
 
-在每台主机上，__/opt/cloudera/security/pki/__下有三个重要文件：agent.crt，agent.pem，truststore.jks，在后续配置中都会用到。 +
+在每台主机上，__/opt/cloudera/security/pki/__下有四个重要文件：keystore.jks，agent.crt，agent.pem，truststore.jks，在后续配置中都会用到。 +
 在CM主机上，还多了一个重要文件：server.jks，在后续配置中也会用到。
 
 * 使用CA certificates signer:

@@ -1,0 +1,1 @@
+mkdir -p /opt/cloudera/security/pki/

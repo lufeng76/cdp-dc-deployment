@@ -422,6 +422,11 @@ keytool -importcert -alias rootca -keystore /opt/cloudera/security/pki/truststor
 chmod 444 /opt/cloudera/security/pki/rootCA.crt
 chmod 400 /opt/cloudera/security/pki/rootCA.key
 
+##################################################################################
+# Part10: Encryption-CM
+# Note: The following script run on ALL NODES !!!
+##################################################################################
+
 #Copy the rootCA.crt & rootCA.key & truststore.jks to all nodes and play these lines:
 mkdir -p /opt/cloudera/security/pki/
 cp ~/rootCA.* /opt/cloudera/security/pki/

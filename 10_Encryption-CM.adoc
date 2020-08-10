@@ -1,115 +1,194 @@
-= Encryption of CM & agents
+= 对CM&Agent配置TLS
 
-Goal is to provide Encryption to secure data and provide encryption for data in Transit and also UIs. 
-
-== Pre-Req: Creation and deployment of Keys 
-
-=== Generation of keys
-
-Firstly, on all nodes, create a directory to store all certificates and relatives:
-
-[source,bash]
+== 前置操作
+在所有的节点上都建立下面的目录存放key。
+....
 mkdir -p /opt/cloudera/security/pki
+....
 
-Note that __cloudera__ is the password in use for all certificates.
+== Root certificate 
 
-==== Root certificate 
-
-== Using CLDR existing ones
-
-Download root certificate from http://sub-ca.ad.sec.cloudera.com/certsrv/certcarc.asp[http://sub-ca.ad.sec.cloudera.com/certsrv/certcarc.asp] +
-Install it locally by clicking "Install this CA locally" http://sub-ca.ad.sec.cloudera.com/certsrv/certcarc.asp[http://sub-ca.ad.sec.cloudera.com/certsrv/certcarc.asp]
-
-Be sure to get all chain certificates and read certificates with this command:
-[source,bash]
-openssl pkcs7 -print_certs -inform DER -in certnew.p7b 
-
-From the output, create two files: __rootca.pem__ and __intca.pem__ .
-
-Finally distribute certificate to all nodes, by sending it to __/opt/cloudera/security/pki__ folder.
-
-On each node import the root certificate to the java keystore (this will able all Java applications to trust applications with a certificate signed by this authority) (password by default is : __changeit__):
-[source,bash]
-keytool -importcert -alias rootca -keystore /etc/pki/ca-trust/extracted/java/cacerts -file /opt/cloudera/security/pki/rootca.pem
-
-A truststore.jks file will be also created by importing the root and intermediate certificate:
-[source,bash]
-keytool -importcert -alias rootca -keystore /opt/cloudera/security/pki/truststore.jks -file /opt/cloudera/security/pki/rootca.pem
-keytool -importcert -alias intca -keystore /opt/cloudera/security/pki/truststore.jks -file /opt/cloudera/security/pki/intca.pem
-
-=== Creating yours
-
-First, create a key which will be your rootCA.key:
-[source,bash]
+Step1.  首先创建rootCA.key: +
 openssl genrsa -out rootCA.key 4096
+....
+Generating RSA private key, 4096 bit long modulus
+....
 
-Then create a certificate from it:
-[source,bash]
-----
+Step2.  然后由rootCA.key生成rootCA.crt：+
 openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.crt
+....
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
 There are quite a few fields but you can leave some blank
 For some fields there will be a default value,
 If you enter '.', the field will be left blank.
-Country Name (2 letter code) [XX]:FR
-State or Province Name (full name) []:FRANCE
-Locality Name (eg, city) [Default City]:PARIS
+-----
+Country Name (2 letter code) [XX]:CN
+State or Province Name (full name) []:CHINA
+Locality Name (eg, city) [Default City]:SHANGHAI
 Organization Name (eg, company) [Default Company Ltd]:Cloudera
-Organizational Unit Name (eg, section) []:PS
-Common Name (eg, your name or your server\'s hostname) []:ccycloud-1.fri2.root.hwx.site
-Email Address []:frisch@cloudera.com
-----
+Organizational Unit Name (eg, section) []:SE
+Common Name (eg, your name or your server's hostname) []:ccycloud-1.feng.root.hwx.site
+Email Address []:fxu1024@hotmail.com
+....
 
-A truststore.jks must be created with rootCA in it:
-[source,bash]
+Step3.  接下来生成truststore.jks：+
 keytool -importcert -alias rootca -keystore /opt/cloudera/security/pki/truststore.jks -file /opt/cloudera/security/pki/rootCA.crt
+....
+Enter keystore password:
+Re-enter new password:
+Valid from: Sun Aug 09 17:40:28 PDT 2020 until: Tue May 30 17:40:28 PDT 2023
+Certificate fingerprints:
+	 MD5:  7C:53:35:00:D7:7C:F8:6E:33:28:3F:83:F0:2F:89:21
+	 SHA1: 53:1A:34:0A:B0:AF:EE:B2:0D:05:7B:4D:AF:DE:AA:77:6E:E4:8C:CD
+	 SHA256: AB:43:02:B7:6A:E0:45:63:6F:65:E5:2D:20:91:D8:C1:A7:69:C7:D6:12:9F:A2:3D:BD:1B:AF:02:6D:22:AF:BE
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 4096-bit RSA key
+Version: 3
 
+Extensions:
 
-Now, to sign CSR (certificate signing request) using this, you'll just need to do this:
-[source,bash]
-openssl x509 -req -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -days 500 -sha256 -in $(hostname -f).csr -out $(hostname -f).crt
+#1: ObjectId: 2.5.29.35 Criticality=false
+AuthorityKeyIdentifier [
+KeyIdentifier [
+0000: FE D0 6B 94 F8 34 2D CF   4E 4F 80 E8 34 7D 0B D1  ..k..4-.NO..4...
+0010: 07 E3 EF 6F                                        ...o
+]
+]
 
+#2: ObjectId: 2.5.29.19 Criticality=false
+BasicConstraints:[
+  CA:true
+  PathLen:2147483647
+]
+
+#3: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: FE D0 6B 94 F8 34 2D CF   4E 4F 80 E8 34 7D 0B D1  ..k..4-.NO..4...
+0010: 07 E3 EF 6F                                        ...o
+]
+]
+
+Trust this certificate? [no]:  yes
+Certificate was added to keystore
+....
 
 ==== Server certificates
+**注意：**以下操作在每个节点上分布执行
 
-On each node, generate a certificate and its associated certificate sign request:
+Step1.  创建一个server certificate和对应的CSR（certificate sign request）：+
+keytool -genkeypair -alias $(hostname -f) -keyalg RSA -keystore /opt/cloudera/security/pki/$(hostname -f).jks -keysize 2048 -dname "CN=$(hostname -f)" -ext san=dns:$(hostname -f),dns:${HOSTNAME}${1}  -storepass cloudera
+....
+Enter key password for <ccycloud-1.feng.root.hwx.site>
+	(RETURN if same as keystore password):
 
-[source,bash]
-keytool -genkeypair -alias $(hostname -f) -keyalg RSA -keystore /opt/cloudera/security/pki/$(hostname -f).jks -keysize 2048 -dname "CN=$(hostname -f)" -ext san=dns:$(hostname -f),dns:
+Warning:
+The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks -destkeystore /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks -deststoretype pkcs12".
+....
+
+Step2.  生成server jks文件 +
 keytool -certreq -alias $(hostname -f) -keystore /opt/cloudera/security/pki/$(hostname -f).jks -file /opt/cloudera/security/pki/$(hostname -f).csr -ext san=dns:$(hostname -f)
+....
+Warning:
+The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks -destkeystore /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks -deststoretype pkcs12".
+....
 
-Get all csr generated and submit them to CA of Cloudera (http://sub-ca.ad.sec.cloudera.com/certsrv/certrqxt.asp[http://sub-ca.ad.sec.cloudera.com/certsrv/certrqxt.asp]).
+Step3.  生成server crt文件 +
+openssl x509 -req -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -days 500 -sha256 -in /opt/cloudera/security/pki/$(hostname -f).csr -out /opt/cloudera/security/pki/$(hostname -f).crt
+....
+Signature ok
+subject=/CN=ccycloud-1.feng.root.hwx.site
+Getting CA Private Key
+....
 
-Convert (if certificates are in DER format to PEM):
-[source,bash]
-openssl x509 -inform der -in $(hostname -f) -out $(hostname -f)
+Step4.  将rootCA.crt添加入server crt文件 +
+cat /opt/cloudera/security/pki/rootCA.crt >> /opt/cloudera/security/pki/$(hostname -f).crt
 
-Put back certificates to its corresponding machine under __/opt/cloudera/security/pki/__.
+Step5.  导入server crt文件到jks文件中 +
+keytool -importcert -alias $(hostname -f) -keystore /opt/cloudera/security/pki/$(hostname -f).jks -file /opt/cloudera/security/pki/$(hostname -f).crt  -storepass cloudera
+....
+Top-level certificate in reply:
 
-On each node, import certificates signed along with the root certificate into the keystore that contains the key: 
-[source,bash]
-cat /opt/cloudera/security/pki/rootca.pem >> /opt/cloudera/security/pki/$(hostname -f).pem
-keytool -importcert -alias $(hostname -f) -keystore /opt/cloudera/security/pki/$(hostname -f).jks -file /opt/cloudera/security/pki/$(hostname -f).pem 
+Owner: EMAILADDRESS=feng.xu@cloudera.com, CN=ccycloud-1.feng.root.hwx.site, OU=SE, O=Cloudera, L=SHANGHAI, ST=CHINA, C=CN
+Issuer: EMAILADDRESS=feng.xu@cloudera.com, CN=ccycloud-1.feng.root.hwx.site, OU=SE, O=Cloudera, L=SHANGHAI, ST=CHINA, C=CN
+Serial number: eee334999ffb1d23
+Valid from: Sun Aug 09 18:11:38 PDT 2020 until: Tue May 30 18:11:38 PDT 2023
+Certificate fingerprints:
+	 MD5:  32:29:E7:0E:2D:52:E8:1F:2A:03:8A:AB:94:4A:0B:48
+	 SHA1: 0A:14:B1:2D:31:97:C3:A4:4D:AE:E8:E8:13:3F:B8:6C:5F:38:84:16
+	 SHA256: B7:22:70:1D:57:C6:73:03:A4:5B:E1:84:22:30:ED:7B:24:78:04:19:90:DD:B8:45:17:B3:66:94:B8:F3:D1:9A
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 4096-bit RSA key
+Version: 3
 
-Finally a kesytore.jks is created on each node:
-[source,bash]
+Extensions:
+
+#1: ObjectId: 2.5.29.35 Criticality=false
+AuthorityKeyIdentifier [
+KeyIdentifier [
+0000: 4C 7E A0 A0 EE FE AB 7F   6A 59 09 5B 72 14 85 8F  L.......jY.[r...
+0010: 7E BF C3 3C                                        ...<
+]
+]
+
+#2: ObjectId: 2.5.29.19 Criticality=false
+BasicConstraints:[
+  CA:true
+  PathLen:2147483647
+]
+
+#3: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 4C 7E A0 A0 EE FE AB 7F   6A 59 09 5B 72 14 85 8F  L.......jY.[r...
+0010: 7E BF C3 3C                                        ...<
+]
+]
+
+
+... is not trusted. Install reply anyway? [no]:  yes
+Certificate reply was installed in keystore
+
+Warning:
+The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks -destkeystore /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks -deststoretype pkcs12".
+....
+
+Step6.  将Server jks转为p12文件 +
+keytool -importkeystore -srckeystore /opt/cloudera/security/pki/$(hostname -f).jks -destkeystore /opt/cloudera/security/pki/$(hostname -f).p12 -srcalias $(hostname -f) -srcstoretype jks -deststoretype pkcs12  -storepass cloudera
+Importing keystore /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks to /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.p12...
+Enter source keystore password:
+
+Step7.  将Server p12转为pem文件 +
+openssl pkcs12 -in /opt/cloudera/security/pki/$(hostname -f).p12 -out /opt/cloudera/security/pki/$(hostname -f).pem
+....
+Enter Import Password:
+MAC verified OK
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+....
+
+Step8.  最终每个节点都有一个keystore.jks和key.pem +
 ln -s /opt/cloudera/security/pki/$(hostname -f).jks /opt/cloudera/security/pki/keystore.jks 
+ln -s /opt/cloudera/security/pki/$(hostname -f).pem /opt/cloudera/security/pki/key.pem
+chmod 444 /opt/cloudera/security/pki/*
+chmod 400 /opt/cloudera/security/pki/rootCA.*
 
-==== Final
+== 验证
 
-Now, on each machine, there should be 3 files under __/opt/cloudera/security/pki/__: +
-- A certificate in jks format, that will be used by Java applications linked to the machine, this is what we call keystore.jks +
-- A CSR (certificate sign request) no longer needed +
-- A certificate signed in PEM format, that will be used by applications +
-- A root certificate in PEM format, that has been imported into Java truststore +
-- A root certificate in JKS format, which is what we call a truststore.jks, it will be used by Java applications
+在每台主机上，__/opt/cloudera/security/pki/__下应该有3个文件：+
+* JKS格式的证书，主机上的Java应用程序将使用该证书，这就是我们所说的keystore.jks +
+* 不再需要CSR（证书签名请求）+
+* 以PEM格式签名的证书，主机上的Java应用程序也将使用该证书 +
+* PEM格式的root证书，已导入Java truststore，不再需要 +
+* JKS格式的root证书，这就是我们所说的truststore.jks，它也将被Java应用程序使用
 
-Depending on how you generated certificates, you could have different (but still similar) files under __/opt/cloudera/security/pki/__:
 
-Using a CA certificates signer:
-[source,bash]
+__/opt/cloudera/security/pki/__目录下面的文件（可能会有写差异）:
+
+* 使用CA certificates signer:
+....
 lrwxrwxrwx 1 root root   58 Mar 26 03:53 agent.pem -> /opt/cloudera/security/pki/cdp-test-1.gce.cloudera.com.pem
 -rw-r--r-- 1 root root 1055 Mar 26 02:03 cdp-test-1.gce.cloudera.com.csr
 -rw-r--r-- 1 root root 8107 Mar 26 07:34 cdp-test-1.gce.cloudera.com.jks
@@ -118,10 +197,10 @@ lrwxrwxrwx 1 root root   58 Mar 26 07:43 keystore.jks -> /opt/cloudera/security/
 -rw-r--r-- 1 root root 2045 Mar 26 03:05 rootca.pem
 lrwxrwxrwx 1 root root   58 Mar 26 07:14 server.jks -> /opt/cloudera/security/pki/cdp-test-1.gce.cloudera.com.jks
 -rw-r--r-- 1 root root 1532 Mar 26 07:52 truststore.jks
+....
 
-Using self-signed certificates:
-[source,bash]
-total 52
+使用self-signed certificates:
+....
 -r--r--r-- 1 root root 3688 Apr 10 07:27 ccycloud-2.fri2.root.hwx.site.crt
 -r--r--r-- 1 root root 1105 Apr 10 07:23 ccycloud-2.fri2.root.hwx.site.csr
 -r--r--r-- 1 root root 4025 Apr 10 07:27 ccycloud-2.fri2.root.hwx.site.jks
@@ -133,80 +212,67 @@ lrwxrwxrwx 1 root root   60 Apr 10 07:30 keystore.jks -> /opt/cloudera/security/
 -r--r--r-- 1 root root 2155 Apr 10 07:16 rootCA.crt
 -r-------- 1 root root 3243 Apr 10 07:26 rootCA.key
 -r--r--r-- 1 root root 1612 Apr 10 07:35 truststore.jks
+....
 
-Above, rootCA.key was generated so it is present but only with root read access. There are also certificate file in pem format and in p12 format as they were used to convert from jks to pem.
+上面生成了rootCA.key，仅有root对其有读权限。 还有pem格式和p12格式的证书文件，用于将jks转换为pem。
 
-If you list entries in keystore.jks, you have one privateKeyEntry (which in fact is enriched by corresponding signed certificate & root ca, to have the whole chain of certification):
-[source,bash]
-----
-[root@cdp-test-2 ~]# keytool -list -keystore /opt/cloudera/security/pki/keystore.jks 
-Enter keystore password:  
-
-*****************  WARNING WARNING WARNING  *****************
-* The integrity of the information stored in your keystore  *
-* has NOT been verified!  In order to verify its integrity, *
-* you must provide your keystore password.                  *
-*****************  WARNING WARNING WARNING  *****************
-
+如果您查看keystore.jks，您会发现一个privateKeyEntry（实际上，它由相应的已签名证书和root ca来enrich，以具有整个认证链）：+
+keytool -list -keystore /opt/cloudera/security/pki/keystore.jks
+....
+Enter keystore password:
 Keystore type: jks
 Keystore provider: SUN
 
 Your keystore contains 1 entry
 
-cdp-test-2.gce.cloudera.com, Mar 26, 2020, PrivateKeyEntry, 
-Certificate fingerprint (SHA1): 86:0F:91:90:D1:1B:13:E6:48:51:54:36:5A:63:25:4E:26:3E:94:D8
-----
+ccycloud-1.feng.root.hwx.site, Aug 9, 2020, PrivateKeyEntry,
+Certificate fingerprint (SHA1): 61:77:7D:B9:73:BD:A0:BD:61:8D:9A:37:A3:07:42:2F:78:28:63:F9
 
+Warning:
+The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore /opt/cloudera/security/pki/keystore.jks -destkeystore /opt/cloudera/security/pki/keystore.jks -deststoretype pkcs12".
+....
 
-If you list entries in truststore.jks, there is only one which is the trusted root certificate:
-[source,bash]
-----
-[root@cdp-test-1 pki]# keytool -list -keystore /opt/cloudera/security/pki/truststore.jks 
-Enter keystore password:  
-
-*****************  WARNING WARNING WARNING  *****************
-* The integrity of the information stored in your keystore  *
-* has NOT been verified!  In order to verify its integrity, *
-* you must provide your keystore password.                  *
-*****************  WARNING WARNING WARNING  *****************
-
+如果您查看truststore.jks，您会发现里面有一个rootca +
+keytool -list -keystore /opt/cloudera/security/pki/truststore.jks
+....
+Enter keystore password:
 Keystore type: jks
 Keystore provider: SUN
 
-Your keystore contains 2 entries
+Your keystore contains 1 entry
 
-rootca, Mar 26, 2020, trustedCertEntry, 
-Certificate fingerprint (SHA1): 1F:94:E0:C1:F6:FE:07:72:9C:C1:2B:69:05:9B:55:79:39:4A:02:30
-intca, Mar 26, 2020, trustedCertEntry, 
-Certificate fingerprint (SHA1): B6:44:38:E6:2E:C3:08:A0:23:14:84:C6:DF:6F:53:D7:38:C7:CA:48
-----
+rootca, Aug 9, 2020, trustedCertEntry,
+Certificate fingerprint (SHA1): 0A:14:B1:2D:31:97:C3:A4:4D:AE:E8:E8:13:3F:B8:6C:5F:38:84:16
+....
 
-== CM security
+== 对CM设置TLS
 
-Goal is to set up security for Cloudera Manager and agents by enabling encryption of communication between CM and its agents and also securize the CM UI.
+通过对CM及其Agent之间的通信进行加密，来确保CM UI的安全性。
 
-It is necessary to make a new symlink on all nodes to allow cloudera agent to use the pem file:
-
-[source,bash]
+Step1.  必须在所有节点上建立新的link文件，以允许cloudera agent使用pem文件：
+....
 ln -s /opt/cloudera/security/pki/$(hostname -f).pem /opt/cloudera/security/pki/agent.pem
+....
 
-Then on CM server instance, it is also mandatory to create a symlink (on JKS format this time):
-
-[source,bash]
+Step2.  在CM节点上也需要建议新的link文件，以允许cloudera server使用jks文件：
+....
 ln -s /opt/cloudera/security/pki/$(hostname -f).jks /opt/cloudera/security/pki/server.jks
+....
 
-CM should be configured with this (Administration > Settings > Security):
+Step3.  修改CM配置(Administration > Settings > Security):
+
 image::pictures/CMSecureSettings.png[CM TLS configuration]
 
-A restart of CM must be made:
-[source,bash]
+Step4.  重启CM Server
+....
 systemctl restart cloudera-scm-server
+....
 
-Now, CM UI is on https protocol and port is 7183.
+现在，CM UI开始使用https和7183端口。
 
 image::pictures/CMUISecured.png[CM UI secured]
 
-Note that CM agent and CMS must be configured to talk in a secure way with CM.
+**注意：** 必须将CM Agent和CMS配置为以安全方式与CM通信。
 
 
 

@@ -1,12 +1,19 @@
 = 对CM&Agent配置TLS
 
 == 前置操作
-在所有的节点上都建立下面的目录存放key。
+
+以下操作详见link:install_full_script.sh[install_full_script.sh]部分。
+
+**注意：** 在所有的节点上都建立下面的目录存放key。
 ....
 mkdir -p /opt/cloudera/security/pki
 ....
 
 == Root certificate 
+
+以下操作详见link:install_full_script.sh[install_full_script.sh]部分。
+
+**注意：**以下操作在主节点1上执行
 
 Step1.  首先创建rootCA.key: +
 **openssl genrsa -out rootCA.key 4096**
@@ -33,8 +40,8 @@ Common Name (eg, your name or your server's hostname) []:ccycloud-1.feng.root.hw
 Email Address []:fxu1024@hotmail.com
 ....
 
-Step3.  接下来生成truststore.jks：+
-keytool -importcert -alias rootca -keystore /opt/cloudera/security/pki/truststore.jks -file /opt/cloudera/security/pki/rootCA.crt
+Step3.  接下来生成truststore.jks： +
+**keytool -importcert -alias rootca -keystore /opt/cloudera/security/pki/truststore.jks -file /opt/cloudera/security/pki/rootCA.crt**
 ....
 Enter keystore password:
 Re-enter new password:
@@ -76,6 +83,9 @@ Certificate was added to keystore
 ....
 
 == Server certificates
+
+以下操作详见link:install_full_script.sh[install_full_script.sh]部分。
+
 **注意：**以下操作在每个节点上分别执行
 
 Step1.  创建一个server certificate和对应的CSR（certificate sign request）： +
@@ -188,7 +198,7 @@ chmod 400 /opt/cloudera/security/pki/rootCA.*
 * JKS格式的root证书，这就是我们所说的truststore.jks，它也将被Java应用程序使用
 
 
-__/opt/cloudera/security/pki/__目录下面的文件（可能会有写差异）:
+__/opt/cloudera/security/pki/__目录下面的文件列表（可能会略有差异）:
 
 * 使用CA certificates signer:
 ....
@@ -202,7 +212,7 @@ lrwxrwxrwx 1 root root   58 Mar 26 07:14 server.jks -> /opt/cloudera/security/pk
 -rw-r--r-- 1 root root 1532 Mar 26 07:52 truststore.jks
 ....
 
-使用self-signed certificates:
+* 使用self-signed certificates:
 ....
 -r--r--r-- 1 root root 3688 Apr 10 07:27 ccycloud-2.fri2.root.hwx.site.crt
 -r--r--r-- 1 root root 1105 Apr 10 07:23 ccycloud-2.fri2.root.hwx.site.csr
@@ -219,8 +229,8 @@ lrwxrwxrwx 1 root root   60 Apr 10 07:30 keystore.jks -> /opt/cloudera/security/
 
 上面生成了rootCA.key，仅有root对其有读权限。 还有pem格式和p12格式的证书文件，用于将jks转换为pem。
 
-如果您查看keystore.jks，您会发现一个privateKeyEntry（实际上，它由相应的已签名证书和root ca来enrich，以具有整个认证链）：+
-keytool -list -keystore /opt/cloudera/security/pki/keystore.jks
+如果您查看keystore.jks，您会发现一个privateKeyEntry（实际上，它由相应的已签名证书和root ca来enrich，以具有整个认证链）： +
+**keytool -list -keystore /opt/cloudera/security/pki/keystore.jks**
 ....
 Enter keystore password:
 Keystore type: jks
@@ -236,7 +246,7 @@ The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS
 ....
 
 如果您查看truststore.jks，您会发现里面有一个rootca +
-keytool -list -keystore /opt/cloudera/security/pki/truststore.jks
+**keytool -list -keystore /opt/cloudera/security/pki/truststore.jks**
 ....
 Enter keystore password:
 Keystore type: jks
@@ -262,9 +272,10 @@ Step2.  在CM节点上也需要建议新的link文件，以允许cloudera server
 ln -s /opt/cloudera/security/pki/$(hostname -f).jks /opt/cloudera/security/pki/server.jks
 ....
 
-Step3.  修改CM配置(Administration > Settings > Security):
+Step3.  进入CM页面，管理->设置->搜索栏输入"Cloudera Manager TLS/SSL"，填写：
 
-image::pictures/CMSecureSettings.png[CM TLS configuration]
+
+image::pictures/CMTLS001.jpg[CM TLS configuration]
 
 Step4.  重启CM Server
 ....
@@ -273,7 +284,7 @@ systemctl restart cloudera-scm-server
 
 现在，CM UI开始使用https和7183端口。
 
-image::pictures/CMUISecured.png[CM UI secured]
+image::pictures/CMTLS002.jpg[CM UI secured]
 
 **注意：** 必须将CM Agent和CMS配置为以安全方式与CM通信。
 

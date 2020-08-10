@@ -24,21 +24,21 @@
 
 == ATLAS
 
-导航Atlas > 配置 > 安全性： +
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-重启所有相关服务
+* 导航Atlas > 配置 > 安全性： +
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 重启所有相关服务
 
 == HBase
 
-导航Atlas > 配置 > 安全性： +
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-重启HBase服务 +
-检查https端口是否变为16010
+* 导航HBase > 配置 > 安全性： +
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 重启HBase服务 +
+* 检查https端口是否变为16010
 
 
 == HDFS
 
-修改以下参数：
+* 修改以下参数：
 ....
 dfs.encrypt.data.transfer = true
 hadoop.rpc.protection = privacy
@@ -46,84 +46,84 @@ dfs.data.transfer.protection = privacy
 dfs.datanode.address = 1044
 ....
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-检查https端口是否变为9871
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 检查https端口是否变为9871
 
 
 == Hive
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-检查https端口是否变为1002
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 检查https端口是否变为1002
 
 
 == Hue
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
 ....
   client_key_file=/opt/cloudera/security/pki/agent.pem
   client_keypw_file=/etc/cloudera-scm-agent/agentkey.pw
   client_cert_file=/opt/cloudera/security/pki/agent.crt
 ....
 
-检查https端口是否变为8889. (8888 without load balancer)
+* 检查https端口是否变为8889. (8888 without load balancer)
 
 
 == Impala
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
 ....
   client_key_file=/opt/cloudera/security/pki/agent.pem
   client_cert_file=/opt/cloudera/security/pki/agent.crt
 ....
 
-检查catalog server https端口是否变为25020, state store https端口是否变为25010.
+* 检查catalog server https端口是否变为25020, state store https端口是否变为25010.
 
 
 == Kudu
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties：
 ....
   client_key_file=/opt/cloudera/security/pki/agent.pem
   client_cert_file=/opt/cloudera/security/pki/agent.crt
 ....
 
-检查https端口是否变为8051.
+* 检查https端口是否变为8051.
 
 
 == Oozie
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-检查https端口是否变为11443
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 检查https端口是否变为11443
 
 
 == Ranger
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-检查https端口是否变为6182
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 检查https端口是否变为6182
 
 
 == Spark
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-检查https端口是否变为18488
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 检查https端口是否变为18488
 
 
 == YARN
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-检查Resource manager https端口是否变为8090, Job History https端口是否变为19890.
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 检查Resource manager https端口是否变为8090, Job History https端口是否变为19890.
 
 
 == YARN Queue Manager
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties
 
 
 == Kafka, Phoenix, Ozone, SolR
 
-勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-但是这些服务不提供UI，因此无法直接声明任何内容。
+* 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
+* 但是这些服务不提供UI，因此无法直接声明任何内容。
 
 == 验证方法
 
-如果您想验证TLS配置之后是否运行正常，有一种比较简单的方法，就是查看Ranger UI的“Audit”>“Plugins ”，查看服务是否仍然能够从Ranger下载Policy。
+* 如果您想验证在TLS配置之后是否运行正常，有一种比较简单的方法，就是查看Ranger UI的“Audit”>“Plugins ”，查看服务是否仍然能够从Ranger下载Policy。

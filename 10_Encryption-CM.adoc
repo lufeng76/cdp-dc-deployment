@@ -176,13 +176,13 @@ chmod 400 /opt/cloudera/security/pki/rootCA.*
 
 * 使用CA certificates signer:
 ....
-lrwxrwxrwx 1 root root   58 Mar 26 03:53 agent.pem -> /opt/cloudera/security/pki/cdp-test-1.gce.cloudera.com.pem
--rw-r--r-- 1 root root 1055 Mar 26 02:03 cdp-test-1.gce.cloudera.com.csr
--rw-r--r-- 1 root root 8107 Mar 26 07:34 cdp-test-1.gce.cloudera.com.jks
--rw-r--r-- 1 root root 4618 Mar 26 07:33 cdp-test-1.gce.cloudera.com.pem
-lrwxrwxrwx 1 root root   58 Mar 26 07:43 keystore.jks -> /opt/cloudera/security/pki/cdp-test-1.gce.cloudera.com.jks
+lrwxrwxrwx 1 root root   58 Mar 26 03:53 agent.pem -> /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.pem
+-rw-r--r-- 1 root root 1055 Mar 26 02:03 ccycloud-1.feng.root.hwx.site.csr
+-rw-r--r-- 1 root root 8107 Mar 26 07:34 ccycloud-1.feng.root.hwx.site.jks
+-rw-r--r-- 1 root root 4618 Mar 26 07:33 ccycloud-1.feng.root.hwx.site.pem
+lrwxrwxrwx 1 root root   58 Mar 26 07:43 keystore.jks -> /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks
 -rw-r--r-- 1 root root 2045 Mar 26 03:05 rootca.pem
-lrwxrwxrwx 1 root root   58 Mar 26 07:14 server.jks -> /opt/cloudera/security/pki/cdp-test-1.gce.cloudera.com.jks
+lrwxrwxrwx 1 root root   58 Mar 26 07:14 server.jks -> /opt/cloudera/security/pki/ccycloud-1.feng.root.hwx.site.jks
 -rw-r--r-- 1 root root 1532 Mar 26 07:52 truststore.jks
 ....
 

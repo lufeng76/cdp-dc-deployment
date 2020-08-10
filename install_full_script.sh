@@ -419,9 +419,8 @@ mkdir -p /opt/cloudera/security/pki/
 openssl genrsa -out rootCA.key 4096
 openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.crt
 keytool -importcert -alias rootca -keystore /opt/cloudera/security/pki/truststore.jks -file /opt/cloudera/security/pki/rootCA.crt
-chmod 444 /opt/cloudera/security/pki/rootCA.crt
-chmod 400 /opt/cloudera/security/pki/rootCA.key
 
+#Copy the rootCA.crt & rootCA.key & truststore.jks to all nodes
 scp /opt/cloudera/security/pki/rootCA.* root@ccycloud-2.feng.root.hwx.site:/opt/cloudera/security/pki/
 scp /opt/cloudera/security/pki/truststore.jks root@ccycloud-2.feng.root.hwx.site:/opt/cloudera/security/pki/
 scp /opt/cloudera/security/pki/rootCA.* root@ccycloud-3.feng.root.hwx.site:/opt/cloudera/security/pki/
@@ -431,21 +430,26 @@ scp /opt/cloudera/security/pki/truststore.jks root@ccycloud-4.feng.root.hwx.site
 scp /opt/cloudera/security/pki/rootCA.* root@ccycloud-5.feng.root.hwx.site:/opt/cloudera/security/pki/
 scp /opt/cloudera/security/pki/truststore.jks root@ccycloud-5.feng.root.hwx.site:/opt/cloudera/security/pki/
 
-#修改config.ini，然后分发到其他节点
-#server_host=ccycloud-1.feng.root.hwx.site
-#use_tls=1
-#verify_cert_file=/opt/cloudera/security/pki/agent.pem
+#Copy config.ini to all nodes
+#vi /etc/cloudera-scm-agent/config.ini
+#  server_host=ccycloud-1.feng.root.hwx.site
+#  use_tls=1
+#  verify_cert_file=/opt/cloudera/security/pki/agent.crt
+#  client_key_file=/opt/cloudera/security/pki/agent.pem
+#  client_keypw_file=/etc/cloudera-scm-agent/agentkey.pw
+#  client_cert_file=/opt/cloudera/security/pki/agent.crt
 scp /etc/cloudera-scm-agent/config.ini root@ccycloud-2.feng.root.hwx.site:/etc/cloudera-scm-agent/ 
 scp /etc/cloudera-scm-agent/config.ini root@ccycloud-3.feng.root.hwx.site:/etc/cloudera-scm-agent/
 scp /etc/cloudera-scm-agent/config.ini root@ccycloud-4.feng.root.hwx.site:/etc/cloudera-scm-agent/
 scp /etc/cloudera-scm-agent/config.ini root@ccycloud-5.feng.root.hwx.site:/etc/cloudera-scm-agent/
+
+ln -s /opt/cloudera/security/pki/$(hostname -f).jks /opt/cloudera/security/pki/server.jks
 
 ##################################################################################
 # Part10: Encryption-CM
 # Note: The following script run on ALL NODES !!!
 ##################################################################################
 
-#Copy the rootCA.crt & rootCA.key & truststore.jks to all nodes and play these lines:
 mkdir -p /opt/cloudera/security/pki/
 
 export jkspassword=cloudera

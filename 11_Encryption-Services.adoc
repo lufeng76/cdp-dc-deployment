@@ -122,8 +122,8 @@ dfs.datanode.address = 1044
 == Kafka, Phoenix, Ozone, SolR
 
 * 勾选 TLS/SSL ，然后填写所有的keystore/truststore properties +
-* 但是这些服务不提供UI，因此无法直接声明任何内容。
+* 但是这些服务不提供UI，因此无法直接声明任何内容
 
 == 验证方法
 
-* 如果您想验证在TLS配置之后是否运行正常，有一种比较简单的方法，就是查看Ranger UI的“Audit”>“Plugins ”，查看服务是否仍然能够从Ranger下载Policy。
+* 如果您想验证在TLS配置之后是否运行正常，有一种比较简单的方法，就是查看Ranger UI的“Audit”>“Plugins ”，查看服务是否仍然能够从Ranger下载Policy

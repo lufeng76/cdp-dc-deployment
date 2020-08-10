@@ -106,6 +106,6 @@ sudo -u postgres psql << EOF
 EOF
 ....
 
-Step7.  重启数据库  
+Step7.  重启数据库  +
 systemctl restart postgresql-10
 

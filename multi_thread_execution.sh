@@ -37,7 +37,7 @@ cp script.sh ${FOLDER_NAME}/
 # Execute the script on each node and redirect its output in an appropriate named file
 for i in $(eval echo "{${NODE_NUMBERS_START}..${NODE_NUMBERS_END}}")
 do
-    echo "*************** Launch parallel execution on node ${NODE_NAME}${i} ***************"
+    echo "*************** Launch parallel execution on node ${NODE_NAME/xxx/${i}} ***************"
     ssh ${NODE_USER}@${NODE_NAME/xxx/${i}} 'bash -s' < ${FOLDER_NAME}/script.sh ${i} > ${FOLDER_NAME}/results/${NODE_NAME}${i}.out 2>&1 &
     PID_ARRAY+=($!)
 done

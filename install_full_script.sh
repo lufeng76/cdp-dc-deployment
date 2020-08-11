@@ -65,17 +65,17 @@ echo "vm.dirty_background_ratio=20" >> /etc/sysctl.conf
 echo "vm.dirty_ratio=50" >> /etc/sysctl.conf
 # echo performance > /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 # Setup cloudera manager repo
-cat - > /etc/yum.repos.d/cloudera-manager-7_1_1.repo << EOF
+cat - > /etc/yum.repos.d/cloudera-manager-7_1_3.repo << EOF
 [cloudera-manager]
-name=Cloudera Manager 7.1.1
-baseurl=https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/
-gpgkey=https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
+name=Cloudera Manager 7.1.3
+baseurl=https://archive.cloudera.com/cm7/7.1.3/redhat7/yum/
+gpgkey=https://archive.cloudera.com/cm7/7.1.3/redhat7/yum/RPM-GPG-KEY-cloudera
 gpgcheck=1
 enabled=1
 autorefresh=0
 type=rpm-md
 EOF
-rpm --import https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/RPM-GPG-KEY-cloudera
+rpm --import https://archive.cloudera.com/cm7/7.1.3/redhat7/yum/RPM-GPG-KEY-cloudera
 
 ##################################################################################
 # Part02: Pre-Installation
@@ -106,16 +106,30 @@ yum -y install postgresql10-server
 /usr/pgsql-10/bin/postgresql-10-setup initdb
 systemctl enable postgresql-10
 systemctl start postgresql-10
-yum -y install pip
 pip install psycopg2==2.7.5 --ignore-installed
 
-echo "listen_addresses = '*'
-max_connections = 1000" >> /var/lib/pgsql/10/data/postgresql.conf
-echo "
-local   all             posgtres                                trust
-host    all             all             0.0.0.0/0               md5
-local   all             all                                     md5
-" >> /var/lib/pgsql/10/data/pg_hba.conf
+#vi /var/lib/pgsql/10/data/pg_hba.conf
+#....
+## IPv4 local connections:
+#host    all             all             127.0.0.1/32           ident
+#修改为：
+#host    all             all             127.0.0.1/32           password
+#
+#末尾新增三行：
+#local   all             posgtres                                trust
+#host    all             all             0.0.0.0/0               md5
+#local   all             all                                     md5
+#
+#vi /var/lib/pgsql/10/data/postgresql.conf
+#listen_addresses = localhost
+#修改为：
+#listen_addresses = '*'
+#max_connections = 100
+#修改为：
+#max_connections = 1000
+....
+
+systemctl restart postgresql-10
 
 sudo -u postgres psql << EOF
     CREATE ROLE scm LOGIN PASSWORD 'admin';
@@ -137,8 +151,6 @@ sudo -u postgres psql << EOF
     CREATE ROLE rangeradmin LOGIN PASSWORD 'admin';
     CREATE DATABASE ranger OWNER rangeradmin ENCODING 'UTF8' TEMPLATE template0;
 EOF
-
-systemctl restart postgresql-10
 
 ##################################################################################
 # Part03: CM installation

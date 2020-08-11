@@ -1,12 +1,6 @@
-echo "127.0.0.1	localhost
-::1	localhost ip6-localhost ip6-loopback
-fe00::0	ip6-localnet
-ff00::0	ip6-mcastprefix
-ff02::1	ip6-allnodes
-ff02::2	ip6-allrouters
-172.27.157.131   ccycloud-1.feng.root.hwx.site   feng-1
-172.27.87.68   ccycloud-2.feng.root.hwx.site   feng-2
-172.27.173.128   ccycloud-3.feng.root.hwx.site   feng-3
-172.27.109.1   ccycloud-4.feng.root.hwx.site   feng-4
-172.27.72.128   ccycloud-5.feng.root.hwx.site   feng-5
-" > /etc/hosts
+yum -y install postgresql-jdbc*
+cp /usr/share/java/postgresql-jdbc.jar /usr/share/java/postgresql-connector-java.jar
+chmod 644 /usr/share/java/postgresql-connector-java.jar
+yum -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+yum -y install https://yum.postgresql.org/10/redhat/rhel-7-x86_64/python3-psycopg2-2.8.5-1.rhel7.x86_64.rpm
+yum -y install postgresql10

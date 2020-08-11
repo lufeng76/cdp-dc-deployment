@@ -74,11 +74,11 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@ccycloud-5.feng.root.hwx.site
 |===
 |组件 |下载链接
 
-|CDH7.1.1
-|https://archive.cloudera.com/cdh7/7.1.1.0/parcels/
+|CDH7.1.3
+|https://archive.cloudera.com/cdh7/7.1.3.0/parcels/
 
-|CM7.1.1
-|https://archive.cloudera.com/cm7/7.1.1/redhat7/yum/
+|CM7.1.3
+|https://archive.cloudera.com/cm7/7.1.3/redhat7/yum/
 
 |CSA/Flink
 |https://www.cloudera.com/downloads/cdf/csa.html

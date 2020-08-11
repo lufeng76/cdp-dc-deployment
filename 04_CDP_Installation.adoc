@@ -75,7 +75,7 @@ image::pictures/CDP023.jpg[Add host]
 
 image::pictures/CDP014.jpg[Add host]
 
-后面的步骤和前面一模一样。
+后面的步骤和前面一模一样，不再赘述。
 
 
 == 添加服务组件

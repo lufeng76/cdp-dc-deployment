@@ -4,6 +4,7 @@
 
 . <<上传License>> +
 . <<安装Cloudera Manager Agent和CDH Parcel>> +
+. <<补加节点>> +
 . <<添加服务组件>>
 
 == 上传License
@@ -24,15 +25,13 @@ image::pictures/CDP002.jpg[cluster name]
 
 image::pictures/CDP003.jpg[select hosts]
 
-由于第一台主机已经安装过Cloudera Manager Agent，所以会显示为灰色，但也要勾选上
-
-image::pictures/CDP014.jpg[select hosts]
+由于第一台主机已经安装过Cloudera Manager Agent，所以会显示为灰色，后面要补充添加
 
 === Step3:选择软件包下载地址
 
 image::pictures/CDP005.jpg[select repoistories]
 
-注意：Parcel Repository & Network Settings需要填写cdp7.1.1对应的URL
+注意：Parcel Repository & Network Settings需要填写cdp7.1.3对应的URL
 
 image::pictures/CDP004.jpg[select repoistories]
 
@@ -64,9 +63,26 @@ image::pictures/CDP011.jpg[inspector]
 
 image::pictures/CDP012.jpg[inspector]
 
+== 补加节点
+
+退出当前页面，新开一个页面，必须把第一个节点补加进去。选择"主机"->"Add host":
+
+image::pictures/CDP022.jpg[Add host]
+
+image::pictures/CDP023.jpg[Add host]
+
+选择"当前管理的主机"：
+
+image::pictures/CDP014.jpg[Add host]
+
+以下步骤和前面一模一样。
+
 
 == 添加服务组件
 
+点击"群集"-> Add Service，重新进入原来的页面
+
+image::pictures/CDP024.jpg[return previous webpage]
 
 === Step1：以Data Engineering为例
 
@@ -74,7 +90,7 @@ image::pictures/CDP015.jpg[add services]
 
 === Step2：角色分配
 
-https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html[参考链接]
+https://docs.cloudera.com/cloudera-manager/7.1.3/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html[参考链接]
 
 各主机角色分配示例如下：
 

@@ -6,7 +6,7 @@
 . <<安装SCM database>> +
 . <<启动CM server和agent服务>> 
 
-将CM 7.1.1安装在主节点1上。
+将CM 7.1.3安装在主节点1上。
 
 == 安装软件包
 
@@ -23,6 +23,11 @@ yum -y install cloudera-manager-server
 == 安装SCM database
 ....
 /opt/cloudera/cm/schema/scm_prepare_database.sh postgresql scm scm admin
+....
+
+如果安装成功，会显示以下信息:
+....
+All done, your SCM database is configured correctly!
 ....
 
 == 启动CM server和agent服务

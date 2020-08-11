@@ -1,9 +1,9 @@
 = README
 
 == 内容介绍
-本文介绍如何在Centos7.x上安装CDP7.1.1。
+本文介绍如何在Centos7.x上安装CDP7.1.x。
 
-https://docs.cloudera.com/cloudera-manager/7.1.1/installation/topics/cdpdc-installation.html[官网安装文档]
+https://docs.cloudera.com/cloudera-manager/7.1.3/installation/topics/cdpdc-installation.html[官网安装文档]
 
 CDP安装部署一般分成六个阶段：
 

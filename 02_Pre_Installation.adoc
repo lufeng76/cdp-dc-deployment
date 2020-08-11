@@ -59,8 +59,10 @@ sudo -u postgres psql
 
 Step4.  修改配置 +
 **注意：** 该步为交互式，无法远程执行 +
-vi /var/lib/pgsql/10/data/pg_hba.conf
+
 ....
+vi /var/lib/pgsql/10/data/pg_hba.conf
+
 # IPv4 local connections:
 host    all             all             127.0.0.1/32           ident
 修改为：
@@ -72,6 +74,7 @@ host    all             all             0.0.0.0/0               md5
 local   all             all                                     md5
 
 vi /var/lib/pgsql/10/data/postgresql.conf
+
 listen_addresses = localhost
 修改为：
 listen_addresses = '*'

@@ -25,7 +25,7 @@ image::pictures/CDP002.jpg[cluster name]
 
 image::pictures/CDP003.jpg[select hosts]
 
-由于第一台主机已经安装过Cloudera Manager Agent，所以会显示为灰色，后面要补充添加
+**注意：** 由于第一台主机已经安装过Cloudera Manager Agent，所以会显示为灰色，后面要补充添加
 
 === Step3:选择软件包下载地址
 
@@ -75,7 +75,7 @@ image::pictures/CDP023.jpg[Add host]
 
 image::pictures/CDP014.jpg[Add host]
 
-以下步骤和前面一模一样。
+后面的步骤和前面一模一样。
 
 
 == 添加服务组件
@@ -90,11 +90,22 @@ image::pictures/CDP015.jpg[add services]
 
 === Step2：角色分配
 
+推荐按照官网指导： 
 https://docs.cloudera.com/cloudera-manager/7.1.3/installation/topics/cdpdc-runtime-cluster-hosts-role-assignments.html[参考链接]
 
 各主机角色分配示例如下：
 
 image::pictures/CDP016.jpg[assign roles]
+
+有两个需要注意的地方：
+
+* hiveserver2需要在hive on tez中选择：
+
+image::pictures/CDP025.jpg[assign roles]
+
+* Activity Monitor为MapReduce1服务，不需要选
+
+image::pictures/CDP026.jpg[assign roles]
 
 === Step3：测试数据库连接
 

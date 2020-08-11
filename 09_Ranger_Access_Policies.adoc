@@ -22,7 +22,7 @@ image::pictures/Ranger004.jpg[Ranger for Solr-infra]
 
 Step3.  Ranger服务初始化Plugin（进入Ranger主页面，点击"Setup Ranger Plugin Service"）
 
-注意：该步操作需要10分钟左右。
+注意：该步操作需要5分钟左右。
 
 image::pictures/Ranger006.jpg[Setup Ranger Plugin]
 

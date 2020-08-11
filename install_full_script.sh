@@ -3,7 +3,7 @@
 # Note: The following script run on ALL NODES !!!
 ##################################################################################
 # Define global variables here
-export IP_ADDRESS=10.96.9.38
+export IP_ADDRESS=xx.xx.xx.xx
 set -e
 
 # System Pre-Requisites

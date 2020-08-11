@@ -9,7 +9,7 @@
 echo "Start of script"
 
 # Modify these below settings according to your cluster
-export NODE_NAME='feng-'
+export NODE_NAME='ccycloud-xxx.feng.root.hwx.site'
 export NODE_USER='root'
 export NODE_NUMBERS_START=1
 export NODE_NUMBERS_END=5
@@ -38,7 +38,7 @@ cp script.sh ${FOLDER_NAME}/
 for i in $(eval echo "{${NODE_NUMBERS_START}..${NODE_NUMBERS_END}}")
 do
     echo "*************** Launch parallel execution on node ${NODE_NAME}${i} ***************"
-    ssh ${NODE_USER}@${NODE_NAME}${i} 'bash -s' < ${FOLDER_NAME}/script.sh ${i} > ${FOLDER_NAME}/results/${NODE_NAME}${i}.out 2>&1 &
+    ssh ${NODE_USER}@${NODE_NAME/xxx/${i}} 'bash -s' < ${FOLDER_NAME}/script.sh ${i} > ${FOLDER_NAME}/results/${NODE_NAME}${i}.out 2>&1 &
     PID_ARRAY+=($!)
 done
 

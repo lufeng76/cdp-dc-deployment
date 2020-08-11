@@ -48,16 +48,8 @@ java.lang.NullPointerException: null
 ....
 
 **根源：** /opt/cloudera/parcels/CDH/lib/solr/clusterconfig/hadoop_multi_scheme_config.json文件需要做些调整： +
-1）Change below line  +
--- +
-"class": "org.apache.solr.security.HadoopAuthPlugin"  +
-TO +
-"class":"org.apache.solr.security.ConfigurableInternodeAuthHadoopPlugin" +
--- +
-2. Also add below line. +
--- +
-"clientBuilderFactory": "org.apache.solr.client.solrj.impl.Krb5HttpClientBuilder" +
--- +
+1）将 "class": "org.apache.solr.security.HadoopAuthPlugin" 改成  "class":"org.apache.solr.security.ConfigurableInternodeAuthHadoopPlugin" +
+2）添加一行 "clientBuilderFactory": "org.apache.solr.client.solrj.impl.Krb5HttpClientBuilder" 
 
 **解决方案：**  +
 将link:tools[tools]目录下的hadoop_multi_scheme_config.json文件分发到集群所有主机。

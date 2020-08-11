@@ -25,10 +25,10 @@ org.apache.solr.client.solrj.impl.HttpSolrClient$RemoteSolrException: Error from
 **根源：** 在添加Ranger和Atlas服务之前，集群必须启用kerberos。Ranger的configset中<lib>相关item无法在非安全的集群中使用。
 
 **解决方案：**  +
-* 集群启用Kerberos +
-* 停止Slor和Ranger服务 +
-* 执行命令：solrctl --zk ccycloud-1.feng.root.hwx.site:2181,ccycloud-2.feng.root.hwx.site:2181,ccycloud-3.feng.root.hwx.site:2181/solr-infra instancedir --delete ranger_audits +
-* 启动Slor和Ranger服务
+1）集群启用Kerberos +
+2）停止Slor和Ranger服务 +
+3）执行命令：solrctl --zk ccycloud-1.feng.root.hwx.site:2181,ccycloud-2.feng.root.hwx.site:2181,ccycloud-3.feng.root.hwx.site:2181/solr-infra instancedir --delete ranger_audits +
+4）启动Slor和Ranger服务
 
 === Error occured while writing audit log
 

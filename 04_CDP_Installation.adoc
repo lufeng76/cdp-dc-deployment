@@ -80,7 +80,8 @@ image::pictures/CDP014.jpg[Add host]
 
 == 添加服务组件
 
-点击"群集"-> Add Service，重新进入原来的页面
+点击"群集"-> Add Service，重新进入原来的页面 +
+**注意：* 由于CDP组件之间依赖关系比较复杂，强烈推荐按照上面的方式做初始安装。
 
 image::pictures/CDP024.jpg[return previous webpage]
 
